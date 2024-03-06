@@ -3,4 +3,5 @@ export interface IArticle{
     postedOn : Date;
     title : string;
     content: string;
+    useAsUserPic : boolean;
 }

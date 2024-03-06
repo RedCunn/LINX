@@ -1,4 +1,4 @@
-export interface ISong{
+export interface ITrack{
 id: string;
 name: string; 
 album : {

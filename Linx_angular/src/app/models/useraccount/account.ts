@@ -5,7 +5,7 @@ import { IBook } from "../media/book";
 import { IExItem } from "../exchanger/exitem";
 import { IFilm } from "../media/film";
 import { IPodcast } from "../media/podcast";
-import { ISong } from "../media/song";
+import { ITrack } from "../media/track";
 import { IGame } from "../media/game";
 
 export interface IAccount {
@@ -22,7 +22,7 @@ export interface IAccount {
         music : {
             artists : Array<IArtist>,
             albums : Array<IAlbum>,
-            songs : Array<ISong>
+            tracks : Array<ITrack>
         }
         games : Array<IGame>;
     }
