@@ -1,0 +1,29 @@
+import { IAlbum } from "../media/album";
+import { IArticle } from "./article";
+import { IArtist } from "../media/artist";
+import { IBook } from "../media/book";
+import { IExItem } from "../exchanger/exitem";
+import { IFilm } from "../media/film";
+import { IPodcast } from "../media/podcast";
+import { ISong } from "../media/song";
+import { IGame } from "../media/game";
+
+export interface IAccount {
+    idaccount : string;
+    createdAt : Date;
+    active : boolean;
+    articles : Array<IArticle>;
+    exchanger : Array<IExItem>;
+    media : {
+        books : Array<IBook>;
+        podcasts : Array<IPodcast>;
+        films : Array<IFilm>;
+        series : Array<IFilm>;
+        music : {
+            artists : Array<IArtist>,
+            albums : Array<IAlbum>,
+            songs : Array<ISong>
+        }
+        games : Array<IGame>;
+    }
+}
