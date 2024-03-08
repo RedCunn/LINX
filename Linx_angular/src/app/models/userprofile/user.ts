@@ -2,7 +2,8 @@ import { IAccount } from "../useraccount/account";
 import { IFiltering } from "./filtering";
 
 export interface IUser {
-    iduser : string;
+    userid : string;
+    accountid : string;
     username : string;
     name : string;
     lastname : string;

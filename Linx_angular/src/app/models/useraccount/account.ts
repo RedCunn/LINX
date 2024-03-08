@@ -9,8 +9,11 @@ import { ITrack } from "../media/track";
 import { IGame } from "../media/game";
 
 export interface IAccount {
-    idaccount : string;
+    accountid : string;
+    userid : string;
     createdAt : Date;
+    email : string;
+    password: string;
     active : boolean;
     articles : Array<IArticle>;
     exchanger : Array<IExItem>;

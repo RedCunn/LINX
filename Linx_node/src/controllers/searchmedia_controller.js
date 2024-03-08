@@ -17,12 +17,13 @@ module.exports = {
     },
     fetchTracks : async (req, res, next) =>{
         try {
-      
-            let _q = req.query.q;
+            const redirect_uri = 'http://localhost:4200/Linx/Inicio'
+            var scope = 'user-read-private user-read-email';
+            const spotify_authurl = `https://accounts.spotify.com/authorize?client_id=${process.env.SPOTIFY_CLIENTID}&response_type=code&redirect_uri=${redirect_uri}&scope=${scope}`
+            let {q , type} = req.query;
 
-            let _result = await axios.get(`https://https://api.spotify.com/v1/search?q=${_q}&type=track`,
-            {
-                'Authorization' : `Bearer ${process.env.SPOTIFY_CLIENTID}`
+            let _result = await axios.get(`https://api.spotify.com/v1/search?q=${q}&type=${type}`,
+            { headers : {'Authorization' : `Bearer ${code}`}
             });
 
             let foundTracks = [];
