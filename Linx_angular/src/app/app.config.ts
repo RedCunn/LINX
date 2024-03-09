@@ -5,9 +5,10 @@ import { provideClientHydration } from '@angular/platform-browser';
 import { HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { SpotifyService } from './services/spotify.service';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 export const appConfig: ApplicationConfig = {
   providers: [provideHttpClient(withFetch()),
               provideRouter(routes), 
-              provideClientHydration()]
+              provideClientHydration(), provideAnimationsAsync()]
 };

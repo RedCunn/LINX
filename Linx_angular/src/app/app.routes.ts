@@ -7,9 +7,16 @@ export const routes: Routes = [
     {
         path: 'Linx',
         children: 
-        [{path : 'Inicio',
-        loadComponent : ()=> import('./components/mediazone/musicComponents/music/mymusic.component').then(m=> m.MymusicComponent)
-        }]
+        [
+            {
+                path : 'Inicio',
+                loadComponent : ()=> import('./components/mediazone/musicComponents/music/mymusic.component').then(m=> m.MymusicComponent)
+            },
+            {
+                path: 'Registro',
+                loadComponent : ()=> import('./components/accountarea/signupComponent/signup.component').then(c => c.SignupComponent)
+            }
+        ]
     
     }
 ];
