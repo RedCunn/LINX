@@ -32,52 +32,60 @@
 
 
 <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-    <div>
-        <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image.jpg"
-            alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg"
-            src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-1.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg"
-            src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-2.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg"
-            src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-3.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg"
-            src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-4.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg"
-            src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-5.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg"
-            src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-6.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg"
-            src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-7.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg"
-            src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-8.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg"
-            src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-9.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg"
-            src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-10.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg"
-            src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-11.jpg" alt="">
-    </div>
+    
+
+    
+    @switch (this.searchParams.type) {
+        @case ('track') {
+            @for(item of this.tracksResults; track item.id){
+                <div>
+                    <img class="h-auto max-w-full rounded-lg" [src]="item.album.imgurl"
+                        alt="">
+                    <p>{{item.name}}</p>
+                    @for (it of item.artists; track $index) {
+                        <p>{{it.name}}</p>
+                    }
+                    <p>{{item.album.name}}</p>
+                </div>
+            }@empty {
+                <p>No se encontraron resultados...</p>
+            }
+        }
+        @case ('artist') {
+            @for(item of this.artistsResults; track item.id){
+                <div>
+                    <img class="h-auto max-w-full rounded-lg" [src]="item.imgurl"
+                        alt="">
+                    <p>{{item.name}}</p>
+                    <p class="font-bold">Géneros : </p>
+                    @for (it of item.genres; track $index) {
+                        <p>{{it}}</p>
+                    }
+                    <p>Número de seguidores en Spotify : {{item.followers}}</p>
+                </div>
+            }@empty {
+                <p>No se encontraron resultados...</p>
+            }
+        }
+        @case ('album') {
+            @for(item of this.albumsResults; track item.id){
+                <div>
+                    <img class="h-auto max-w-full rounded-lg" [src]="item.imgurl"
+                        alt="">
+                    <p>{{item.name}}</p>
+                    <p>Tracks : {{item.total_tracks}}</p>
+                    @for (it of item.artists; track $index) {
+                        <p>{{it}}</p>
+                    }
+                    <p>Fecha de lanzamiento : {{item.release_date}}</p>
+                    <p>Formato : {{item.album_type}}</p>
+                </div>
+            }@empty {
+                <p>No se encontraron resultados...</p>
+            }
+        }
+    }
+    
+    
+    
 </div>

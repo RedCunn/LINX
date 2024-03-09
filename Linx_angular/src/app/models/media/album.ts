@@ -1,5 +1,6 @@
 export interface IAlbum {
     id: string;
+    album_type : string;
     total_tracks: number;
     imgurl: string;
     name: string;

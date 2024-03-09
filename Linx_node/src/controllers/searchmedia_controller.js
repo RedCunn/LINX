@@ -1,102 +1,187 @@
 const axios = require('axios');
 
+
+async function requestSpotifyAccessToken() {
+
+    let _credentials = Buffer.from(`${process.env.SPOTIFY_CLIENTID}:${process.env.SPOTIFY_CLIENTSECRET}`).toString('base64');
+    try {
+        let _res = await axios.post(
+            'https://accounts.spotify.com/api/token',
+            'grant_type=client_credentials',
+            {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Authorization': `Basic ${_credentials}`
+                }
+            }
+        );
+
+        return _res;
+    } catch (error) {
+        console.log("fallo en la peticion de access token..........")
+        return null;
+    }
+
+
+
+}
+
 module.exports = {
-    fetchFilms : async (req, res, next) =>{
+    fetchFilms: async (req, res, next) => {
         try {
-            
+
         } catch (error) {
-            
+
         }
     },
-    fetchPodcasts : async (req, res, next) =>{
+    fetchPodcasts: async (req, res, next) => {
         try {
-            
+
         } catch (error) {
-            
+
         }
     },
-    fetchTracks : async (req, res, next) =>{
+
+    fetchSpotifyItems: async (req, res, next) => {
+
+        let { q, type } = req.query;
+
         try {
-            const redirect_uri = 'http://localhost:4200/Linx/Inicio'
-            var scope = 'user-read-private user-read-email';
-            const spotify_authurl = `https://accounts.spotify.com/authorize?client_id=${process.env.SPOTIFY_CLIENTID}&response_type=code&redirect_uri=${redirect_uri}&scope=${scope}`
-            let {q , type} = req.query;
+
+            let _accessToken = await requestSpotifyAccessToken();
 
             let _result = await axios.get(`https://api.spotify.com/v1/search?q=${q}&type=${type}`,
-            { headers : {'Authorization' : `Bearer ${code}`}
-            });
+                {
+                    headers: { 'Authorization': `Bearer ${_accessToken.data.access_token}` }
+                });
 
-            let foundTracks = [];
 
-            _result.tracks.items.forEach(item => {
-                const firstImgurl = item.album.images.find(img => img.url);
-                const _artists = [];
-                item.artists.forEach(art => _artists.push({id : art.id, name : art.name})); 
-                const selectedTrack = {
-                    id : item.id,
-                    name : item.name,
-                    album : {
-                        id : item.album.id,
-                        total_tracks : item.album.total_tracks,
-                        imgurl : firstImgurl,
-                        name : item.album.name,
-                        release_date : item.album.release_date
-                    },
-                    artists : _artists
-                }
-                foundTracks.push(selectedTrack);
-            });
+            let retrievedItems = [];
 
-            console.log("TRACKS RECUPERADOS : :: : :", foundTracks);
+            switch (type) {
+                case 'track':
+
+                    _result.data.tracks.items.forEach(item => {
+                        
+                        const empturl = 'https://community.spotify.com/t5/image/serverpage/image-id/55829iC2AD64ADB887E2A5/image-size/large?v=v2&px=999';
+                        let {url} = '';
+                        if(item.images.length > 0){
+                            ({url} = item.images.find(img => img.url));
+                        }
+                        const _artists = [];
+                        item.artists.forEach(art => _artists.push({ id: art.id, name: art.name }));
+                        const selectedTrack = {
+                            id: item.id,
+                            name: item.name,
+                            album: {
+                                id: item.album.id,
+                                total_tracks: item.album.total_tracks,
+                                imgurl: url != '' ? url : empturl,
+                                name: item.album.name,
+                                release_date: item.album.release_date
+                            },
+                            artists: _artists
+                        }
+                        retrievedItems.push(selectedTrack);
+                    });
+
+                    console.log("TRACKS RECUPERADOS : :: : :", retrievedItems);
+                    break;
+                case 'artist':
+                    _result.data.artists.items.forEach(item => {
+                    
+                        const empturl = 'https://community.spotify.com/t5/image/serverpage/image-id/55829iC2AD64ADB887E2A5/image-size/large?v=v2&px=999';
+                        let {url} = '';
+                        if(item.images.length > 0){
+                            ({url} = item.images.find(img => img.url));
+                        }
+                        const genres = [];
+                        item.genres.forEach(g => genres.push(g));
+                        const selectedArtist = {
+                            id: item.id,
+                            name: item.name,
+                            genres: genres,
+                            imgurl: url != '' ? url : empturl,
+                            followers: item.followers.total
+                        }
+                        retrievedItems.push(selectedArtist);
+                    });
+                    break;
+                case 'album':
+
+                _result.data.albums.items.forEach(item => {
+                    const empturl = 'https://community.spotify.com/t5/image/serverpage/image-id/55829iC2AD64ADB887E2A5/image-size/large?v=v2&px=999';
+                    let {url} = '';
+                    if(item.images.length > 0){
+                        ({url} = item.images.find(img => img.url));
+                    }
+
+                    const _artists = [];
+                    item.artists.forEach(art => _artists.push({ id: art.id, name: art.name }));
+                    const selectedAlbum = {
+                        id : item.id,
+                        album_type : item.album_type,
+                        total_tracks : item.total_tracks,
+                        imgurl : url != '' ? url : empturl,
+                        name : item.name,
+                        release_date : item.release_date,
+                        artists : _artists
+                    }
+                    retrievedItems.push(selectedAlbum);
+                });                
+                    
+
+                    break;
+            }
 
             res.status(200).send({
                 code: 0,
                 error: null,
-                message: 'Tracks recuperados.......',
-                token : null,
-                userData : null,
-                others : foundTracks
+                message: `${type}s recuperados.......`,
+                token: null,
+                userData: null,
+                others: retrievedItems
             })
-            
+
         } catch (error) {
-            
-            
+
+
             res.status(400).send({
                 code: 1,
                 error: error.message,
-                message: 'ERROR AL RECUPERAR TRACKS',
-                token : null,
-                userData : null,
-                others : null
+                message: `ERROR AL RECUPERAR ${type}`,
+                token: null,
+                userData: null,
+                others: null
             })
         }
     },
-    fetchAlbums: async (req, res, next) =>{
+    fetchAlbums: async (req, res, next) => {
         try {
-            
+
         } catch (error) {
-            
+
         }
     },
-    fetchArtists: async (req, res, next) =>{
+    fetchArtists: async (req, res, next) => {
         try {
-            
+
         } catch (error) {
-            
+
         }
     },
-    fetchBooks: async (req, res, next) =>{
+    fetchBooks: async (req, res, next) => {
         try {
-            
+
         } catch (error) {
-            
+
         }
     },
-    fetchGames: async (req, res, next) =>{
+    fetchGames: async (req, res, next) => {
         try {
-            
+
         } catch (error) {
-            
+
         }
     }
 

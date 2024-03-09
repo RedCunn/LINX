@@ -12,7 +12,7 @@ export class SpotifyService {
 
   public searchTrack(searchParams : {q : String , type : String}): Promise<IRestMessage> {
     
-    const _obs = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/SearchMedia/tracks?q=${searchParams.q}&type=${searchParams.type}`) as Observable<IRestMessage>;
+    const _obs = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/SearchMedia/items?q=${searchParams.q}&type=${searchParams.type}`) as Observable<IRestMessage>;
     return lastValueFrom(_obs);
   }
 
