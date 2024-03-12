@@ -1,0 +1,608 @@
+<div class="mx-auto max-w-6xl px-5">
+    <div>
+        <p>Para registrarte en LINX formulamos preguntas personales que nos ayudan a encontrar gente con preferencias
+            similares a las tuyas.</p>
+        <p>Ninguno de los datos recogidos son publicables, serán empleados únicamente por nuestro algoritmo para
+            sugerirte perfiles compatibles.</p>
+    </div>
+
+
+
+    <form [formGroup]="signupForm" (ngSubmit)="signup()">
+        <div id="accordion-collapse" data-accordion="collapse">
+            <h2 id="accordion-collapse-heading-age">
+                <button type="button"
+                    class="flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-500 border border-gray-200 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3"
+                    data-accordion-target="#accordion-collapse-body-age" aria-expanded="true"
+                    aria-controls="accordion-collapse-body-age">
+                    <span>Edad</span>
+                    <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 5 5 1 1 5" />
+                    </svg>
+                </button>
+            </h2>
+            <div id="accordion-collapse-body-age" class="hidden" aria-labelledby="accordion-collapse-heading-age">
+                <div class="p-5 border border-t-0 border-gray-200 dark:border-gray-700">
+                    <div>
+                        <input matInput [matDatepicker]="picker" name="mybirthday">
+                        <mat-hint>Fecha de nacimiento</mat-hint>
+                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </div>
+                    <div class="flex flex-col">
+                        <label class="mb-8" for="agerange">Rango de edad que quiero encontrar</label>
+                        <mat-slider min="18" max="120" step="1" discrete value="1.5">
+                            <input matSliderStartThumb>
+                            <input matSliderEndThumb>
+                        </mat-slider>
+                    </div>
+                </div>
+            </div>
+            <h2 id="accordion-collapse-heading-gender">
+                <button type="button"
+                    class="flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-500 border border-b-0 border-gray-200 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3"
+                    data-accordion-target="#accordion-collapse-body-gender" aria-expanded="true"
+                    aria-controls="accordion-collapse-body-gender">
+                    <span>Género</span>
+                    <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 5 5 1 1 5" />
+                    </svg>
+                </button>
+            </h2>
+            <div id="accordion-collapse-body-gender" class="hidden" aria-labelledby="accordion-collapse-heading-gender">
+                <div class="p-5 border border-b-0 border-gray-200 dark:border-gray-700">
+                    <div class="flex flex-col">
+                        <label>Género con el que te identificas</label>
+                        <select name="mygender" class="w-fit">
+                            <option value="woman">Mujer</option>
+                            <option value="man">Hombre</option>
+                            <option value="nonbin">No binarie</option>
+                            <option value="fluid">Género fluido</option>
+                        </select>
+                    </div>
+                    <div class="flex flex-col">
+                        <label>Géneros que buscas</label>
+                        <fieldset name="theirgenders" class="flex flex-col">
+                            <div>
+                                <input type="radio" value="woman">
+                                <label>Mujer</label>
+                            </div>
+                            <div>
+                                <input type="radio" value="man">
+                                <label>Hombre</label>
+                            </div>
+                            <div>
+                                <input type="radio" value="nonbin">
+                                <label>No binarie</label>
+                            </div>
+                            <div>
+                                <input type="radio" value="fluid">
+                                <label>Género fluido</label>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            <h2 id="accordion-collapse-heading-proxy">
+                <button type="button"
+                    class="flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-500 border border-gray-200 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3"
+                    data-accordion-target="#accordion-collapse-body-proxy" aria-expanded="true"
+                    aria-controls="accordion-collapse-body-proxy">
+                    <span>Proximidad</span>
+                    <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 5 5 1 1 5" />
+                    </svg>
+                </button>
+            </h2>
+            <div id="accordion-collapse-body-proxy" class="hidden" aria-labelledby="accordion-collapse-heading-proxy">
+                <div class="p-5 border border-t-0 border-gray-200 dark:border-gray-700 flex flex-col">
+                    <label>Área en la que quieres encontrar personas</label>
+                    <select name="proximity" class="w-fit">
+                        <option value="mycity">Mi ciudad</option>
+                        <option value="mystate">Mi comunidad</option>
+                        <option value="mycountry">Mi país</option>
+                        <option value="mycontinent">Mi continente</option>
+                        <option value="global">El mundo</option>
+                    </select>
+                </div>
+            </div>
+            <h2 id="accordion-collapse-heading-belie">
+                <button type="button"
+                    class="flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-500 border border-gray-200 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3"
+                    data-accordion-target="#accordion-collapse-body-belie" aria-expanded="true"
+                    aria-controls="accordion-collapse-body-belie">
+                    <span>Creencias</span>
+                    <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 5 5 1 1 5" />
+                    </svg>
+                </button>
+            </h2>
+            <div id="accordion-collapse-body-belie" class="hidden" aria-labelledby="accordion-collapse-heading-belie">
+                <div class="p-5 border border-t-0 border-gray-200 dark:border-gray-700">
+                    <div class="flex flex-col">
+                        <label>Tus creencias</label>
+                        <fieldset class="flex flex-col">
+                            <label>¿Tienes una religión?</label>
+                            <div>
+                                <input type="radio" name="religion" value="true">
+                                <label>Sí</label>
+                                <input type="radio" name="religion" value="false">
+                                <label>No</label>
+                            </div>
+                            <label>¿Cuál es tu religión?</label>
+                            <input type="text" name="myreligion">
+                            <label>¿Te consideras una persona espiritual?</label>
+                            <div>
+                                <input type="radio" name="spiritual" value="true">
+                                <label>Sí</label>
+                                <input type="radio" name="spiritual" value="false">
+                                <label>No</label>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="flex flex-col">
+                        <label>¿Quieres encontrar personas que compartan tus creencias?</label>
+                        <fieldset class="flex flex-col">
+                            <div>
+                                <input type="radio" name="sharebeliefs" value="true">
+                                <label>Sí, quiero que compartan mis creencias</label>
+                            </div>
+                            <div>
+                                <input type="radio" name="sharebeliefs" value="false">
+                                <label>No me importa</label>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            <h2 id="accordion-collapse-heading-poli">
+                <button type="button"
+                    class="flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-500 border border-gray-200 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3"
+                    data-accordion-target="#accordion-collapse-body-poli" aria-expanded="true"
+                    aria-controls="accordion-collapse-body-belie">
+                    <span>Espectro político</span>
+                    <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 5 5 1 1 5" />
+                    </svg>
+                </button>
+            </h2>
+            <div id="accordion-collapse-body-poli" class="hidden" aria-labelledby="accordion-collapse-heading-poli">
+                <div class="p-5 border border-t-0 border-gray-200 dark:border-gray-700">
+                    <div class="flex flex-row">
+                        <div class="flex flex-col">
+                            <label>Tu tendencia política</label>
+                            <fieldset class="flex flex-col">
+                                <div>
+                                    <input type="radio" name="politics" value="autholeft">
+                                    <label>Izquierda autoritaria</label>
+                                </div>
+                                <div>
+                                    <input type="radio" name="politics" value="libeleft">
+                                    <label>Izquierda libertaria</label>
+                                </div>
+                                <div>
+                                    <input type="radio" name="politics" value="authoright">
+                                    <label>Derecha autoritaria</label>
+                                </div>
+                                <div>
+                                    <input type="radio" name="politics" value="liberight">
+                                    <label>Derecha libertaria</label>
+                                </div>
+                                <div>
+                                    <input type="radio" name="politics" value="someright">
+                                    <label>En algún lugar a la derecha</label>
+                                </div>
+                                <div>
+                                    <input type="radio" name="politics" value="someleft">
+                                    <label>En algún lugar a la izquierda</label>
+                                </div>
+                                <div>
+                                    <input type="radio" name="politics" value="center">
+                                    <label>Centrocampista</label>
+                                </div>
+                                <div>
+                                    <input type="radio" name="politics" value="none">
+                                    <label>Apolítica</label>
+                                </div>
+                            </fieldset>
+                        </div>
+                        <img src="../../../../assets/imgs/signup/Political_Spectrum.png" class="w-1/4">
+                    </div>
+
+                    <div class="flex flex-col">
+                        <label>¿Buscas gente que comparta tus tendencias políticas?</label>
+                        <fieldset>
+                            <div>
+                                <input type="radio" name="sharepolitics" value="true">
+                                <label>Sí, quiero que compartan mi tendencia</label>
+                            </div>
+                            <div>
+                                <input type="radio" name="sharepolitics" value="false">
+                                <label>No me importa</label>
+                            </div>
+                            <div>
+                                <input type="radio" name="sharepolitics" value="lessleft">
+                                <label>Me da igual mientras no sean de izquierdas</label>
+                            </div>
+                            <div>
+                                <input type="radio" name="sharepolitics" value="lessright">
+                                <label>Me da igual mientras no sean de derechas</label>
+                            </div>
+                            <div>
+                                <input type="radio" name="sharepolitics" value="lessautho">
+                                <label>Me da igual mientras no sean autoritarias</label>
+                            </div>
+                            <div>
+                                <input type="radio" name="sharepolitics" value="lesslibe">
+                                <label>Me da igual mientras no sean libertarias</label>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            <h2 id="accordion-collapse-heading-diet">
+                <button type="button"
+                    class="flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-500 border border-gray-200 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3"
+                    data-accordion-target="#accordion-collapse-body-diet" aria-expanded="true"
+                    aria-controls="accordion-collapse-body-diet">
+                    <span>Dieta</span>
+                    <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 5 5 1 1 5" />
+                    </svg>
+                </button>
+            </h2>
+            <div id="accordion-collapse-body-diet" class="hidden" aria-labelledby="accordion-collapse-heading-diet">
+                <div class="p-5 border border-t-0 border-gray-200 dark:border-gray-700">
+                    <div class="flex flex-col">
+                        <label>Tu dieta</label>
+                        <fieldset>
+                            <div>
+                                <input type="radio" name="mydiet" value="omnivore">
+                                <label>Omnívora</label>
+                            </div>
+                            <div>
+                                <input type="radio" name="mydiet" value="vegetarian">
+                                <label>Vegetariana</label>
+                            </div>
+                            <div>
+                                <input type="radio" name="mydiet" value="vegane">
+                                <label>Vegana</label>
+                            </div>
+                            <div class="flex flex-col">
+                                <label>No como...(animal, alimento o grupo de alimentos)</label>
+                                <input type="text" name="donteat">
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="flex flex-col">
+                        <label>¿Buscas gente que comparta tu dieta?</label>
+                        <fieldset>
+                            <div>
+                                <input type="radio" name="sharediet" value="true">
+                                <label>Sí, quiero que compartan mi dieta</label>
+                            </div>
+                            <div>
+                                <input type="radio" name="sharediet" value="false">
+                                <label>No me importa</label>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            <h2 id="accordion-collapse-heading-lang">
+                <button type="button"
+                    class="flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-500 border border-gray-200 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3"
+                    data-accordion-target="#accordion-collapse-body-lang" aria-expanded="true"
+                    aria-controls="accordion-collapse-body-lang">
+                    <span>Idiomas</span>
+                    <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 5 5 1 1 5" />
+                    </svg>
+                </button>
+            </h2>
+            <div id="accordion-collapse-body-lang" class="hidden" aria-labelledby="accordion-collapse-heading-lang">
+                <div class="p-5 border border-t-0 border-gray-200 dark:border-gray-700">
+                    <div class="flex flex-col">
+                        <label>Tus idiomas</label>
+                        <select name="mylanguages" multiple>
+                            <option value="af">Afrikáans</option>
+                            <option value="sq">Albanés</option>
+                            <option value="de">Alemán</option>
+                            <option value="am">Amárico</option>
+                            <option value="ar">Árabe</option>
+                            <option value="hy">Armenio</option>
+                            <option value="az">Azerí</option>
+                            <option value="eu">Euskera</option>
+                            <option value="bn">Bengalí</option>
+                            <option value="bs">Bosnio</option>
+                            <option value="bg">Búlgaro</option>
+                            <option value="my">Birmano</option>
+                            <option value="km">Camboyano</option>
+                            <option value="ca">Catalán</option>
+                            <option value="ceb">Cebuano</option>
+                            <option value="ny">Chichewa</option>
+                            <option value="zh-CN">Chino (simplificado)</option>
+                            <option value="zh-TW">Chino (tradicional)</option>
+                            <option value="si">Cingalés</option>
+                            <option value="ko">Coreano</option>
+                            <option value="ht">Criollo haitiano</option>
+                            <option value="hr">Croata</option>
+                            <option value="da">Danés</option>
+                            <option value="sk">Eslovaco</option>
+                            <option value="sl">Esloveno</option>
+                            <option value="es">Español</option>
+                            <option value="eo">Esperanto</option>
+                            <option value="et">Estonio</option>
+                            <option value="eu">Euskera</option>
+                            <option value="tl">Filipino</option>
+                            <option value="fi">Finlandés</option>
+                            <option value="fr">Francés</option>
+                            <option value="gd">Gaélico escocés</option>
+                            <option value="gl">Gallego</option>
+                            <option value="cy">Galés</option>
+                            <option value="ka">Georgiano</option>
+                            <option value="el">Griego</option>
+                            <option value="gu">Gujarati</option>
+                            <option value="ha">Hausa</option>
+                            <option value="iw">Hebreo</option>
+                            <option value="hi">Hindi</option>
+                            <option value="hmn">Hmong</option>
+                            <option value="hu">Húngaro</option>
+                            <option value="ig">Igbo</option>
+                            <option value="id">Indonesio</option>
+                            <option value="en">Inglés</option>
+                            <option value="ga">Irlandés</option>
+                            <option value="is">Islandés</option>
+                            <option value="it">Italiano</option>
+                            <option value="ja">Japonés</option>
+                            <option value="jw">Javanés</option>
+                            <option value="kn">Kannada</option>
+                            <option value="kk">Kazajo</option>
+                            <option value="ku">Kurdo</option>
+                            <option value="ky">Kirguís</option>
+                            <option value="lo">Lao</option>
+                            <option value="la">Latín</option>
+                            <option value="lv">Letón</option>
+                            <option value="lt">Lituano</option>
+                            <option value="lb">Luxemburgués</option>
+                            <option value="mk">Macedonio</option>
+                            <option value="ml">Malayalam</option>
+                            <option value="ms">Malayo</option>
+                            <option value="mg">Malgache</option>
+                            <option value="mt">Maltés</option>
+                            <option value="mi">Maorí</option>
+                            <option value="mr">Maratí</option>
+                            <option value="mn">Mongol</option>
+                            <option value="ne">Nepalí</option>
+                            <option value="nl">Neerlandés</option>
+                            <option value="no">Noruego</option>
+                            <option value="uz">Uzbeko</option>
+                            <option value="pa">Panyabí</option>
+                            <option value="ps">Pastún</option>
+                            <option value="fa">Persa</option>
+                            <option value="pl">Polaco</option>
+                            <option value="pt">Portugués</option>
+                            <option value="ro">Rumano</option>
+                            <option value="ru">Ruso</option>
+                            <option value="sm">Samoano</option>
+                            <option value="sr">Serbio</option>
+                            <option value="st">Sesotho</option>
+                            <option value="sd">Sindhi</option>
+                            <option value="so">Somalí</option>
+                            <option value="su">Sundanés</option>
+                            <option value="sw">Suajili</option>
+                            <option value="sv">Sueco</option>
+                            <option value="tg">Tayiko</option>
+                            <option value="th">Tailandés</option>
+                            <option value="ta">Tamil</option>
+                            <option value="cs">Checo</option>
+                            <option value="te">Telugu</option>
+                            <option value="tr">Turco</option>
+                            <option value="uk">Ucraniano</option>
+                            <option value="ur">Urdu</option>
+                            <option value="vi">Vietnamita</option>
+                            <option value="xh">Xhosa</option>
+                            <option value="yi">Yidis</option>
+                            <option value="yo">Yoruba</option>
+                            <option value="zu">Zulú</option>
+                        </select>
+                    </div>
+                    <div class="flex flex-col">
+                        <label>Idiomas en los que quieres hablar</label>
+                        <select name="theirlanguages" multiple>
+                            <option value="af">Afrikáans</option>
+                            <option value="sq">Albanés</option>
+                            <option value="de">Alemán</option>
+                            <option value="am">Amárico</option>
+                            <option value="ar">Árabe</option>
+                            <option value="hy">Armenio</option>
+                            <option value="az">Azerí</option>
+                            <option value="eu">Euskera</option>
+                            <option value="bn">Bengalí</option>
+                            <option value="bs">Bosnio</option>
+                            <option value="bg">Búlgaro</option>
+                            <option value="my">Birmano</option>
+                            <option value="km">Camboyano</option>
+                            <option value="ca">Catalán</option>
+                            <option value="ceb">Cebuano</option>
+                            <option value="ny">Chichewa</option>
+                            <option value="zh-CN">Chino (simplificado)</option>
+                            <option value="zh-TW">Chino (tradicional)</option>
+                            <option value="si">Cingalés</option>
+                            <option value="ko">Coreano</option>
+                            <option value="ht">Criollo haitiano</option>
+                            <option value="hr">Croata</option>
+                            <option value="da">Danés</option>
+                            <option value="sk">Eslovaco</option>
+                            <option value="sl">Esloveno</option>
+                            <option value="es">Español</option>
+                            <option value="eo">Esperanto</option>
+                            <option value="et">Estonio</option>
+                            <option value="eu">Euskera</option>
+                            <option value="tl">Filipino</option>
+                            <option value="fi">Finlandés</option>
+                            <option value="fr">Francés</option>
+                            <option value="gd">Gaélico escocés</option>
+                            <option value="gl">Gallego</option>
+                            <option value="cy">Galés</option>
+                            <option value="ka">Georgiano</option>
+                            <option value="el">Griego</option>
+                            <option value="gu">Gujarati</option>
+                            <option value="ha">Hausa</option>
+                            <option value="iw">Hebreo</option>
+                            <option value="hi">Hindi</option>
+                            <option value="hmn">Hmong</option>
+                            <option value="hu">Húngaro</option>
+                            <option value="ig">Igbo</option>
+                            <option value="id">Indonesio</option>
+                            <option value="en">Inglés</option>
+                            <option value="ga">Irlandés</option>
+                            <option value="is">Islandés</option>
+                            <option value="it">Italiano</option>
+                            <option value="ja">Japonés</option>
+                            <option value="jw">Javanés</option>
+                            <option value="kn">Kannada</option>
+                            <option value="kk">Kazajo</option>
+                            <option value="ku">Kurdo</option>
+                            <option value="ky">Kirguís</option>
+                            <option value="lo">Lao</option>
+                            <option value="la">Latín</option>
+                            <option value="lv">Letón</option>
+                            <option value="lt">Lituano</option>
+                            <option value="lb">Luxemburgués</option>
+                            <option value="mk">Macedonio</option>
+                            <option value="ml">Malayalam</option>
+                            <option value="ms">Malayo</option>
+                            <option value="mg">Malgache</option>
+                            <option value="mt">Maltés</option>
+                            <option value="mi">Maorí</option>
+                            <option value="mr">Maratí</option>
+                            <option value="mn">Mongol</option>
+                            <option value="ne">Nepalí</option>
+                            <option value="nl">Neerlandés</option>
+                            <option value="no">Noruego</option>
+                            <option value="uz">Uzbeko</option>
+                            <option value="pa">Panyabí</option>
+                            <option value="ps">Pastún</option>
+                            <option value="fa">Persa</option>
+                            <option value="pl">Polaco</option>
+                            <option value="pt">Portugués</option>
+                            <option value="ro">Rumano</option>
+                            <option value="ru">Ruso</option>
+                            <option value="sm">Samoano</option>
+                            <option value="sr">Serbio</option>
+                            <option value="st">Sesotho</option>
+                            <option value="sd">Sindhi</option>
+                            <option value="so">Somalí</option>
+                            <option value="su">Sundanés</option>
+                            <option value="sw">Suajili</option>
+                            <option value="sv">Sueco</option>
+                            <option value="tg">Tayiko</option>
+                            <option value="th">Tailandés</option>
+                            <option value="ta">Tamil</option>
+                            <option value="cs">Checo</option>
+                            <option value="te">Telugu</option>
+                            <option value="tr">Turco</option>
+                            <option value="uk">Ucraniano</option>
+                            <option value="ur">Urdu</option>
+                            <option value="vi">Vietnamita</option>
+                            <option value="xh">Xhosa</option>
+                            <option value="yi">Yidis</option>
+                            <option value="yo">Yoruba</option>
+                            <option value="zu">Zulú</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <h2 id="accordion-collapse-heading-diet">
+                <button type="button"
+                    class="flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-500 border border-gray-200 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3"
+                    data-accordion-target="#accordion-collapse-body-indust" aria-expanded="true"
+                    aria-controls="accordion-collapse-body-indust">
+                    <span>Trabajo</span>
+                    <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 5 5 1 1 5" />
+                    </svg>
+                </button>
+            </h2>
+            <div id="accordion-collapse-body-indust" class="hidden" aria-labelledby="accordion-collapse-heading-indust">
+                <div class="p-5 border border-t-0 border-gray-200 dark:border-gray-700">
+                    <div class="flex flex-col">
+                        <label>Tu sector profesional</label>
+                        <select id="sector" name="myjob" class="w-fit">
+                            <option value="agriculture">Agricultura</option>
+                            <option value="food">Alimentación</option>
+                            <option value="art">Arte y diseño</option>
+                            <option value="audiovisual">Audiovisual</option>
+                            <option value="automotive">Automotriz</option>
+                            <option value="bank">Banca y finanzas</option>
+                            <option value="beauty">Belleza y cuidado personal</option>
+                            <option value="biotech">Biotecnología</option>
+                            <option value="commerce">Comercio y ventas</option>
+                            <option value="construction">Construcción</option>
+                            <option value="consulting">Consultoría</option>
+                            <option value="education">Educación</option>
+                            <option value="energy">Energía</option>
+                            <option value="entertainment">Entretenimiento</option>
+                            <option value="realstate">Inmobiliaria</option>
+                            <option value="engineering">Ingeniería</option>
+                            <option value="legal">Legal</option>
+                            <option value="logistic">Logística y cadena de suministro</option>
+                            <option value="manufacture">Manufactura</option>
+                            <option value="marketing">Marketing y publicidad</option>
+                            <option value="medicine">Medicina y salud</option>
+                            <option value="fashion">Moda y textil</option>
+                            <option value="newtech">Nuevas tecnologías</option>
+                            <option value="dirtyenergy">Petróleo y gas</option>
+                            <option value="humanresources">Recursos humanos</option>
+                            <option value="security">Seguridad y vigilancia</option>
+                            <option value="services">Servicios empresariales</option>
+                            <option value="telecomm">Telecomunicaciones</option>
+                            <option value="transportation">Transporte y logística</option>
+                            <option value="turism">Turismo y hostelería</option>
+                            <option value="other">Otro</option>
+                        </select>
+                        <label>Sentimos no conocer tu sector, ¿en qué sector trabajas?</label>
+                        <input type="text" name="otherindustry">
+                    </div>
+                    <div class="flex flex-col">
+                        <label>¿Quieres que encontremos a gente que trabaja en tu sector?</label>
+                        <fieldset>
+                            <div>
+                                <input type="radio" name="sharejob" value="true">
+                                <label>Sí, deseo conocer a gente de mi sector</label>
+                            </div>
+                            <div>
+                                <input type="radio" name="sharejob" value="false">
+                                <label>No me importa</label>
+                            </div>
+                            <div>
+                                <input type="radio" name="sharejob" value="avoidjob">
+                                <label>Deseo evitar a gente que trabaje en el mismo sector</label>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </form>
+
+</div>

@@ -14,7 +14,7 @@ export const routes: Routes = [
             },
             {
                 path: 'Registro',
-                loadComponent : ()=> import('./components/accountarea/signupComponent/signup.component').then(c => c.SignupComponent)
+                loadComponent : ()=> import('./components/accountarea/signupComponent/signupFilters.component').then(c => c.SignupComponent)
             }
         ]
     
