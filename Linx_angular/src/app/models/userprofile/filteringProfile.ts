@@ -1,20 +1,19 @@
 export interface IFiltering{
+    birthday: Date;
     ageRange : {
         fromAge : number;
         toAge : number;
-    },
-    gender : {
-        genders : string []
-    },
-    proximity : {
-        proxyRange : string;
-    },
+    };
+    myGender : string;
+    genders : string [];
+    location : string;
+    proxyRange : string;
     beliefs : {
         religion : boolean;
         spiritual: boolean;
         myreligion? : string;
         sharedBeliefs : boolean;
-    },
+    };
     politics : {
         politicalSpectrum: string;
         sharedSpectrum ?: boolean;
@@ -22,20 +21,19 @@ export interface IFiltering{
         excludeLeft ? : boolean;
         excludeAuthoritarian ? : boolean;
         excludeLibertarian ?: boolean;
-    },
+    };
     diet : {
         mydiet : string;
-        donteat : string [];
         sharedDiet : boolean;
-    },
-    languages : {
+    };
+    language : {
         mylanguages : string [];
         theirlanguages : string [];
-    },
+    };
     work : {
         myIndustry: string;
         sharedIndustry ?: boolean; 
         avoidMyIndustry?: boolean;
-    }
+    };
     
 }

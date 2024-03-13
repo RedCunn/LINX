@@ -1,13 +1,8 @@
 const mongoose=require('mongoose');
 
 let userSchema = new mongoose.Schema({
-  userid : {
-    type : String,
-    required : [true]
-  },
   accountid : {
-    type : String,
-    required : [true]
+    type : {type : mongoose.Schema.Types.ObjectId, ref : 'Account'}
   },
   username : {
     type : String,
@@ -26,25 +21,8 @@ let userSchema = new mongoose.Schema({
     required : [true, '* Apellido del user requerido'],
     maxLength : [30, '* Máx. número de caracteres 30'],
     minLength : [2, '*Min. número de caracteres 2']
-  } ,
-  phone :{
-    type : String,
-    required : [false],
-    maxLength : [9, '* Máx. número de caracteres 9'],
-    minLength : [9, '*Min. número de caracteres 9']
-  },
-  gender : {
-    type : String,
-    required : [false]
-  },
-  birthday : {
-    type : Date,
-    required : [true, '* Necesaria la fecha de nacimiento']
-  },
-  location : {
-    type : String,
-    required : [false]
-  } 
+  }, 
+  userPreferences : { type : mongoose.Schema.Types.ObjectId, ref : 'Filtering'} 
 })
 
 module.exports=mongoose.model('User',userSchema,'Users');

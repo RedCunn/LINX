@@ -2,12 +2,7 @@ const mongoose=require('mongoose');
 
 let accountSchema = new mongoose.Schema ({
     userid : {
-        type : String,
-        required : [true]
-    },
-    accountid : {
-        type : String,
-        required : [true]
+        type : {type : mongoose.Schema.Types.ObjectId, ref : 'User'}
     },
     createdAt : {
         type: Date,
@@ -29,7 +24,13 @@ let accountSchema = new mongoose.Schema ({
         type : Boolean,
         required : [true],
         default : false
-    }
+    },
+    myCircle : [
+        
+        {
+            userid : {type : mongoose.Schema.Types.ObjectId, ref : 'User'}
+        }
+    ]
 })
 
 module.exports=mongoose.model('Account',accountSchema,'Accounts');

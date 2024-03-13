@@ -28,5 +28,6 @@ export interface IAccount {
             tracks : Array<ITrack>
         }
         games : Array<IGame>;
-    }
+    },
+    myCircle : Array<string>;
 }

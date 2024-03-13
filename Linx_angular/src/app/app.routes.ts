@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { SpotifyService } from './services/spotify.service';
-import { MY_SPOTIFYSERVICES_TOKEN } from './services/injectionToken';
 import path from 'path';
 
 export const routes: Routes = [
@@ -14,7 +13,8 @@ export const routes: Routes = [
             },
             {
                 path: 'Registro',
-                loadComponent : ()=> import('./components/accountarea/signupComponent/signupFilters.component').then(c => c.SignupComponent)
+                loadComponent : ()=> import('./components/accountarea/signupComponent/signupuserprof/signup-userdata.component').then(c => c.SignupUserdataComponent)
+                
             }
         ]
     

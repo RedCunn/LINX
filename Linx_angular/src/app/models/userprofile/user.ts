@@ -1,5 +1,5 @@
 import { IAccount } from "../useraccount/account";
-import { IFiltering } from "./filtering";
+import { IFiltering } from "./filteringProfile";
 
 export interface IUser {
     userid : string;
@@ -7,10 +7,6 @@ export interface IUser {
     username : string;
     name : string;
     lastname : string;
-    phone : string;
-    gender : string;
-    birthday: Date;
-    location : string;
     filters : IFiltering;
     account : IAccount;
 }
