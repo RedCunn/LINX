@@ -144,50 +144,6 @@ var PlatformModule = _PlatformModule;
     args: [{}]
   }], null, null);
 })();
-var supportedInputTypes;
-var candidateInputTypes = [
-  // `color` must come first. Chrome 56 shows a warning if we change the type to `color` after
-  // first changing it to something else:
-  // The specified value "" does not conform to the required format.
-  // The format is "#rrggbb" where rr, gg, bb are two-digit hexadecimal numbers.
-  "color",
-  "button",
-  "checkbox",
-  "date",
-  "datetime-local",
-  "email",
-  "file",
-  "hidden",
-  "image",
-  "month",
-  "number",
-  "password",
-  "radio",
-  "range",
-  "reset",
-  "search",
-  "submit",
-  "tel",
-  "text",
-  "time",
-  "url",
-  "week"
-];
-function getSupportedInputTypes() {
-  if (supportedInputTypes) {
-    return supportedInputTypes;
-  }
-  if (typeof document !== "object" || !document) {
-    supportedInputTypes = new Set(candidateInputTypes);
-    return supportedInputTypes;
-  }
-  let featureTestInput = document.createElement("input");
-  supportedInputTypes = new Set(candidateInputTypes.filter((value) => {
-    featureTestInput.setAttribute("type", value);
-    return featureTestInput.type === value;
-  }));
-  return supportedInputTypes;
-}
 var supportsPassiveEvents;
 function supportsPassiveEventListeners() {
   if (supportsPassiveEvents == null && typeof window !== "undefined") {
@@ -302,7 +258,6 @@ function _isTestEnvironment() {
 }
 
 // node_modules/@angular/cdk/fesm2022/keycodes.mjs
-var BACKSPACE = 8;
 var TAB = 9;
 var ENTER = 13;
 var SHIFT = 16;
@@ -352,19 +307,6 @@ function coerceCssPixelValue(value) {
 }
 function coerceElement(elementOrRef) {
   return elementOrRef instanceof ElementRef ? elementOrRef.nativeElement : elementOrRef;
-}
-function coerceStringArray(value, separator = /\s+/) {
-  const result = [];
-  if (value != null) {
-    const sourceValues = Array.isArray(value) ? value : `${value}`.split(separator);
-    for (const sourceValue of sourceValues) {
-      const trimmedString = `${sourceValue}`.trim();
-      if (trimmedString) {
-        result.push(trimmedString);
-      }
-    }
-  }
-  return result;
 }
 
 // node_modules/@angular/cdk/fesm2022/observers.mjs
@@ -5116,22 +5058,15 @@ var _MatInternalFormField = __MatInternalFormField;
 
 export {
   Platform,
-  getSupportedInputTypes,
   normalizePassiveListenerOptions,
   RtlScrollAxisType,
   supportsScrollBehavior,
   getRtlScrollAxisType,
-  _getFocusedElementPierceShadowDom,
   _getEventTarget,
   _isTestEnvironment,
-  BACKSPACE,
   ENTER,
   ESCAPE,
   SPACE,
-  PAGE_UP,
-  PAGE_DOWN,
-  END,
-  HOME,
   LEFT_ARROW,
   UP_ARROW,
   RIGHT_ARROW,
@@ -5143,16 +5078,13 @@ export {
   coerceArray,
   coerceCssPixelValue,
   coerceElement,
-  coerceStringArray,
   ObserversModule,
   addAriaReferencedId,
   removeAriaReferencedId,
   AriaDescriber,
   ActiveDescendantKeyManager,
-  CdkTrapFocus,
   LiveAnnouncer,
   FocusMonitor,
-  CdkMonitorFocus,
   A11yModule,
   Directionality,
   BidiModule,
@@ -5202,4 +5134,4 @@ export {
   MatRippleLoader,
   _MatInternalFormField
 };
-//# sourceMappingURL=chunk-ZJMQTLGX.js.map
+//# sourceMappingURL=chunk-M3FE6STT.js.map

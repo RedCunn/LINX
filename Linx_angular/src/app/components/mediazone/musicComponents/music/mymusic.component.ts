@@ -1,6 +1,5 @@
 import { Component, inject } from '@angular/core';
 import { SpotifyService } from '../../../../services/spotify.service';
-import { MY_SPOTIFYSERVICES_TOKEN } from '../../../../services/injectionToken';
 import { FormsModule, NgForm } from '@angular/forms';
 import { IRestMessage } from '../../../../models/restmessage';
 import { Observable } from 'rxjs';

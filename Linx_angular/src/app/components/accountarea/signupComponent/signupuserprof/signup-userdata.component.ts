@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {MatPaginatorModule} from '@angular/material/paginator';
-import { SignupFiltersComponent } from '../signupFilters.component';
+import { SignupFiltersComponent } from '../signupfilters/signupFilters.component';
 import { IFiltering } from '../../../../models/userprofile/filteringProfile';
 
 @Component({
@@ -19,7 +19,7 @@ export class SignupUserdataComponent {
   public userProfFormShowing : Boolean = false;
 
   public UserPreferences : IFiltering = {
-    birthday : new Date (Date.now()),
+    birthday : new Date (0,0,0),
     ageRange : {
       fromAge : 16,
       toAge : 120
@@ -29,13 +29,12 @@ export class SignupUserdataComponent {
     location : '',
     proxyRange : '',
     beliefs : {
-        religion : false,
-        spiritual: false,
-        sharedBeliefs : true
+        hasReligion : false,
+        sharedBeliefs : false
     },
     politics : {
         politicalSpectrum: '',
-        sharedSpectrum : false
+        sharePolitics : 'false'
     },
     diet : {
         mydiet : '',
@@ -47,18 +46,23 @@ export class SignupUserdataComponent {
     },
     work : {
         myIndustry: '',
-        sharedIndustry: false
+        shareIndustry: 'false'
     }
   } 
 
   constructor(){
     this.signupForm = new FormGroup ({
-        
+        username : new FormControl(),
+        name : new FormControl(),
+        lastname : new FormControl(),
+        email : new FormControl(),
+        password : new FormControl(),
+        reppassword : new FormControl
     });
   }
 
   signup(){
-
+    console.log('TUS ASQUEROSAS TENDENCIAS : ', this.UserPreferences)
   }
 
   onUserPreferencesChange(newPrefs : IFiltering){

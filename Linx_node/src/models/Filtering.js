@@ -34,7 +34,6 @@ const FilteringSchema = new mongoose.Schema({
     proxyRange : {type : String , required : [true], default : 'City'},
     beliefs : {
         hasReligion : {type : Boolean, default : false},
-        isSpiritual : {type : Boolean, default : false},
         religion : {type : String , default : 'none'},
         shareBeliefs : {type : Boolean , default : false}
     },

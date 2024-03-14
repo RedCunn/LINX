@@ -2,7 +2,9 @@
     <form [formGroup]="signupForm" (ngSubmit)="signup()">
 
         @if(this.filtersFormShowing){
+         
             <app-signup-Filters [userPreferences]="this.UserPreferences" (userPreferencesChange)="this.onUserPreferencesChange($event)"></app-signup-Filters>    
+            
         }
         
         @if(this.userProfFormShowing){

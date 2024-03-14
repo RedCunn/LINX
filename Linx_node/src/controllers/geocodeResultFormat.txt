@@ -1,0 +1,77 @@
+PAIS :  {
+    address_components: [ { long_name: 'Spain', short_name: 'ES', types: [Array] } ],
+    formatted_address: 'Spain',
+    geometry: {
+      bounds: { northeast: [Object], southwest: [Object] },
+      location: { lat: 40.46366700000001, lng: -3.74922 },
+      location_type: 'APPROXIMATE',
+      viewport: { northeast: [Object], southwest: [Object] }
+    },
+    place_id: 'ChIJi7xhMnjjQgwR7KNoB5Qs7KY',
+    types: [ 'country', 'political' ]
+  }
+  CIUDAD :  {
+    address_components: [
+      {
+        long_name: 'Alcala de Henares',
+        short_name: 'Alcala de Henares',
+        types: [Array]
+      },
+      { long_name: 'Madrid', short_name: 'M', types: [Array] },
+      {
+        long_name: 'Community of Madrid',
+        short_name: 'MD',
+        types: [Array]
+      },
+      { long_name: 'Spain', short_name: 'ES', types: [Array] }
+    ],
+    formatted_address: 'Alcala de Henares, Madrid, Spain',
+    geometry: {
+      bounds: { northeast: [Object], southwest: [Object] },
+      location: { lat: 40.4843898, lng: -3.3688023 },
+      location_type: 'APPROXIMATE',
+      viewport: { northeast: [Object], southwest: [Object] }
+    },
+    place_id: 'ChIJC-ZpxthLQg0RIxeyVBTrVQU',
+    types: [ 'locality', 'political' ]
+  }
+  COMUNIDAD:  {
+    address_components: [
+      {
+        long_name: 'Community of Madrid',
+        short_name: 'MD',
+        types: [Array]
+      },
+      { long_name: 'Madrid', short_name: 'M', types: [Array] },
+      { long_name: 'Spain', short_name: 'ES', types: [Array] }
+    ],
+    formatted_address: 'Community of Madrid, Madrid, Spain',
+    geometry: {
+      bounds: { northeast: [Object], southwest: [Object] },
+      location: { lat: 40.4167088, lng: -3.5812692 },
+      location_type: 'APPROXIMATE',
+      viewport: { northeast: [Object], southwest: [Object] }
+    },
+    place_id: 'ChIJuTPgQHqBQQ0RgMhLvvNAAwE',
+    types: [ 'administrative_area_level_1', 'political' ]
+  }
+  PROVINCIA:  {
+    address_components: [
+      { long_name: 'Madrid', short_name: 'M', types: [Array] },
+      {
+        long_name: 'Community of Madrid',
+        short_name: 'MD',
+        types: [Array]
+      },
+      { long_name: 'Spain', short_name: 'ES', types: [Array] }
+    ],
+    formatted_address: 'Madrid, Spain',
+    geometry: {
+      bounds: { northeast: [Object], southwest: [Object] },
+      location: { lat: 40.4167088, lng: -3.5812692 },
+      location_type: 'APPROXIMATE',
+      viewport: { northeast: [Object], southwest: [Object] }
+    },
+    place_id: 'ChIJuTPgQHqBQQ0R8MpLvvNAAwM',
+    types: [ 'administrative_area_level_2', 'political' ]
+  }

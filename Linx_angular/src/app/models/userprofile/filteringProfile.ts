@@ -5,35 +5,29 @@ export interface IFiltering{
         toAge : number;
     };
     myGender : string;
-    genders : string [];
+    genders : String [];
     location : string;
     proxyRange : string;
     beliefs : {
-        religion : boolean;
-        spiritual: boolean;
+        hasReligion : boolean;
         myreligion? : string;
         sharedBeliefs : boolean;
     };
     politics : {
         politicalSpectrum: string;
-        sharedSpectrum ?: boolean;
-        excludeRight ?: boolean;
-        excludeLeft ? : boolean;
-        excludeAuthoritarian ? : boolean;
-        excludeLibertarian ?: boolean;
+        sharePolitics: string;
     };
     diet : {
         mydiet : string;
         sharedDiet : boolean;
     };
     language : {
-        mylanguages : string [];
-        theirlanguages : string [];
+        mylanguages : String [];
+        theirlanguages : String [];
     };
     work : {
         myIndustry: string;
-        sharedIndustry ?: boolean; 
-        avoidMyIndustry?: boolean;
+        shareIndustry : string;
     };
     
 }
