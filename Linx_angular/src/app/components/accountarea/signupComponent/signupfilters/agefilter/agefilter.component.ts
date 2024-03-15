@@ -1,38 +1,69 @@
-import { Component, Input, Output , EventEmitter, signal, OnInit} from '@angular/core';
+import { Component, Input, Output , EventEmitter, signal, OnInit, forwardRef} from '@angular/core';
 import { MatSliderModule } from '@angular/material/slider';
 import { IFiltering } from '../../../../../models/userprofile/filteringProfile';
+import { AbstractControl, ControlValueAccessor, FormBuilder, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveFormsModule, ValidationErrors, Validator, Validators } from '@angular/forms';
+import { debounceTime } from 'rxjs';
 
 
 @Component({
   selector: 'app-agefilter',
   standalone: true,
-  imports: [MatSliderModule],
+  imports: [MatSliderModule, ReactiveFormsModule],
   templateUrl: './agefilter.component.html',
-  styleUrl: './agefilter.component.css'
+  styleUrl: './agefilter.component.css',
+  providers : [
+    {provide: NG_VALUE_ACCESSOR, useExisting : forwardRef(()=> AgefilterComponent), multi: true},
+    {provide : NG_VALIDATORS, useExisting : forwardRef(()=> AgefilterComponent), multi: true}
+  ]
 })
-export class AgefilterComponent{
-
+export class AgefilterComponent implements ControlValueAccessor, Validator{
   
   @Input() userPreferences !: IFiltering;
   @Output() userPreferencesChange = new EventEmitter<IFiltering>();
 
+  private _onChange : Function = (_value : {year: number, month : number , day : number}) => {}
+  private _onTouch : Function = (_value : {year: number, month : number , day : number}) => {}
 
   days: number[] = [];
   months: string[] = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
   years: number[] = Array.from({ length: 100 }, (el, pos) => (new Date(Date.now()).getFullYear() - 16) - pos);
 
-  public birthYear : number = 0;
-  public birthMonth : number = 0;
-  public birthDay : number = 0;
+  constructor(private _FB : FormBuilder) {
+    
+    this.ageForm.valueChanges.pipe(debounceTime(100))
+                             .subscribe(()=> {
+                                this._onChange(this.ageForm.value)
+                                this._onTouch(this.ageForm.value)
+                              }) 
+  }
 
-  setUserBirthday(){
-    if(this.birthYear !== 0 && this.birthMonth !== 0 && this.birthDay !== 0){
-      const userBirthday : Date = new Date(this.birthYear, this.birthMonth, this.birthDay);
-      this.userPreferences.birthday = userBirthday;
-      console.log("USER CUMPLLE : ", userBirthday);
-    }
+  
+  public ageForm : FormGroup = this._FB.group({
+    year : [ 0,Validators.min(2)],
+    month : [0,Validators.min(1)],
+    day : [0, Validators.min(1)]
+  })
 
-  }  
+
+  validate(_control: AbstractControl<any, any>): ValidationErrors | null {
+    return this.ageForm.valid? null : {invalidAge : true}
+  }
+
+  //#region  ................... Control Value Accessor
+
+  writeValue(obj: {year : number, month: number, day : number}): void {
+    this.ageForm.setValue(obj);
+  }
+
+  registerOnChange(fn: Function): void {
+    this._onChange = fn;
+  }
+  registerOnTouched(fn: Function): void {
+   this._onTouch = fn;
+  }
+
+  //#endregion
+
 
   loadDaysOfMonth(value: string) {
     if (value === '-1') {

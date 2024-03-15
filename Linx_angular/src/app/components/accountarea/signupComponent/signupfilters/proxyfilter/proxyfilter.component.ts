@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, forwardRef, inject } from '@angular/core';
 import { RestnodeService } from '../../../../../services/restnode.service';
 import { IFiltering } from '../../../../../models/userprofile/filteringProfile';
 import { IRestMessage } from '../../../../../models/restmessage';
+import { NG_VALIDATORS, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
   selector: 'app-proxyfilter',
@@ -38,10 +39,10 @@ export class ProxyfilterComponent implements OnInit{
         this.userCurrentAddress = _res.others;
         this.userPreferences.location = _res.others;
       }else{
-        this.userCurrentAddress = 'no podemos localizarte... 🙎'
+        this.userCurrentAddress = 'no podemos localizarte... 👹'
       }  
     } catch (error) {
-      this.userCurrentAddress = 'no podemos localizarte... 🙎'
+      this.userCurrentAddress = 'no podemos localizarte... 👹'
     }
     
   }
