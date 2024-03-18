@@ -19,7 +19,7 @@
 
             @switch (this.sectionPag()) {
             @case (0) {
-            <app-agefilter formControlName="userAge" [userPreferences]="this.UserPreferences"
+            <app-agefilter formControlName="userAge" [validateAgeForm]="validateAge" [userPreferences]="this.UserPreferences"
                 (userPreferencesChange)="this.onUserPreferencesChange($event)"></app-agefilter>
             }
             @case (1) {
@@ -27,8 +27,8 @@
                 (userPreferencesChange)="this.onUserPreferencesChange($event)"></app-proxyfilter>
             }
             @case (2) {
-            <app-genderfilter formControlName="gender" [userPreferences]="this.UserPreferences"
-                (userPreferencesChange)="this.onUserPreferencesChange($event)"></app-genderfilter>
+            <app-genderfilter [validateGender]="validateGender" [userPreferences]="this.UserPreferences"
+                (userPreferencesChange)="this.onUserPreferencesChange($event)" (isValidGenders)="this.onValidGenders($event)"></app-genderfilter>
             }
             @case (3) {
             <app-politicsfilter [userPreferences]="this.UserPreferences"
@@ -85,6 +85,9 @@
                     <input type="text" id="username" formControlName="username"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="Nombre LINX" required />
+                    @if(!this.userDataForm.get('username')?.pristine && this.userDataForm.get('username')?.errors !== null){
+                        <span class="text-red-600">Necesitas nombre de user</span>
+                    }
                 </div>
             </div>
             <div class="col-span-2 flex flex-col items-center">
@@ -94,6 +97,9 @@
                     <input type="text" id="name" formControlName="name"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="Nombre" required />
+                    @if(!this.userDataForm.get('name')?.pristine && this.userDataForm.get('name')?.errors !== null){
+                        <span class="text-red-600">Necesitamos saber tu nombre</span>
+                    }
                 </div>
             </div>
             <div class="col-span-2 flex flex-col items-center">
@@ -103,6 +109,9 @@
                     <input type="text" id="lastname" formControlName="lastname"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="Apellidos" required />
+                    @if(!this.userDataForm.get('lastname')?.pristine && this.userDataForm.get('lastname')?.errors !== null){
+                        <span class="text-red-600">Necesitamos saber tus apellidos</span>
+                    }
                 </div>
             </div>
             <div class="col-span-2 flex flex-col items-center">
@@ -112,6 +121,9 @@
                     <input type="text" id="email" formControlName="email"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="mail@mail.com" required />
+                    @if(!this.userDataForm.get('email')?.pristine && this.userDataForm.get('email')?.errors !== null){
+                        <span class="text-red-600">Necesitas un email válido para registrarte</span>
+                    }
                 </div>
             </div>
             <div class="col-span-2 flex flex-col items-center">
@@ -121,6 +133,9 @@
                     <input type="password" id="password" formControlName="password"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="Contraseña" required />
+                    @if(!this.userDataForm.get('password')?.pristine && this.userDataForm.get('password')?.errors !== null){
+                        <span class="text-red-600">Se requiere contraseña, min. 8 caracteres max. 30 caracteres</span>
+                    }
                 </div>
             </div>
             <div class="col-span-2 flex flex-col items-center">
@@ -130,6 +145,9 @@
                     <input type="password" id="reppassword" formControlName="reppassword"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="Repite tu contraseña" required />
+                    @if(!this.userDataForm.get('reppassword')?.pristine && this.userDataForm.get('reppassword')?.errors !== null){
+                        <span class="text-red-600">Repite la contraseña</span>
+                    }
                 </div>
             </div>
 

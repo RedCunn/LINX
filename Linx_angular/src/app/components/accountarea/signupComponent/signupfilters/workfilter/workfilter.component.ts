@@ -17,5 +17,6 @@ export class WorkfilterComponent {
 
   setUserWorkPref(event : any){
     this.userPreferences.work.shareIndustry = event.target.value;
+    this.userPreferencesChange.emit(this.userPreferences);
   }
 }

@@ -12,12 +12,13 @@ export interface IAccount {
     accountid : string;
     userid : string;
     createdAt : Date;
+    username : string;
     email : string;
     password: string;
     active : boolean;
-    articles : Array<IArticle>;
-    exchanger : Array<IExItem>;
-    media : {
+    articles ?: Array<IArticle>;
+    exchanger ?: Array<IExItem>;
+    media ?: {
         books : Array<IBook>;
         podcasts : Array<IPodcast>;
         films : Array<IFilm>;
@@ -29,5 +30,5 @@ export interface IAccount {
         }
         games : Array<IGame>;
     },
-    myCircle : Array<string>;
+    myCircle ?: Array<string>;
 }

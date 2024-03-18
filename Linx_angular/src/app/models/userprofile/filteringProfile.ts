@@ -27,6 +27,7 @@ export interface IFiltering{
     };
     work : {
         myIndustry: string;
+        other?: String;
         shareIndustry : string;
     };
     

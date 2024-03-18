@@ -15,8 +15,10 @@ export class PoliticsfilterComponent {
 
   setUserPolitics(event : any){
     this.userPreferences.politics.politicalSpectrum = event.target.value;
+    this.userPreferencesChange.emit(this.userPreferences);
   }
   setUserPoliPref (event : any){
     this.userPreferences.politics.sharePolitics = event.target.value;
+    this.userPreferencesChange.emit(this.userPreferences);
   }
 }

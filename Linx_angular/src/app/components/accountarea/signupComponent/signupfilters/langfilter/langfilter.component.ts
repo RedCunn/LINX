@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, signal } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, signal } from '@angular/core';
 import { IFiltering } from '../../../../../models/userprofile/filteringProfile';
 
 @Component({
@@ -8,13 +8,22 @@ import { IFiltering } from '../../../../../models/userprofile/filteringProfile';
   templateUrl: './langfilter.component.html',
   styleUrl: './langfilter.component.css'
 })
-export class LangfilterComponent {
+export class LangfilterComponent implements OnInit{
   @Input() userPreferences !: IFiltering;
   @Output() userPreferencesChange = new EventEmitter<IFiltering>();
   @ViewChild('selectUserLangs') selectUserLangs !: ElementRef;
   @ViewChild('selectUserLangPrefs') selectUserLangPrefs !: ElementRef;
   public userLangList = signal<String[]>([]);
   public userLangPrefsList = signal<String[]>([]);
+
+  ngOnInit(): void {
+   if(this.userPreferences.language.mylanguages.length > 0){
+    this.userLangList.set(this.userPreferences.language.mylanguages)
+   } 
+   if(this.userPreferences.language.theirlanguages.length > 0){
+    this.userLangPrefsList.set(this.userPreferences.language.theirlanguages)
+   }
+  }
 
   addUserLang(event : any) {
     const selectedLangs = this.selectUserLangs.nativeElement;
@@ -29,10 +38,12 @@ export class LangfilterComponent {
     })
 
     this.userPreferences.language.mylanguages = this.userLangList();
+    this.userPreferencesChange.emit(this.userPreferences);
   }
   removeUserLang(item: String) {
     this.userLangList.update(values => values.filter(l => l !== item));
     this.userPreferences.language.mylanguages = this.userLangList();
+    this.userPreferencesChange.emit(this.userPreferences);
   }
   addUserLangPref() {
     const selectedLangs = this.selectUserLangPrefs.nativeElement;
@@ -47,10 +58,12 @@ export class LangfilterComponent {
     })
 
     this.userPreferences.language.theirlanguages = this.userLangPrefsList();
+    this.userPreferencesChange.emit(this.userPreferences);
   }
   removeUserLangPref(item : String) {
     this.userLangPrefsList.update(values => values.filter(l => l !== item));
     this.userPreferences.language.theirlanguages = this.userLangPrefsList();
+    this.userPreferencesChange.emit(this.userPreferences);
   }
 
 

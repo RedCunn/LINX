@@ -18,10 +18,12 @@ export class BeliefsfilterComponent {
     const value = event.target.value;
     const hasReligion : boolean = (value === 'true');
     this.userPreferences.beliefs.hasReligion = hasReligion;
+    this.userPreferencesChange.emit(this.userPreferences);
   }
   setUserBeliefsPref(event : any){
     const value = event.target.value;
     const sharedBeliefs : boolean = (value === 'true');
     this.userPreferences.beliefs.sharedBeliefs = sharedBeliefs;
+    this.userPreferencesChange.emit(this.userPreferences);
   }
 }

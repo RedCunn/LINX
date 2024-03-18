@@ -20,5 +20,6 @@ export class DietfilterComponent {
     const value = event.target.value;
     const shareDiet : boolean = (value === 'true');
     this.userPreferences.diet.sharedDiet = shareDiet;
+    this.userPreferencesChange.emit(this.userPreferences);
   }
 }

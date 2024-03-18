@@ -18,6 +18,7 @@ import { debounceTime } from 'rxjs';
 })
 export class AgefilterComponent implements ControlValueAccessor, Validator{
   
+  @Input() validateAgeForm! : boolean;
   @Input() userPreferences !: IFiltering;
   @Output() userPreferencesChange = new EventEmitter<IFiltering>();
 
@@ -85,11 +86,13 @@ export class AgefilterComponent implements ControlValueAccessor, Validator{
   }
   setFromAgeRange(event : any){
    this.userPreferences.ageRange.fromAge = event.target.value;
-   console.log(this.userPreferences.ageRange)
+   console.log(this.userPreferences.ageRange);
+   this.userPreferencesChange.emit(this.userPreferences);
   }
   setToAgeRange(event : any){
     this.userPreferences.ageRange.toAge = event.target.value;
-    console.log(this.userPreferences.ageRange)
+    console.log(this.userPreferences.ageRange);
+    this.userPreferencesChange.emit(this.userPreferences);
   }
 
 

@@ -20,6 +20,10 @@ export class ProxyfilterComponent implements OnInit{
   public userCurrentLocation = {latitude : 0, longitude : 0}
   public userCurrentAddress : string = '';
 
+  onProxyRangeChange(){
+    this.userPreferencesChange.emit(this.userPreferences);
+  }
+
   async trackUserCurrentLocation(){
     navigator.geolocation.getCurrentPosition((position)=>{
       this.userCurrentLocation.latitude = position.coords.latitude;
