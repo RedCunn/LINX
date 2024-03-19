@@ -85,6 +85,9 @@ export class AgefilterComponent implements ControlValueAccessor, Validator{
 
   }
   setFromAgeRange(event : any){
+  console.log('YEAR-', this.ageForm.get('year')?.value)
+  console.log('MONTH-', this.ageForm.get('month')?.value)
+  console.log('DAY-', this.ageForm.get('day')?.value)
    this.userPreferences.ageRange.fromAge = event.target.value;
    console.log(this.userPreferences.ageRange);
    this.userPreferencesChange.emit(this.userPreferences);

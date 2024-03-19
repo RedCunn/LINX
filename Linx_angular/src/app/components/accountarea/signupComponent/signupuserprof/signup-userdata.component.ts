@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 import { IFiltering } from '../../../../models/userprofile/filteringProfile';
@@ -13,6 +13,10 @@ import { ProxyfilterComponent } from '../signupfilters/proxyfilter/proxyfilter.c
 import { IUser } from '../../../../models/userprofile/user';
 import { IAccount } from '../../../../models/useraccount/account';
 import { compareToValidator } from '../../../../validators/compareTo';
+import { IRestMessage } from '../../../../models/restmessage';
+import { RestnodeService } from '../../../../services/restnode.service';
+import { Router } from '@angular/router';
+
 @Component({
   selector: 'app-signup-userdata',
   standalone: true,
@@ -31,6 +35,8 @@ import { compareToValidator } from '../../../../validators/compareTo';
 })
 export class SignupUserdataComponent {
 
+  private restnodeSvc : RestnodeService = inject(RestnodeService);
+
   public userDataForm! : FormGroup;
   public filtersFormShowing : Boolean = true;
   public userProfFormShowing : Boolean = false;
@@ -41,17 +47,24 @@ export class SignupUserdataComponent {
   public isValidGenders : boolean = false;
 
   public UserPreferences : IFiltering = {
-    birthday : new Date (0,0,0),
+    birthday : '',
     ageRange : {
       fromAge : 16,
       toAge : 120
     },
     myGender : '',
     genders : [],
-    location : '',
+    location : {
+        country_id : '',
+        city_id : '',
+        area1_id : '',
+        area2_id : '',
+        global_code : ''
+    },
     proxyRange : 'city',
     beliefs : {
         hasReligion : false,
+        myreligion : '',
         sharedBeliefs : false
     },
     politics : {
@@ -75,7 +88,7 @@ export class SignupUserdataComponent {
   private UserAccount : IAccount = {
    accountid : '',
    userid : '',
-   createdAt : new Date(),
+   createdAt : '',
    username : '',
    email : '',
    password : '',
@@ -89,7 +102,7 @@ export class SignupUserdataComponent {
     filters : this.UserPreferences,
     account : this.UserAccount
   }
-  constructor(private _formBuilder : FormBuilder){
+  constructor(private _formBuilder : FormBuilder, private router : Router){
 
     
 
@@ -109,42 +122,65 @@ export class SignupUserdataComponent {
 
   }
 
-  signup(){
+  async signup(){
 
-    if(this.userDataForm.errors === null){
+    if(this.userDataForm.valid){
       const _userAge = this.userDataForm.get('userAge')?.value;
       const _year = _userAge.year;
       const _month = _userAge.month;
       const _day = _userAge.day;
-      console.log('anio-',_year)
-      console.log('mes-', _month)
-      console.log('dia-', _day)
-      this.UserPreferences.birthday = new Date(_year, _month, _day);
+      this.UserPreferences.birthday = new Date(_year, _month - 1 , _day).toISOString();
       this.UserAccount.username = this.userDataForm.get('username')?.value;
       this.UserAccount.email = this.userDataForm.get('email')?.value;
       this.UserAccount.password = this.userDataForm.get('password')?.value;
-  
+      this.UserAccount.createdAt = new Date().toISOString();
       this.NewUser.name = this.userDataForm.get('name')?.value;
       this.NewUser.lastname = this.userDataForm.get('lastname')?.value;
       this.NewUser.account = this.UserAccount;
       this.NewUser.filters = this.UserPreferences;
   
       console.log('TUS ASQUEROSAS TENDENCIAS : ', this.NewUser)
+
+      try {
+        const _response : IRestMessage = await this.restnodeSvc.signupNewUser(this.NewUser);
+        console.log('RESPUESTA DE NODE AL INTENTO DE REGISTRO : ', _response);
+
+        if(_response.code === 0){
+          this.router.navigateByUrl('/Linx/SignedUp');
+        }
+
+
+      } catch (error) {
+       console.log('ERROR EN NODE AL HACER REGISTRO DE USER : ', error) 
+      }
+
     }else{
-      console.log('INVALID FORM : ', this.userDataForm.errors)
+      console.log('INVALID FORM : ')
+      this.showFormErrors(this.userDataForm);
     }
 
   }
 
+  private showFormErrors(formGroup: FormGroup): void {
+    Object.keys(formGroup.controls).forEach(controlName => {
+      const control = formGroup.get(controlName);
+      if (control instanceof FormGroup) {
+        this.showFormErrors(control); 
+      } else {
+        if (control && control.errors) {
+          Object.keys(control.errors).forEach(errorKey => {
+            console.log(`Campo: ${controlName}, Error: ${errorKey}`);
+          });
+        }
+      }
+    });
+  }
   nextPag(){
-    console.log('valid age---> ', this.userDataForm.get('userAge')!.errors)
 
     if(this.userDataForm.get('userAge')!.errors === null){
           this.sectionPag.update((value)=>{
             if(value < 8 ){
               if( value === 2 && !this.isValidGenders){
-                console.log('MY GENDER ....', this.UserPreferences.myGender)
-                console.log('GENDERS----', this.UserPreferences.genders)
                 this.validateGender = true;
                 return value;
               }

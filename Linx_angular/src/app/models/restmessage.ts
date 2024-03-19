@@ -5,6 +5,6 @@ export interface IRestMessage {
     message: string,
     error? : string,
     token? : string,
-    userdata? : IUser,
+    userdata? : any,
     others?: any 
 }

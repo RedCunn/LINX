@@ -1,16 +1,19 @@
 const mongoose = require('mongoose');
 
 const FilteringSchema = new mongoose.Schema({
-    userid : {type : mongoose.Schema.Types.ObjectId, ref : 'User'},
+    userid : {type: String, 
+             required : [true, '*Necesitas un user_id que asociar a estas preferencias'],
+             unique : true
+            },
     birthday : {
         type : Date,
-        required : [true, '* Necesaria la fecha de nacimiento']
+        required : [true, '* Necesaria fecha de nacimiento']
     },
     ageRange : {
         fromAge : {
             type : Number,
             required : [true],
-            default : 18
+            default : 16
         },
         toAge : {
             type : Number,
@@ -22,25 +25,25 @@ const FilteringSchema = new mongoose.Schema({
         type : String,
         required : [true, '* Necesario userGender']
     },
-    genders : [
-        {
-            gender : {type : String}
-        }
-    ],
+    genders : [String],
     userLocation : {
-        type : String,
-        required : [true, '* Necesario habilitar location']
+        country_id : {type: String, required : true},
+        city_id : {type: String, required : true},
+        area1_id : {type: String, required : true},
+        area2_id : {type: String, required : true},
+        global_code : {type: String, required : true}
     },
-    proxyRange : {type : String , required : [true], default : 'City'},
+    proxyRange : {type : String , required : [true], default : 'city'},
     beliefs : {
         hasReligion : {type : Boolean, default : false},
-        religion : {type : String , default : 'none'},
+        religion : {type : String , default : ''},
         shareBeliefs : {type : Boolean , default : false}
     },
     politics : {
+        // autho-left || libe-left || autho-right || libe-right || some-left || some-right || center || none
         userPoliticalSpec : {type : String},
-        // IDC || EXRIGHT || EXLEFT || EXAUTHORITARIAN || EXLIBERTARIAN || SAMESPEC 
-        sharePolitics : {type : String, default : 'IDC' }
+        // true || false || lessright || lessleft || lessautho || lesslibe || lessnone || lesscenter
+        sharePolitics : {type : String, default : 'false' }
     },
     diet : {
         userDiet : {type : String},
@@ -48,18 +51,19 @@ const FilteringSchema = new mongoose.Schema({
     },
     language : {
         userLanguages : [
-            {lang : {type : String, default : 'es'}}
+            String
         ],
         langPreferences : [
-            {lang : {type : String, default : 'es'}}
+            String
         ]
     },
     work : {
         userIndustry : {type : String},
-        // IDC || SAMEINDUSTRY || AVOIDSAME
-        shareIndustry : {type : String , default : 'IDC'}
+        other : {type : String},
+        // true || false || avoid
+        shareIndustry : {type : String , default : 'false'}
     }
 
 })
 
-module.exports = mongoose.model('Filtering', FilteringSchema, 'UserPreferences');
+module.exports = mongoose.model('Filtering', FilteringSchema, 'Filterings');

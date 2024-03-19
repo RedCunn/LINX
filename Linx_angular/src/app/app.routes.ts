@@ -17,8 +17,16 @@ export const routes: Routes = [
                 
             },
             {
+                path:'SignedUp',
+                loadComponent : () => import('./components/accountarea/signupComponent/signedupOK/signedup-ok.component').then(c => c.SignedupOKComponent)
+            },
+            {
                 path : 'Musica',
                 loadComponent : ()=> import('./components/mediazone/musicComponents/music/mymusic.component').then(m=> m.MymusicComponent)
+            },
+            {
+                path : 'Signin',
+                loadComponent : () => import('./components/accountarea/signinComponent/signin.component').then(m=> m.SigninComponent)
             }
         ]
     

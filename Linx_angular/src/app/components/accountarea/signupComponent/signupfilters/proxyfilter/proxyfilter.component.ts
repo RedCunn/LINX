@@ -20,6 +20,8 @@ export class ProxyfilterComponent implements OnInit{
   public userCurrentLocation = {latitude : 0, longitude : 0}
   public userCurrentAddress : string = '';
 
+  private _locationData! : any;
+
   onProxyRangeChange(){
     this.userPreferencesChange.emit(this.userPreferences);
   }
@@ -40,8 +42,10 @@ export class ProxyfilterComponent implements OnInit{
       const _res : IRestMessage = await this.restnodeSvc.trackUserLocationGoogleGeocode(lat, long)
 
       if(_res.code === 0){
-        this.userCurrentAddress = _res.others;
-        this.userPreferences.location = _res.others;
+        this._locationData = _res.others;
+        this.userCurrentAddress = _res.others.formatAddr;
+        this.userPreferences.location = this._locationData.fullLoc;
+        this.userPreferencesChange.emit(this.userPreferences);
       }else{
         this.userCurrentAddress = 'no podemos localizarte... 👹'
       }  

@@ -7,7 +7,7 @@
                     <label>Año</label>
                     <select id="anio" formControlName="year" class="w-fit">
                         @for(y of this.years ; track $index){
-                        <option value="@y">{{y}}</option>
+                        <option [value]="y">{{y}}</option>
                         }
                     </select>
                 </div>
@@ -25,7 +25,7 @@
                     <label>Día</label>
                     <select id="day" formControlName="day" class="w-fit">
                         @for(d of this.days; track $index){
-                        <option value="@d">{{d}}</option>
+                        <option [value]="d">{{d}}</option>
                         }@empty {
                         <option value="-1">día</option>
                         }

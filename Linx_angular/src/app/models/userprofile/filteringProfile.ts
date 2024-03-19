@@ -1,12 +1,18 @@
 export interface IFiltering{
-    birthday: Date;
+    birthday: string;
     ageRange : {
         fromAge : number;
         toAge : number;
     };
     myGender : string;
     genders : String [];
-    location : string;
+    location : {
+        country_id : string;
+        city_id : string;
+        area1_id : string;
+        area2_id : string;
+        global_code : string;
+    };
     proxyRange : string;
     beliefs : {
         hasReligion : boolean;

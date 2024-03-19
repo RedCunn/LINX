@@ -1,0 +1,28 @@
+DATOS RECIBIDOS DE ANGULAR-CLI :  {
+  userid: '',
+  accountid: '',
+  name: 'Eugenio',
+  lastname: 'Ors',
+  filters: {
+    birthday: '1988-02-12T23:00:00.000Z',
+    ageRange: { fromAge: 16, toAge: '16' },
+    myGender: 'man',
+    genders: [ 'woman', 'man' ],
+    location: '',
+    proxyRange: 'city',
+    beliefs: { hasReligion: false, sharedBeliefs: false },
+    politics: { politicalSpectrum: 'none', sharePolitics: 'false' },
+    diet: { mydiet: 'omnivore', sharedDiet: false },
+    language: { mylanguages: [Array], theirlanguages: [Array] },
+    work: { myIndustry: 'automotive', other: '', shareIndustry: 'false' }
+  },
+  account: {
+    accountid: '',
+    userid: '',
+    createdAt: '2024-03-19T11:25:13.824Z',
+    username: 'EugenioOros',
+    email: 'eugene@gmail.com',
+    password: 'tecomoelmongo',
+    active: false
+  }
+}

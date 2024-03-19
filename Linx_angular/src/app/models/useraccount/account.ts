@@ -11,7 +11,7 @@ import { IGame } from "../media/game";
 export interface IAccount {
     accountid : string;
     userid : string;
-    createdAt : Date;
+    createdAt : string;
     username : string;
     email : string;
     password: string;

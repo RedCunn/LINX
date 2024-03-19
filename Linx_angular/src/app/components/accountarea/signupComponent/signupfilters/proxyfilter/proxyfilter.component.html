@@ -11,7 +11,8 @@
         <select name="proximity" class="w-fit" [value]="this.userPreferences.proxyRange" (input)="this.userPreferences.proxyRange = $any($event.target).value"
         (change)="this.onProxyRangeChange()">
             <option value="city">Mi ciudad</option>
-            <option value="state">Mi comunidad</option>
+            <option value="area2">Mi provincia</option>
+            <option value="area1">Mi comunidad</option>
             <option value="country">Mi país</option>
             <option value="continent">Mi continente</option>
             <option value="global">El mundo</option>

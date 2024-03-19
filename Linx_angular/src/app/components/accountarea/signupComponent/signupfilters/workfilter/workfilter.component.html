@@ -53,7 +53,7 @@
                 <label class="ms-2 me-5">No me importa</label>
             </div>
             <div>
-                <input type="radio" name="sharejob" value="avoidjob" [checked]="this.userPreferences.work.shareIndustry === 'avoidjob'" (change)="this.setUserWorkPref($event)">
+                <input type="radio" name="sharejob" value="avoid" [checked]="this.userPreferences.work.shareIndustry === 'avoid'" (change)="this.setUserWorkPref($event)">
                 <label class="ms-2 me-5">Deseo evitar a gente que trabaje en el mismo sector</label>
             </div>
         </fieldset>

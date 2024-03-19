@@ -6,27 +6,27 @@
                 <label>Tu tendencia política</label>
                 <fieldset class="flex flex-col mt-5">
                     <div>
-                        <input type="radio" [checked]="this.userPreferences.politics.politicalSpectrum === 'autholeft'" name="politics" value="autholeft" (change)="this.setUserPolitics($event)">
+                        <input type="radio" [checked]="this.userPreferences.politics.politicalSpectrum === 'autho-left'" name="politics" value="autho-left" (change)="this.setUserPolitics($event)">
                         <label class="ms-2 me-5">Izquierda autoritaria</label>
                     </div>
                     <div>
-                        <input type="radio" name="politics" [checked]="this.userPreferences.politics.politicalSpectrum === 'libeleft'" value="libeleft" (change)="this.setUserPolitics($event)">
+                        <input type="radio" name="politics" [checked]="this.userPreferences.politics.politicalSpectrum === 'libe-left'" value="libe-left" (change)="this.setUserPolitics($event)">
                         <label class="ms-2 me-5">Izquierda libertaria</label>
                     </div>
                     <div>
-                        <input type="radio" name="politics" [checked]="this.userPreferences.politics.politicalSpectrum === 'authoright'" value="authoright" (change)="this.setUserPolitics($event)">
+                        <input type="radio" name="politics" [checked]="this.userPreferences.politics.politicalSpectrum === 'autho-right'" value="autho-right" (change)="this.setUserPolitics($event)">
                         <label class="ms-2 me-5">Derecha autoritaria</label>
                     </div>
                     <div>
-                        <input type="radio" name="politics" value="liberight" [checked]="this.userPreferences.politics.politicalSpectrum === 'liberight'" (change)="this.setUserPolitics($event)">
+                        <input type="radio" name="politics" value="libe-right" [checked]="this.userPreferences.politics.politicalSpectrum === 'libe-right'" (change)="this.setUserPolitics($event)">
                         <label class="ms-2 me-5">Derecha libertaria</label>
                     </div>
                     <div>
-                        <input type="radio" name="politics" value="someright" [checked]="this.userPreferences.politics.politicalSpectrum === 'someright'" (change)="this.setUserPolitics($event)">
+                        <input type="radio" name="politics" value="some-right" [checked]="this.userPreferences.politics.politicalSpectrum === 'some-right'" (change)="this.setUserPolitics($event)">
                         <label class="ms-2 me-5">En algún lugar a la derecha</label>
                     </div>
                     <div>
-                        <input type="radio" name="politics" value="someleft" [checked]="this.userPreferences.politics.politicalSpectrum === 'someleft'" (change)="this.setUserPolitics($event)">
+                        <input type="radio" name="politics" value="some-left" [checked]="this.userPreferences.politics.politicalSpectrum === 'some-left'" (change)="this.setUserPolitics($event)">
                         <label class="ms-2 me-5">En algún lugar a la izquierda</label>
                     </div>
                     <div>
@@ -66,6 +66,14 @@
                     <div>
                         <input type="radio" name="sharepolitics" value="lesslibe" [checked]="this.userPreferences.politics.sharePolitics === 'lesslibe'" (change)="this.setUserPoliPref($event)">
                         <label class="ms-2 me-5">Me da igual mientras no sean libertarias</label>
+                    </div>
+                    <div>
+                        <input type="radio" name="sharepolitics" value="lesscenter" [checked]="this.userPreferences.politics.sharePolitics === 'lesscenter'" (change)="this.setUserPoliPref($event)">
+                        <label class="ms-2 me-5">Me da igual mientras no sean de centro</label>
+                    </div>
+                    <div>
+                        <input type="radio" name="sharepolitics" value="lessnone" [checked]="this.userPreferences.politics.sharePolitics === 'lessnone'" (change)="this.setUserPoliPref($event)">
+                        <label class="ms-2 me-5">Me da igual mientras no sean apolíticas</label>
                     </div>
                 </fieldset>
             </div>

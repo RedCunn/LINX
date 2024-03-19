@@ -1,13 +1,20 @@
 const mongoose=require('mongoose');
 
 let accountSchema = new mongoose.Schema ({
-    userid : {
-        type : {type : mongoose.Schema.Types.ObjectId, ref : 'User'}
+    userid : {type: String, 
+        required : [true, '*Necesitas un user_id que asociar a esta cuenta'],
+        unique : true
     },
     createdAt : {
         type: Date,
         required : [true],
         default : Date.now
+    },  
+    username : {
+        type : String,
+        required : [true, '* Nombre user requerido'],
+        maxLength : [20, '* Máx. número de caracteres 20'],
+        minLength : [3, '*Min. número de caracteres 3']
     },
     email :{
         type : String,
@@ -22,7 +29,7 @@ let accountSchema = new mongoose.Schema ({
     },
     active : {
         type : Boolean,
-        required : [true],
+        required : true,
         default : false
     },
     myCircle : [

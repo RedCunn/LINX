@@ -7,6 +7,16 @@ const configServer = require('./config/config_pipeline');
 serverExpress.listen(3000,()=> console.log('escuchando en el puerto 3000 🏠'));
 configServer(serverExpress);
 
+const mongoose = require('mongoose');
+
+mongoose.connect(process.env.CONNECTION_MONGODB)
+        .then(
+            () => console.log('______________MONGO CONNECTION STABLISHED')
+        ).catch(
+            (err) => console.log('MONGO CONNECTION FAILED_____________', err)
+        )
+
+
 // const axios = require('axios');
 // const readline = require('readline');
 

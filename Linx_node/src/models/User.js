@@ -1,15 +1,11 @@
 const mongoose=require('mongoose');
 
 let userSchema = new mongoose.Schema({
-  accountid : {
-    type : {type : mongoose.Schema.Types.ObjectId, ref : 'Account'}
-  },
-  username : {
-    type : String,
-    required : [true, '* Nombre user requerido'],
-    maxLength : [20, '* Máx. número de caracteres 20'],
-    minLength : [3, '*Min. número de caracteres 3']
-  },
+  userid : {type: String, 
+    required : [true, '*Necesitas un user_id'],
+    unique : true
+   },
+  accountid : {type : mongoose.Schema.Types.ObjectId, ref : 'Account'},
   name : {
     type : String,
     required : [true, '* Nombre propio del user requerido'],
