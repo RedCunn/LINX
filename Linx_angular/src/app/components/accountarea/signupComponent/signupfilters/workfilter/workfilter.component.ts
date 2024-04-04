@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
 import { IFiltering } from '../../../../../models/userprofile/filteringProfile';
+import { IUser } from '../../../../../models/userprofile/user';
 
 @Component({
   selector: 'app-workfilter',
@@ -10,13 +11,16 @@ import { IFiltering } from '../../../../../models/userprofile/filteringProfile';
 })
 export class WorkfilterComponent {
 
+  @Input() userProfile! : IUser;
+  @Output() userProfileChange = new EventEmitter<IUser>();
   @Input() userPreferences !: IFiltering;
   @Output() userPreferencesChange = new EventEmitter<IFiltering>();
 
   public hasOtherIndustry = signal<boolean>(false);
 
   setUserWorkPref(event : any){
-    this.userPreferences.work.shareIndustry = event.target.value;
+    this.userPreferences.shareIndustry = event.target.value;
+    this.userProfileChange.emit(this.userProfile);
     this.userPreferencesChange.emit(this.userPreferences);
   }
 }

@@ -3,6 +3,7 @@ import { RestnodeService } from '../../../../../services/restnode.service';
 import { IFiltering } from '../../../../../models/userprofile/filteringProfile';
 import { IRestMessage } from '../../../../../models/restmessage';
 import { NG_VALIDATORS, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { IUser } from '../../../../../models/userprofile/user';
 
 @Component({
   selector: 'app-proxyfilter',
@@ -14,6 +15,8 @@ import { NG_VALIDATORS, NG_VALUE_ACCESSOR } from '@angular/forms';
 export class ProxyfilterComponent implements OnInit{
 
   private restnodeSvc : RestnodeService = inject(RestnodeService);
+  @Input() userProfile! : IUser;
+  @Output() userProfileChange = new EventEmitter<IUser>();
   @Input() userPreferences !: IFiltering;
   @Output() userPreferencesChange = new EventEmitter<IFiltering>();
   
@@ -44,8 +47,8 @@ export class ProxyfilterComponent implements OnInit{
       if(_res.code === 0){
         this._locationData = _res.others;
         this.userCurrentAddress = _res.others.formatAddr;
-        this.userPreferences.location = this._locationData.fullLoc;
-        this.userPreferencesChange.emit(this.userPreferences);
+        this.userProfile.location = this._locationData.fullLoc;
+        this.userProfileChange.emit(this.userProfile);
       }else{
         this.userCurrentAddress = 'no podemos localizarte... 👹'
       }  

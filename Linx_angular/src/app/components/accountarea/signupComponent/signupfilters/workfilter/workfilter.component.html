@@ -3,7 +3,7 @@
     <h1 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Trabajo 💸</h1>
     <div class="flex flex-col">
         <label class="mb-5">Tu sector profesional</label>
-        <select id="sector" name="myjob" class="w-fit" [value]="this.userPreferences.work.myIndustry" (input)="this.userPreferences.work.myIndustry = $any($event.target).value">
+        <select id="sector" name="myjob" class="w-fit" [value]="this.userProfile.work.industry" (input)="this.userProfile.work.industry = $any($event.target).value">
             <option value="agriculture">Agricultura</option>
             <option value="food">Alimentación</option>
             <option value="art">Arte y diseño</option>
@@ -36,24 +36,24 @@
             <option value="turism">Turismo y hostelería</option>
             <option value="other">Otro</option>
         </select>
-        @if(this.userPreferences.work.myIndustry === 'other'){
+        @if(this.userProfile.work.industry === 'other'){
             <label class="mt-8">Sentimos no conocer tu sector, ¿en qué sector trabajas?</label>
-            <input type="text" [value]="this.userPreferences.work.other" name="otherindustry" (input)="this.userPreferences.work.other = $any($event.target).value">
+            <input type="text" [value]="this.userProfile.work.other" name="otherindustry" (input)="this.userProfile.work.other = $any($event.target).value">
         }
     </div>
     <div class="flex flex-col mt-8">
         <label class="mb-5">¿Quieres que encontremos a gente que trabaja en tu sector?</label>
         <fieldset>
             <div>
-                <input type="radio" name="sharejob" value="true" [checked]="this.userPreferences.work.shareIndustry === 'true'" (change)="this.setUserWorkPref($event)">
+                <input type="radio" name="sharejob" value="true" [checked]="this.userPreferences.shareIndustry === 'true'" (change)="this.setUserWorkPref($event)">
                 <label class="ms-2 me-5">Sí, deseo conocer a gente de mi sector</label>
             </div>
             <div>
-                <input type="radio" name="sharejob" value="false" [checked]="this.userPreferences.work.shareIndustry === 'false'" (change)="this.setUserWorkPref($event)">
+                <input type="radio" name="sharejob" value="false" [checked]="this.userPreferences.shareIndustry === 'false'" (change)="this.setUserWorkPref($event)">
                 <label class="ms-2 me-5">No me importa</label>
             </div>
             <div>
-                <input type="radio" name="sharejob" value="avoid" [checked]="this.userPreferences.work.shareIndustry === 'avoid'" (change)="this.setUserWorkPref($event)">
+                <input type="radio" name="sharejob" value="avoid" [checked]="this.userPreferences.shareIndustry === 'avoid'" (change)="this.setUserWorkPref($event)">
                 <label class="ms-2 me-5">Deseo evitar a gente que trabaje en el mismo sector</label>
             </div>
         </fieldset>

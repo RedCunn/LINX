@@ -25,8 +25,12 @@ export const routes: Routes = [
                 loadComponent : ()=> import('./components/mediazone/musicComponents/music/mymusic.component').then(m=> m.MymusicComponent)
             },
             {
-                path : 'Signin',
+                path : 'Login',
                 loadComponent : () => import('./components/accountarea/signinComponent/signin.component').then(m=> m.SigninComponent)
+            },
+            {
+                path: 'Home',
+                loadComponent : () => import('./components/home/userhome/userhome.component').then(m=>m.UserhomeComponent)
             }
         ]
     

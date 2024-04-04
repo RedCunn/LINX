@@ -6,6 +6,8 @@ let User = require('../models/User');
 let Account = require('../models/Account');
 let Filtering = require('../models/Filtering');
 
+const jsondiff =  require('json-diff');
+
 async function shuffleProfilesBasedOnUserPreferences (user) {
     try {
 
@@ -60,7 +62,7 @@ async function shuffleProfilesBasedOnUserPreferences (user) {
 
         let _filteredByAge = await Filtering.find({
             '_id': { $in: _filteredByGender.map(doc => doc._id) }, 
-            'birthday': { $gte:  fromDateISOString , $lte: toDateISOString} 
+            'birthday': { $gte:  fromDateToISO , $lte: toDateToISO} 
         });
 
         //--------------BELIEFS
@@ -258,23 +260,27 @@ async function retrieveFilteringWithActiveAccounts(){
 module.exports = {
     signin : async (req, res, next)=>{
         try {
-            let {email, password} = req.body;
+            let {emailorlinxname, password} = req.body;
 
-            let _account = await Account.findOne({email : email})
+            let _account = await Account.findOne({$or : [{email : emailorlinxname}, {linxname : emailorlinxname}]})
 
-            console.log(_account);
-
-            if(!_account) throw new Error ('no existe cuenta con ese email...................');
+            if(!_account) throw new Error ('no existe cuenta con ese email o linxname...................');
 
             if(bcrypt.compareSync(password, _account.password)){
 
                 if(!_account.active) throw new Error ('ESTA CUENTA NO ESTA ACTIVADA...................');
 
-                let _filtering = await Account.findOne({userid : _account.userid})
+                let _userPrefs = await Filtering.findOne({userid : _account.userid})
 
-                let _shuffledProfiles = shuffleProfilesBasedOnUserPreferences(_filtering);
+                let _filteringDocs = await Filtering.find();
 
-                let _selectedProfiles = setProfilesForUser(_shuffledProfiles);
+                _filteringDocs.forEach(d => {
+                    let diff = jsondiff.diff(_userPrefs, d)
+                    let stringdiff = jsondiff.diffString(_userPrefs, d)
+                    console.log('DIFF : ',diff)
+                    console.log('STRING DIFF : ', stringdiff)
+                })
+
 
                 let _jwt = jwt.sign(
                         {
@@ -285,13 +291,13 @@ module.exports = {
                     process.env.JWT_SECRETKEY,
                     {
                         expiresIn: '1h',
-                            issuer: 'http://localhost:3003'
+                            issuer: 'http://localhost:3000'
                     }
                 )
             }
 
         } catch (error) {
-            
+            console.log("ERROR EN EL LOGIN .....", error)   
         }
     }
     

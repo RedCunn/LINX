@@ -4,7 +4,7 @@
         
             <div class="flex flex-col">
                 <label class="mb-5">Género con el que te identificas</label>
-                <select class="w-fit" [value]="this.userPreferences.myGender" (input)="this.userPreferences.myGender = $any($event.target).value">
+                <select class="w-fit" [value]="this.userProfile.gender" (input)="this.userProfile.gender = $any($event.target).value">
                     <option value="" selected disabled>-tu género-</option>
                     <option value="woman">Mujer</option>
                     <option value="man">Hombre</option>

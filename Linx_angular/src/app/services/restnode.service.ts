@@ -30,4 +30,19 @@ export class RestnodeService {
    return lastValueFrom(_obs);
   }
   //#endregion
+
+  //#region ----------------------- SIGN IN -----------------------------------
+
+  public signin(credentials: { emailorlinxname: string, password: string }) : Promise<IRestMessage>{
+
+    const _obs = this._httpClient.post<IRestMessage>("http://localhost:3000/api/Matching/signin",
+      credentials,
+      {
+        headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+      });
+
+    return lastValueFrom(_obs);
+  }
+
+  //#endregion
 }

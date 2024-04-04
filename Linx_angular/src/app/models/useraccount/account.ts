@@ -12,7 +12,7 @@ export interface IAccount {
     accountid : string;
     userid : string;
     createdAt : string;
-    username : string;
+    linxname : string;
     email : string;
     password: string;
     active : boolean;

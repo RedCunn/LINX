@@ -5,14 +5,14 @@
             <fieldset class="flex flex-col">
                 <label>¿Tienes alguna religión?</label>
                 <div class="mt-5">
-                    <input type="radio" name="religion" value="true" [checked]="this.userPreferences.beliefs.hasReligion" (change)="this.setHasReligion($event)">
+                    <input type="radio" name="religion" value="true" [checked]="this.userProfile.beliefs.hasReligion" (change)="this.setHasReligion($event)">
                     <label class="ms-2 me-5">Sí</label>
-                    <input type="radio" name="religion" value="false" [checked]="!this.userPreferences.beliefs.hasReligion" (change)="this.setHasReligion($event)">
+                    <input type="radio" name="religion" value="false" [checked]="!this.userProfile.beliefs.hasReligion" (change)="this.setHasReligion($event)">
                     <label class="ms-2 me-5">No</label>
                 </div>
-                @if(this.userPreferences.beliefs.hasReligion){
+                @if(this.userProfile.beliefs.hasReligion){
                     <label class="mt-8">¿Cuál es tu religión?</label>
-                    <input type="text" name="myreligion" [value]="this.userPreferences.beliefs.myreligion || '' " (input)="this.userPreferences.beliefs.myreligion = $any($event.target).value">
+                    <input type="text" name="myreligion" [value]="this.userProfile.beliefs.religion || '' " (input)="this.userProfile.beliefs.religion = $any($event.target).value">
                 }
             </fieldset>
         </div>
@@ -20,11 +20,11 @@
             <label>¿Quieres encontrar personas que compartan tus creencias?</label>
             <fieldset class="flex flex-col mt-5">
                 <div>
-                    <input type="radio" name="sharebeliefs" value="true" [checked]="this.userPreferences.beliefs.sharedBeliefs" (change)="this.setUserBeliefsPref($event)">
+                    <input type="radio" name="sharebeliefs" value="true" [checked]="this.userPreferences.shareBeliefs" (change)="this.setUserBeliefsPref($event)">
                     <label class="ms-2 me-5">Sí, quiero que compartan mis creencias</label>
                 </div>
                 <div>
-                    <input type="radio" name="sharebeliefs" value="false" [checked]="!this.userPreferences.beliefs.sharedBeliefs" (change)="this.setUserBeliefsPref($event)">
+                    <input type="radio" name="sharebeliefs" value="false" [checked]="!this.userPreferences.shareBeliefs" (change)="this.setUserBeliefsPref($event)">
                     <label class="ms-2 me-5">No me importa</label>
                 </div>
             </fieldset>

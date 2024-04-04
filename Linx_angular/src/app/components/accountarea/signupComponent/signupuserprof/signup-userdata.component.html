@@ -23,32 +23,32 @@
                 (userPreferencesChange)="this.onUserPreferencesChange($event)"></app-agefilter>
             }
             @case (1) {
-            <app-proxyfilter [userPreferences]="this.UserPreferences"
-                (userPreferencesChange)="this.onUserPreferencesChange($event)"></app-proxyfilter>
+            <app-proxyfilter [userPreferences]="this.UserPreferences" (userPreferencesChange)="this.onUserPreferencesChange($event)"
+            [userProfile]="this.UserProfile" (userProfileChange)="this.onUserProfileChange($event)"></app-proxyfilter>
             }
             @case (2) {
-            <app-genderfilter [validateGender]="validateGender" [userPreferences]="this.UserPreferences"
+            <app-genderfilter [validateGender]="validateGender" [userPreferences]="this.UserPreferences" [userProfile]="this.UserProfile" (userProfileChange)="this.onUserProfileChange($event)"
                 (userPreferencesChange)="this.onUserPreferencesChange($event)" (isValidGenders)="this.onValidGenders($event)"></app-genderfilter>
             }
             @case (3) {
-            <app-politicsfilter [userPreferences]="this.UserPreferences"
-                (userPreferencesChange)="this.onUserPreferencesChange($event)"></app-politicsfilter>
+            <app-politicsfilter [userPreferences]="this.UserPreferences" (userPreferencesChange)="this.onUserPreferencesChange($event)"
+            [userProfile]="this.UserProfile" (userProfileChange)="this.onUserProfileChange($event)"></app-politicsfilter>
             }
             @case (4) {
-            <app-beliefsfilter [userPreferences]="this.UserPreferences"
-                (userPreferencesChange)="this.onUserPreferencesChange($event)"></app-beliefsfilter>
+            <app-beliefsfilter [userPreferences]="this.UserPreferences" (userPreferencesChange)="this.onUserPreferencesChange($event)"
+            [userProfile]="this.UserProfile" (userProfileChange)="this.onUserProfileChange($event)"></app-beliefsfilter>
             }
             @case (5) {
-            <app-dietfilter [userPreferences]="this.UserPreferences"
-                (userPreferencesChange)="this.onUserPreferencesChange($event)"></app-dietfilter>
+            <app-dietfilter [userPreferences]="this.UserPreferences" (userPreferencesChange)="this.onUserPreferencesChange($event)"
+            [userProfile]="this.UserProfile" (userProfileChange)="this.onUserProfileChange($event)"></app-dietfilter>
             }
             @case (6) {
-            <app-langfilter [userPreferences]="this.UserPreferences"
-                (userPreferencesChange)="this.onUserPreferencesChange($event)"></app-langfilter>
+            <app-langfilter [userPreferences]="this.UserPreferences" (userPreferencesChange)="this.onUserPreferencesChange($event)"
+            [userProfile]="this.UserProfile" (userProfileChange)="this.onUserProfileChange($event)"></app-langfilter>
             }
             @case (7) {
-            <app-workfilter [userPreferences]="this.UserPreferences"
-                (userPreferencesChange)="this.onUserPreferencesChange($event)"></app-workfilter>
+            <app-workfilter [userPreferences]="this.UserPreferences" (userPreferencesChange)="this.onUserPreferencesChange($event)"
+            [userProfile]="this.UserProfile" (userProfileChange)="this.onUserProfileChange($event)"></app-workfilter>
             }
             @case (8) {
             <div class="bg-purple-600 rounded-xl p-20">
@@ -80,13 +80,13 @@
         <div class="grid grid-cols-2 gap-5">
             <div class="col-span-2 flex flex-col items-center">
                 <div class="w-1/3">
-                    <label for="username" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nombre de
-                        LINX (nombre que será visible en tu perfil)</label>
-                    <input type="text" id="username" formControlName="username"
+                    <label for="linxname" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                        Nombre de LINX (nombre que será visible en tu perfil)</label>
+                    <input type="text" id="linxname" formControlName="linxname"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="Nombre LINX" required />
-                    @if(!this.userDataForm.get('username')?.pristine && this.userDataForm.get('username')?.errors !== null){
-                        <span class="text-red-600">Necesitas nombre de user</span>
+                    @if(!this.userDataForm.get('linxname')?.pristine && this.userDataForm.get('linxname')?.errors !== null){
+                        <span class="text-red-600">Necesitas nombre de linx</span>
                     }
                 </div>
             </div>

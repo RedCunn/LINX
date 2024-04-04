@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { IFiltering } from '../../../../../models/userprofile/filteringProfile';
+import { IUser } from '../../../../../models/userprofile/user';
 
 @Component({
   selector: 'app-politicsfilter',
@@ -9,16 +10,18 @@ import { IFiltering } from '../../../../../models/userprofile/filteringProfile';
   styleUrl: './politicsfilter.component.css'
 })
 export class PoliticsfilterComponent {
-
+  
+  @Input() userProfile! : IUser;
+  @Output() userProfileChange = new EventEmitter<IUser>();
   @Input() userPreferences !: IFiltering;
   @Output() userPreferencesChange = new EventEmitter<IFiltering>();
 
   setUserPolitics(event : any){
-    this.userPreferences.politics.politicalSpectrum = event.target.value;
-    this.userPreferencesChange.emit(this.userPreferences);
+    this.userProfile.politics = event.target.value;
+    this.userProfileChange.emit(this.userProfile);
   }
   setUserPoliPref (event : any){
-    this.userPreferences.politics.sharePolitics = event.target.value;
+    this.userPreferences.sharePolitics = event.target.value;
     this.userPreferencesChange.emit(this.userPreferences);
   }
 }

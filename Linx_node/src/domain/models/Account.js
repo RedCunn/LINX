@@ -10,7 +10,7 @@ let accountSchema = new mongoose.Schema ({
         required : [true],
         default : Date.now
     },  
-    username : {
+    linxname : {
         type : String,
         required : [true, '* Nombre user requerido'],
         maxLength : [20, '* Máx. número de caracteres 20'],
@@ -32,10 +32,10 @@ let accountSchema = new mongoose.Schema ({
         required : true,
         default : false
     },
-    myCircle : [
+    myChain : [
         
         {
-            userid : {type : mongoose.Schema.Types.ObjectId, ref : 'User'}
+            accountid : {type : mongoose.Schema.Types.ObjectId, ref : 'Account'}
         }
     ]
 })
