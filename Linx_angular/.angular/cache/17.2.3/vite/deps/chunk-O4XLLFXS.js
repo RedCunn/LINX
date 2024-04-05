@@ -1,7 +1,7 @@
 import {
   DOCUMENT,
   isPlatformBrowser
-} from "./chunk-6K7BAJGL.js";
+} from "./chunk-B2AZ5AOP.js";
 import {
   ANIMATION_MODULE_TYPE,
   APP_ID,
@@ -79,130 +79,6 @@ import {
   __spreadProps,
   __spreadValues
 } from "./chunk-J4B6MK7R.js";
-
-// node_modules/@angular/cdk/fesm2022/platform.mjs
-var hasV8BreakIterator;
-try {
-  hasV8BreakIterator = typeof Intl !== "undefined" && Intl.v8BreakIterator;
-} catch {
-  hasV8BreakIterator = false;
-}
-var _Platform = class _Platform {
-  constructor(_platformId) {
-    this._platformId = _platformId;
-    this.isBrowser = this._platformId ? isPlatformBrowser(this._platformId) : typeof document === "object" && !!document;
-    this.EDGE = this.isBrowser && /(edge)/i.test(navigator.userAgent);
-    this.TRIDENT = this.isBrowser && /(msie|trident)/i.test(navigator.userAgent);
-    this.BLINK = this.isBrowser && !!(window.chrome || hasV8BreakIterator) && typeof CSS !== "undefined" && !this.EDGE && !this.TRIDENT;
-    this.WEBKIT = this.isBrowser && /AppleWebKit/i.test(navigator.userAgent) && !this.BLINK && !this.EDGE && !this.TRIDENT;
-    this.IOS = this.isBrowser && /iPad|iPhone|iPod/.test(navigator.userAgent) && !("MSStream" in window);
-    this.FIREFOX = this.isBrowser && /(firefox|minefield)/i.test(navigator.userAgent);
-    this.ANDROID = this.isBrowser && /android/i.test(navigator.userAgent) && !this.TRIDENT;
-    this.SAFARI = this.isBrowser && /safari/i.test(navigator.userAgent) && this.WEBKIT;
-  }
-};
-_Platform.ɵfac = function Platform_Factory(t) {
-  return new (t || _Platform)(ɵɵinject(PLATFORM_ID));
-};
-_Platform.ɵprov = ɵɵdefineInjectable({
-  token: _Platform,
-  factory: _Platform.ɵfac,
-  providedIn: "root"
-});
-var Platform = _Platform;
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(Platform, [{
-    type: Injectable,
-    args: [{
-      providedIn: "root"
-    }]
-  }], () => [{
-    type: Object,
-    decorators: [{
-      type: Inject,
-      args: [PLATFORM_ID]
-    }]
-  }], null);
-})();
-var _PlatformModule = class _PlatformModule {
-};
-_PlatformModule.ɵfac = function PlatformModule_Factory(t) {
-  return new (t || _PlatformModule)();
-};
-_PlatformModule.ɵmod = ɵɵdefineNgModule({
-  type: _PlatformModule
-});
-_PlatformModule.ɵinj = ɵɵdefineInjector({});
-var PlatformModule = _PlatformModule;
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(PlatformModule, [{
-    type: NgModule,
-    args: [{}]
-  }], null, null);
-})();
-var supportsPassiveEvents;
-function supportsPassiveEventListeners() {
-  if (supportsPassiveEvents == null && typeof window !== "undefined") {
-    try {
-      window.addEventListener("test", null, Object.defineProperty({}, "passive", {
-        get: () => supportsPassiveEvents = true
-      }));
-    } finally {
-      supportsPassiveEvents = supportsPassiveEvents || false;
-    }
-  }
-  return supportsPassiveEvents;
-}
-function normalizePassiveListenerOptions(options) {
-  return supportsPassiveEventListeners() ? options : !!options.capture;
-}
-var RtlScrollAxisType;
-(function(RtlScrollAxisType2) {
-  RtlScrollAxisType2[RtlScrollAxisType2["NORMAL"] = 0] = "NORMAL";
-  RtlScrollAxisType2[RtlScrollAxisType2["NEGATED"] = 1] = "NEGATED";
-  RtlScrollAxisType2[RtlScrollAxisType2["INVERTED"] = 2] = "INVERTED";
-})(RtlScrollAxisType || (RtlScrollAxisType = {}));
-var shadowDomIsSupported;
-function _supportsShadowDom() {
-  if (shadowDomIsSupported == null) {
-    const head = typeof document !== "undefined" ? document.head : null;
-    shadowDomIsSupported = !!(head && (head.createShadowRoot || head.attachShadow));
-  }
-  return shadowDomIsSupported;
-}
-function _getShadowRoot(element) {
-  if (_supportsShadowDom()) {
-    const rootNode = element.getRootNode ? element.getRootNode() : null;
-    if (typeof ShadowRoot !== "undefined" && ShadowRoot && rootNode instanceof ShadowRoot) {
-      return rootNode;
-    }
-  }
-  return null;
-}
-function _getFocusedElementPierceShadowDom() {
-  let activeElement = typeof document !== "undefined" && document ? document.activeElement : null;
-  while (activeElement && activeElement.shadowRoot) {
-    const newActiveElement = activeElement.shadowRoot.activeElement;
-    if (newActiveElement === activeElement) {
-      break;
-    } else {
-      activeElement = newActiveElement;
-    }
-  }
-  return activeElement;
-}
-function _getEventTarget(event) {
-  return event.composedPath ? event.composedPath()[0] : event.target;
-}
-function _isTestEnvironment() {
-  return (
-    // @ts-ignore
-    typeof __karma__ !== "undefined" && !!__karma__ || // @ts-ignore
-    typeof jasmine !== "undefined" && !!jasmine || // @ts-ignore
-    typeof jest !== "undefined" && !!jest || // @ts-ignore
-    typeof Mocha !== "undefined" && !!Mocha
-  );
-}
 
 // node_modules/@angular/cdk/fesm2022/bidi.mjs
 var DIR_DOCUMENT = new InjectionToken("cdk-dir-doc", {
@@ -361,6 +237,130 @@ var BidiModule = _BidiModule;
     }]
   }], null, null);
 })();
+
+// node_modules/@angular/cdk/fesm2022/platform.mjs
+var hasV8BreakIterator;
+try {
+  hasV8BreakIterator = typeof Intl !== "undefined" && Intl.v8BreakIterator;
+} catch {
+  hasV8BreakIterator = false;
+}
+var _Platform = class _Platform {
+  constructor(_platformId) {
+    this._platformId = _platformId;
+    this.isBrowser = this._platformId ? isPlatformBrowser(this._platformId) : typeof document === "object" && !!document;
+    this.EDGE = this.isBrowser && /(edge)/i.test(navigator.userAgent);
+    this.TRIDENT = this.isBrowser && /(msie|trident)/i.test(navigator.userAgent);
+    this.BLINK = this.isBrowser && !!(window.chrome || hasV8BreakIterator) && typeof CSS !== "undefined" && !this.EDGE && !this.TRIDENT;
+    this.WEBKIT = this.isBrowser && /AppleWebKit/i.test(navigator.userAgent) && !this.BLINK && !this.EDGE && !this.TRIDENT;
+    this.IOS = this.isBrowser && /iPad|iPhone|iPod/.test(navigator.userAgent) && !("MSStream" in window);
+    this.FIREFOX = this.isBrowser && /(firefox|minefield)/i.test(navigator.userAgent);
+    this.ANDROID = this.isBrowser && /android/i.test(navigator.userAgent) && !this.TRIDENT;
+    this.SAFARI = this.isBrowser && /safari/i.test(navigator.userAgent) && this.WEBKIT;
+  }
+};
+_Platform.ɵfac = function Platform_Factory(t) {
+  return new (t || _Platform)(ɵɵinject(PLATFORM_ID));
+};
+_Platform.ɵprov = ɵɵdefineInjectable({
+  token: _Platform,
+  factory: _Platform.ɵfac,
+  providedIn: "root"
+});
+var Platform = _Platform;
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(Platform, [{
+    type: Injectable,
+    args: [{
+      providedIn: "root"
+    }]
+  }], () => [{
+    type: Object,
+    decorators: [{
+      type: Inject,
+      args: [PLATFORM_ID]
+    }]
+  }], null);
+})();
+var _PlatformModule = class _PlatformModule {
+};
+_PlatformModule.ɵfac = function PlatformModule_Factory(t) {
+  return new (t || _PlatformModule)();
+};
+_PlatformModule.ɵmod = ɵɵdefineNgModule({
+  type: _PlatformModule
+});
+_PlatformModule.ɵinj = ɵɵdefineInjector({});
+var PlatformModule = _PlatformModule;
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(PlatformModule, [{
+    type: NgModule,
+    args: [{}]
+  }], null, null);
+})();
+var supportsPassiveEvents;
+function supportsPassiveEventListeners() {
+  if (supportsPassiveEvents == null && typeof window !== "undefined") {
+    try {
+      window.addEventListener("test", null, Object.defineProperty({}, "passive", {
+        get: () => supportsPassiveEvents = true
+      }));
+    } finally {
+      supportsPassiveEvents = supportsPassiveEvents || false;
+    }
+  }
+  return supportsPassiveEvents;
+}
+function normalizePassiveListenerOptions(options) {
+  return supportsPassiveEventListeners() ? options : !!options.capture;
+}
+var RtlScrollAxisType;
+(function(RtlScrollAxisType2) {
+  RtlScrollAxisType2[RtlScrollAxisType2["NORMAL"] = 0] = "NORMAL";
+  RtlScrollAxisType2[RtlScrollAxisType2["NEGATED"] = 1] = "NEGATED";
+  RtlScrollAxisType2[RtlScrollAxisType2["INVERTED"] = 2] = "INVERTED";
+})(RtlScrollAxisType || (RtlScrollAxisType = {}));
+var shadowDomIsSupported;
+function _supportsShadowDom() {
+  if (shadowDomIsSupported == null) {
+    const head = typeof document !== "undefined" ? document.head : null;
+    shadowDomIsSupported = !!(head && (head.createShadowRoot || head.attachShadow));
+  }
+  return shadowDomIsSupported;
+}
+function _getShadowRoot(element) {
+  if (_supportsShadowDom()) {
+    const rootNode = element.getRootNode ? element.getRootNode() : null;
+    if (typeof ShadowRoot !== "undefined" && ShadowRoot && rootNode instanceof ShadowRoot) {
+      return rootNode;
+    }
+  }
+  return null;
+}
+function _getFocusedElementPierceShadowDom() {
+  let activeElement = typeof document !== "undefined" && document ? document.activeElement : null;
+  while (activeElement && activeElement.shadowRoot) {
+    const newActiveElement = activeElement.shadowRoot.activeElement;
+    if (newActiveElement === activeElement) {
+      break;
+    } else {
+      activeElement = newActiveElement;
+    }
+  }
+  return activeElement;
+}
+function _getEventTarget(event) {
+  return event.composedPath ? event.composedPath()[0] : event.target;
+}
+function _isTestEnvironment() {
+  return (
+    // @ts-ignore
+    typeof __karma__ !== "undefined" && !!__karma__ || // @ts-ignore
+    typeof jasmine !== "undefined" && !!jasmine || // @ts-ignore
+    typeof jest !== "undefined" && !!jest || // @ts-ignore
+    typeof Mocha !== "undefined" && !!Mocha
+  );
+}
 
 // node_modules/@angular/cdk/fesm2022/keycodes.mjs
 var ENTER = 13;
@@ -4459,12 +4459,12 @@ var _MatInternalFormField = __MatInternalFormField;
 })();
 
 export {
-  Platform,
   Directionality,
+  Platform,
   MatCommonModule,
   RippleState,
   MAT_RIPPLE_GLOBAL_OPTIONS,
   MatRipple,
   MatRippleModule
 };
-//# sourceMappingURL=chunk-X5YNYZOT.js.map
+//# sourceMappingURL=chunk-O4XLLFXS.js.map

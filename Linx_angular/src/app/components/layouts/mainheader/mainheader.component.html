@@ -1,13 +1,19 @@
 <header class="flex flex-row justify-between">
     <div class="mt-6 ms-5">
-        <a (click)="this.goHome()"><img src="../../../../../assets/imgs/logos/eslabon6.png"
+        @if(this.rotatelogo()){
+            <a (click)="this.goHome()"><img src="../../../../../assets/imgs/logos/eslabon6.png" class="rotate-90"
                 style="width: 250px; height: 110px;"></a>
+        }@else {
+            <a (click)="this.goHome()"><img src="../../../../../assets/imgs/logos/eslabon6.png"
+                style="width: 250px; height: 110px;"></a>
+        }
+        
     </div>
     <div class="flex flex-row px-15 pt-5 me-5">
         @if(!loggedUser()){
         <div class="text-violet-500 me-4">
             <a (click)="this.goToSignin()" class="text-lg me-2 hover:text-violet-800">Inicio sesión </a>
-            <mat-icon>diversity_2</mat-icon>
+            <span class="material-symbols-outlined"> diversity_2</span>
         </div>
         <div class="text-green-500">
             <a (click)="this.goToSignup()" class="text-lg me-2 hover:text-green-800">Registro</a>

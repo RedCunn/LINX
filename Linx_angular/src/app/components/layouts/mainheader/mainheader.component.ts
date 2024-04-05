@@ -1,5 +1,5 @@
 import { Component, Renderer2, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Event, NavigationStart, Router } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
 
 @Component({
@@ -13,7 +13,23 @@ export class MainheaderComponent {
 
   public loggedUser = signal(false);
 
-  constructor(private router : Router, private renderer : Renderer2){}
+  public routePattern : RegExp = new RegExp("/Linx/Inicio", "g");
+  public rotatelogo = signal(true);
+
+
+  constructor(private router : Router, private renderer : Renderer2){
+    
+    this.router.events.subscribe((event: Event) => {
+      if (event instanceof NavigationStart ) {
+        if(event.url.match(this.routePattern)){
+          this.rotatelogo.update(rotate => true)
+        }else{
+          this.rotatelogo.update(rotate => false)
+        }
+      }
+    })
+
+  }
 
 
   goHome(){
