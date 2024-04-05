@@ -2,6 +2,7 @@ import { AfterViewInit, Component, Inject, OnInit, PLATFORM_ID } from '@angular/
 import { initFlowbite} from 'flowbite';
 import { MatIcon } from '@angular/material/icon';
 import { isPlatformBrowser } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-userhomeaside',
@@ -12,7 +13,7 @@ import { isPlatformBrowser } from '@angular/common';
 })
 export class UserhomeasideComponent implements OnInit{
   
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) { }
+  constructor(@Inject(PLATFORM_ID) private platformId: Object, private router : Router) { }
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
@@ -20,4 +21,27 @@ export class UserhomeasideComponent implements OnInit{
     }
   }
 
+  goToEventsPanel(){
+    this.router.navigateByUrl("/Linx/Events");
+  }
+
+  goToExchangePanel(){
+    this.router.navigateByUrl("/Linx/Exchange");
+  }
+
+  goToTracksLib(){
+    this.router.navigateByUrl("/Linx/Trackslib");
+  }
+
+  goToAlbumsLib(){
+    this.router.navigateByUrl("/Linx/Albumslib");
+  }
+
+  goToPodcastsLib(){
+    this.router.navigateByUrl("/Linx/Podcastslib");
+  }
+
+  goToArtistsLib(){
+    this.router.navigateByUrl("/Linx/Artistslib");
+  }
 }

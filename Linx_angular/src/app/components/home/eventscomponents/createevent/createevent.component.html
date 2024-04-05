@@ -1,0 +1,83 @@
+
+<button (click)="goToEventsPanel()" type="button" class="focus:outline-none text-white bg-green-400 hover:bg-green-500  font-medium rounded-lg text-sm px-5 py-2.5 mt-5 mb-2">
+    <span class="material-symbols-outlined">navigate_before</span>
+</button>
+
+<div class="container ms-auto me-20">
+    
+    <form class="me-20">
+        <div class="mb-5">
+            <h2>Empieza el </h2>
+            <mat-form-field color="accent">
+                <mat-label>Fecha inicio</mat-label>
+                <input matInput [matDatepicker]="picker1">
+                <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+                <mat-datepicker #picker1></mat-datepicker>
+              </mat-form-field>
+              
+            <h2>A las </h2>
+            <div class="relative">
+                <input type="time" id="time" class="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-fit p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  value="00:00" required />
+            </div>
+        </div>
+        <div class="mb-5">
+            <h2>Termina el </h2>
+            <mat-form-field color="accent">
+                <mat-label>Fecha fin</mat-label>
+                <input matInput [matDatepicker]="picker2">
+                <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+                <mat-datepicker #picker2 color="primary"></mat-datepicker>
+              </mat-form-field>
+            <h2>A las </h2>
+            <div class="relative">
+                <input type="time" id="time" class=" bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-fit p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="00:00" required />
+            </div>
+        </div>
+        <div class="mb-5">
+            <h2>Nombre del evento </h2>
+            <input type="text" id="eventname" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Nombre, título..." required />
+        </div>
+        <div class="mb-5">
+            <h2>Descripción </h2>
+            <textarea id="message" style="resize: none;" maxlength="300" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Ambiente, estilo, experiencias ..."></textarea>
+        </div>
+        <div>
+            <h2>Etiquetas </h2>
+            <select multiple #selectEventTags (change)="addEventTag()"
+            id="countries_multiple" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-auto p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <option value="art">Arte</option>
+                <option value="talk">Charla</option>
+                <option value="cinema">Cine</option>
+                <option value="food">Comida</option>
+                <option value="concentration">Concentración</option>
+                <option value="concert">Concierto</option>
+                <option value="birthday">Cumpleaños</option>
+                <option value="premier">Estreno</option>
+                <option value="exhibition">Exposición</option>
+                <option value="fair">Feria</option>
+                <option value="festival">Festival</option>
+                <option value="strike">Huelga</option>
+                <option value="inauguration">Inauguración</option>
+                <option value="protest">Manifestación</option>
+                <option value="fleamarket">Mercadillo</option>
+                <option value="music">Música</option>
+                <option value="performance">Performance</option>
+                <option value="launch">Presentación</option>
+                <option value="theater">Teatro</option>
+              </select>
+        </div>
+        <div class="flex mb-5">
+            @for(tag of this.eventTags() ; track $index){
+            <button (click)="this.removeEventTag(tag)" class="bg-green-300 text-green-600 w-fit flex flex-row px-2">
+                <p>{{tag}}</p>
+                <p class="font-extrabold ps-3">x</p>
+            </button>
+            }
+        </div>
+        <div class="pb-20 text-right">
+            <button type="submit" class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800  font-medium rounded-lg text-sm px-5 py-2.5 mb-2">
+                Crear evento
+            </button>
+        </div>
+    </form>
+</div>

@@ -1,2 +1,31 @@
 <h1>LINX</h1>
+<div class="p-5 bg-gray-100 flex justify-center items-center">
+    <div class="container mx-auto bg-indigo-300 rounded-lg p-14 ">
+        <form #searchForm="ngForm" (ngSubmit)="search(searchForm)">
+                <div class="sm:flex items-center bg-white dark:bg-gray-700 dark:border-s-gray-700  dark:border-gray-600 rounded-lg overflow-hidden px-2 py-1 justify-between">
+                    <input class="text-base text-gray-400 flex-grow outline-none rounded-md px-2 dark:bg-gray-700 dark:border-s-gray-700  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500" type="text"    
+                    placeholder="Busca eventos a los que van tus linxes o intercambiables en linx" 
+                    name="q"
+                    required 
+                    [(ngModel)]="searchParams.q" #q="ngModel"/>
+                    <div class="ms:flex items-center px-2 rounded-lg space-x-4 mx-auto ">
+                        <select id="qtype" class="text-base text-gray-800 dark:text-gray-200 dark:bg-gray-700 dark:border-gray-600 outline-none border-2 px-4 py-2 rounded-lg"
+                        required [(ngModel)]="searchParams.type" #type="ngModel" name="type">
+                            <option value="aa" [selected]="true" [disabled]="true">Selecciona</option>
+                            <option value="exchange">Intercambio</option>
+                            <option value="event">Evento</option>
+                        </select>
+                        <button class="bg-indigo-500 text-white text-base rounded-lg px-4 py-2 font-thin">
+                            <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 20 20">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                        </svg>
+                        </button>
+                    </div>
+                </div>
+        </form>
+    </div>
+</div>
+
 <img src="../../../../assets/imgs/logos/cadena-roto-realista.avif">

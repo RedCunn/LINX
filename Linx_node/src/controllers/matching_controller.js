@@ -2,9 +2,9 @@ const bcrypt = require('bcrypt');
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
 
-let User = require('../models/User');
-let Account = require('../models/Account');
-let Filtering = require('../models/Filtering');
+let User = require('../domain/schemas/User');
+let Account = require('../domain/schemas/Account');
+let Filtering = require('../domain/schemas/Filtering');
 
 const jsondiff =  require('json-diff');
 

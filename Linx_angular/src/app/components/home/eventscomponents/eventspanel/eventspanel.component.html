@@ -1,0 +1,33 @@
+<div class="grid grid-cols-4 gap-5 mt-10">
+    <div class="col-auto">
+        <button (click)="goToSearchEvents()" class=" bg-pink-200 hover:bg-purple-200 flex flex-row w-full py-3 rounded-xl  justify-center">
+            <span class="material-symbols-outlined">saved_search</span>
+            <p class="ps-2 pt-1">Eventos en cadena</p>
+        </button>
+        <button (click)="goToNewEventForm()" class=" bg-pink-400 hover:bg-pink-500 flex flex-row w-full py-3  rounded-xl justify-center">
+            <span class="material-symbols-outlined">family_star</span>
+            <p class="ps-2 pt-1">Crear evento</p>
+        </button>
+    </div>
+    <div class="col-span-3">
+        <ul class="grid w-full gap-6 md:grid-cols-2">
+            <li>
+                <input type="radio" id="hosting-small" name="hosting" value="hosting-small" class="hidden peer" required />
+                <label for="hosting-small" class="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-blue-500 peer-checked:border-pink-600 peer-checked:text-pink-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">                           
+                    <div class="block">
+                        <div class="w-full text-lg font-semibold">Mis Eventos</div>
+                    </div>
+                </label>
+            </li>
+            <li>
+                <input type="radio" id="hosting-big" name="hosting" value="hosting-big" class="hidden peer">
+                <label for="hosting-big" class="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-blue-500 peer-checked:border-pink-600 peer-checked:text-pink-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">
+                    <div class="block">
+                        <div class="w-full text-lg font-semibold">Eventos en Cadena</div>
+                    </div>
+                </label>
+            </li>
+        </ul>
+        
+    </div>
+</div>

@@ -1,12 +1,12 @@
 <aside class="me-10">
-    <div class=" hover:text-fuchsia-700 flex flex-row justify-end items-center">
+    <a (click)="goToEventsPanel()" class=" hover:text-fuchsia-700 flex flex-row justify-end items-center">
         <h2 class="pe-3 pt-3">Eventos</h2>
         <mat-icon>local_activity</mat-icon>
-    </div>
-    <div class=" hover:text-lime-400 flex flex-row justify-end items-center">
+    </a>
+    <a (click)="goToExchangePanel()" class=" hover:text-lime-400 flex flex-row justify-end items-center">
         <h2 class="pe-3 pt-3">Intercambiador</h2>
         <mat-icon>handshake</mat-icon>
-    </div>
+    </a>
     <div class="text-end pt-1">
         <button id="dropdownInformationButton" data-dropdown-toggle="dropdownInformation" class=" hover:text-pink-500 text-end" type="button">
             <div class="flex flex-row">
@@ -17,13 +17,16 @@
                 <div id="dropdownInformation" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
             <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownInformationButton">
                 <li class="text-end ">
-                <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"> Podcasts </a>
+                <a (click)="goToPodcastsLib()" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"> Podcasts </a>
                 </li>
                 <li class="text-end">
-                <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"> Álbums </a>
+                <a (click)="goToAlbumsLib()" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"> Álbums </a>
                 </li>
                 <li class="text-end">
-                <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"> Tracks </a>
+                <a (click)="goToTracksLib()" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"> Tracks </a>
+                </li>
+                <li class="text-end">
+                    <a (click)="goToArtistsLib()" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"> Artistas </a>
                 </li>
             </ul>
             <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownInformationButton">

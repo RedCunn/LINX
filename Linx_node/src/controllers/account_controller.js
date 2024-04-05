@@ -3,12 +3,14 @@ const multer = require('multer');
 const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
 
-let User = require('../models/User');
-let Account = require('../models/Account');
-let Filtering = require('../models/Filtering');
 const { default: mongoose } = require('mongoose');
 
+const UserRepository = require('../data_access/userRepo');
+const AccountRepository = require('../data_access/accountRepo');
+const FilteringRepository = require('../data_access/filteringRepo');
+
 module.exports = {
+    
     trackLocationGeocode : async (req, res, next) => {
         try {
             
@@ -76,54 +78,55 @@ module.exports = {
         const session = await mongoose.startSession();
         session.startTransaction();
 
+        const UserRepo = new UserRepository();
+        const AccountRepo = new AccountRepository();
+        const FilteringRepo = new FilteringRepository();
+
         try {            
 
             const _user_id = uuidv4();
 
-            let _filteringInsertResult = await Filtering.create(
-                [{
-                    userid : _user_id,
-                    ageRange : {
-                        fromAge : parseInt(preferences.ageRange.fromAge),
-                        toAge : parseInt(preferences.ageRange.toAge)
-                    },
-                    genders : preferences.genders,
-                    proxyRange: preferences.proxyRange,
-                    shareBeliefs :  preferences.shareBeliefs,
-                    sharePolitics : preferences.sharePolitics,
-                    shareDiet : preferences.shareDiet,
-                    languages : preferences.languages,
-                    shareIndustry : preferences.shareIndustry
-
-                }],
-                {session}
-            );
-
+            let _filtering = {
+                        userid : _user_id,
+                        ageRange : {
+                            fromAge : parseInt(preferences.ageRange.fromAge),
+                            toAge : parseInt(preferences.ageRange.toAge)
+                        },
+                        genders : preferences.genders,
+                        proxyRange: preferences.proxyRange,
+                        shareBeliefs :  preferences.shareBeliefs,
+                        sharePolitics : preferences.sharePolitics,
+                        shareDiet : preferences.shareDiet,
+                        languages : preferences.languages,
+                        shareIndustry : preferences.shareIndustry
+    
+                    }
+            let _filteringInsertResult = await FilteringRepo.createUserFiltering(_filtering, session);
+            if(!_filteringInsertResult) await session.abortTransaction();
             console.log("INSERT RESULT - FILTERING - : ", _filteringInsertResult)
-            let _accountInsertResult = await Account.create(
-                [{
-                    userid : _user_id,
-                    createdAt : account.createdAt,
-                    linxname : account.linxname,
-                    email : account.email,
-                    password : bcrypt.hashSync(account.password,10),
-                    active : false,
-                    myCircle : []
-                }],
-                {session}
-            );
+
+            let _account = {
+                        userid : _user_id,
+                        createdAt : account.createdAt,
+                        linxname : account.linxname,
+                        email : account.email,
+                        password : bcrypt.hashSync(account.password,10),
+                        active : false,
+                        myCircle : []
+                    }
+            let _accountInsertResult = await AccountRepo.createAccount(_account, session);
+            if(!_accountInsertResult) await session.abortTransaction();
             console.log("INSERT RESULT - ACCOUNT - : ", _accountInsertResult)
             
-            const _findFilteringID = await Filtering.findOne({ userid: _user_id }, { projection: { _id: 1 } });
-            const _findAccountID = await Account.findOne({ userid: _user_id }, { projection: { _id: 1 } });
+            const _findFilteringID = await FilteringRepo.findUserFiltering(_user_id);
+            const _findAccountID = await AccountRepo.findUserAccount(_user_id);
 
-            let _userInsertResult = await User.create(
-                [{
-                    userid : _user_id,
-                    accountid : _findAccountID,
+            let _user = {
+                        userid : _user_id,
+                    accountid : _findAccountID.id,
                     name : req.body.name,
                     lastname : req.body.lastname,
-                    preferences : _findFilteringID,
+                    preferences : _findFilteringID.id,
                     birthday : req.body.birthday,
                     gender : req.body.gender,
                     geolocation : {
@@ -144,10 +147,9 @@ module.exports = {
                         industry : req.body.work.industry,
                         other : req.body.work.other
                     }
-                }],
-                {session}
-            );
-
+            }
+            let _userInsertResult = await UserRepo.createUser(_user, session);
+            if(!_userInsertResult) await session.abortTransaction();
             console.log("INSERT RESULT - USER - : ", _userInsertResult);
 
             await session.commitTransaction();

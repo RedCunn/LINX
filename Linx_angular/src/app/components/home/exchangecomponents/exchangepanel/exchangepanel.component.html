@@ -1,0 +1,33 @@
+<div class="grid grid-cols-4 gap-5 mt-10">
+    <div class="col-auto">
+        <button (click)="goToSearchExchange()" class=" bg-lime-200 hover:bg-lime-300 flex flex-row w-full py-3 rounded-xl  justify-center">
+            <span class="material-symbols-outlined">find_replace</span>
+            <p class="ps-2 pt-1">Intercambios en cadena</p>
+        </button>
+        <button (click)="goToNewExitemForm()" class=" bg-lime-500 hover:bg-lime-600 flex flex-row w-full py-3  rounded-xl justify-center">
+            <span class="material-symbols-outlined">category</span>
+            <p class="ps-2 pt-1">Crear intercambiable</p>
+        </button>
+    </div>
+    <div class="col-span-3">
+        <ul class="grid w-full gap-6 md:grid-cols-2">
+            <li>
+                <input type="radio" id="hosting-small" name="hosting" value="hosting-small" class="hidden peer" required />
+                <label for="hosting-small" class="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer  peer-checked:border-lime-400 peer-checked:text-lime-500 hover:text-gray-600 hover:bg-gray-100 ">                           
+                    <div class="block">
+                        <div class="w-full text-lg font-semibold">Mis Intercambios</div>
+                    </div>
+                </label>
+            </li>
+            <li>
+                <input type="radio" id="hosting-big" name="hosting" value="hosting-big" class="hidden peer">
+                <label for="hosting-big" class="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer  peer-checked:border-lime-400 peer-checked:text-lime-500 hover:text-gray-600 hover:bg-gray-100 ">
+                    <div class="block">
+                        <div class="w-full text-lg font-semibold">Intercambios en Cadena</div>
+                    </div>
+                </label>
+            </li>
+        </ul>
+        
+    </div>
+</div>

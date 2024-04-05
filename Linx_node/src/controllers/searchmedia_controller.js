@@ -56,17 +56,18 @@ module.exports = {
                 });
 
 
+            console.log("RESULT DAATA : ", _result.data)
+
             let retrievedItems = [];
 
             switch (type) {
                 case 'track':
-
                     _result.data.tracks.items.forEach(item => {
-                        
                         const empturl = 'https://community.spotify.com/t5/image/serverpage/image-id/55829iC2AD64ADB887E2A5/image-size/large?v=v2&px=999';
-                        let {url} = '';
-                        if(item.images.length > 0){
-                            ({url} = item.images.find(img => img.url));
+                        let { url } = '';
+                        if (item.album && item.album.images.length > 0) {
+                            // Verifica si la pista tiene un álbum asociado y si el álbum tiene imágenes
+                            ({ url } = item.album.images.find(img => img.url));
                         }
                         const _artists = [];
                         item.artists.forEach(art => _artists.push({ id: art.id, name: art.name }));
@@ -74,17 +75,18 @@ module.exports = {
                             id: item.id,
                             name: item.name,
                             album: {
-                                id: item.album.id,
-                                total_tracks: item.album.total_tracks,
-                                imgurl: url != '' ? url : empturl,
-                                name: item.album.name,
-                                release_date: item.album.release_date
+                                id: item.album ? item.album.id : null,
+                                total_tracks: item.album ? item.album.total_tracks : null,
+                                imgurl: url !== '' ? url : empturl,
+                                name: item.album ? item.album.name : null,
+                                release_date: item.album ? item.album.release_date : null
                             },
                             artists: _artists
-                        }
+                        };
                         retrievedItems.push(selectedTrack);
                     });
-
+                    
+                                
                     console.log("TRACKS RECUPERADOS : :: : :", retrievedItems);
                     break;
                 case 'artist':

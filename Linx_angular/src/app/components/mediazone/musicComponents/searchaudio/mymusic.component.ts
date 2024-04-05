@@ -2,8 +2,6 @@ import { Component, inject } from '@angular/core';
 import { SpotifyService } from '../../../../services/spotify.service';
 import { FormsModule, NgForm } from '@angular/forms';
 import { IRestMessage } from '../../../../models/restmessage';
-import { Observable } from 'rxjs';
-import { HttpClientModule } from '@angular/common/http';
 import { ITrack } from '../../../../models/media/track';
 import { IArtist } from '../../../../models/media/artist';
 import { IAlbum } from '../../../../models/media/album';
