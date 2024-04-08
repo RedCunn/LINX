@@ -7,10 +7,13 @@
     </div>
     <div class="mb-1">
       <label for="password" class="block mb-2 text-sm font-medium text-purple-600 dark:text-white">Contraseña</label>
-      <input type="password" name="password" class="bg-purple-100 border border-gray-300 text-green-600 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required 
-      [(ngModel)]="credentials.password" #password="ngModel" />
+        <input type="password" name="password" class="bg-purple-100 border border-gray-300 text-green-600 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required 
+        [(ngModel)]="credentials.password" #password="ngModel" />  
     </div>
     <a href="#" class="font-light text-blue-600 hover:underline dark:text-blue-500" >¿Has olvidado tu contraseña?</a>
+    @if(loginerrors()){
+      <p class="text-pink-600">Credenciales incorrectas.</p>
+    }
     <div class="flex items-start mt-5 mb-5">
       <div class="flex items-center h-5">
         <input id="remember" type="checkbox" value="" class="w-4 h-4 border focus:ring-0 checked:bg-purple-400 border-gray-300 rounded bg-gray-50 dark:bg-gray-700 dark:border-gray-600 "/>
@@ -20,9 +23,7 @@
     <div class="flex justify-end">
       <button type="submit" class="text-white bg-purple-400 hover:bg-purple-500  font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center ">Iniciar sesión</button>
     </div>
-    
 </form>
-
 </div>
 <div class="max-w-sm mx-auto mt-5">
   <div class="flex items-center h-5 mt-5">

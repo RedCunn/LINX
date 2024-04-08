@@ -259,8 +259,8 @@ async function retrieveFilteringWithActiveAccounts(){
 
 module.exports = {
     signin : async (req, res, next)=>{
+        let {emailorlinxname, password} = req.body;
         try {
-            let {emailorlinxname, password} = req.body;
 
             let _account = await Account.findOne({$or : [{email : emailorlinxname}, {linxname : emailorlinxname}]})
 
@@ -272,15 +272,20 @@ module.exports = {
 
                 let _userPrefs = await Filtering.findOne({userid : _account.userid})
 
-                let _filteringDocs = await Filtering.find();
+                let _userProf = await User.findOne({userid : _account.userid});
 
-                _filteringDocs.forEach(d => {
-                    let diff = jsondiff.diff(_userPrefs, d)
-                    let stringdiff = jsondiff.diffString(_userPrefs, d)
-                    console.log('DIFF : ',diff)
-                    console.log('STRING DIFF : ', stringdiff)
-                })
+                // let _filteringDocs = await Filtering.find();
 
+                // _filteringDocs.forEach(d => {
+                //     let diff = jsondiff.diff(_userPrefs, d)
+                //     let stringdiff = jsondiff.diffString(_userPrefs, d)
+                //     console.log('DIFF : ',diff)
+                //     console.log('STRING DIFF : ', stringdiff)
+                // })
+
+                let userData = {_userProf, preferences : _userPrefs, account : _account} 
+
+                console.log('BACK USERDATA : ', userData)
 
                 let _jwt = jwt.sign(
                         {
@@ -294,10 +299,28 @@ module.exports = {
                             issuer: 'http://localhost:3000'
                     }
                 )
+
+                res.status(200).send({
+                    code: 0,
+                    error: null,
+                    message: `${_account.linxname} ha iniciado sesión`,
+                    token: _jwt,
+                    userdata: userData,
+                    others: null
+               })
             }
 
         } catch (error) {
             console.log("ERROR EN EL LOGIN .....", error)   
+            
+            res.status(200).send({
+                code: 1,
+                error: error.message,
+                message: `ERROR AL INICIAR SESION con ${emailorlinxname}`,
+                token: null,
+                userdata: null,
+                others: null
+           })
         }
     }
     

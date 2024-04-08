@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
+import { SignalStorageService } from '../../../services/signal-storage.service';
 
 @Component({
   selector: 'app-mainpanel',
@@ -8,8 +9,9 @@ import { FormsModule, NgForm } from '@angular/forms';
   templateUrl: './mainpanel.component.html',
   styleUrl: './mainpanel.component.css'
 })
-export class MainpanelComponent {
+export class MainpanelComponent implements OnInit{
 
+  private signalstoresvc : SignalStorageService = inject(SignalStorageService);
   public searchParams : {q : String, type : String} = {q : '', type : ''};
 
   async search(searchForm : NgForm){
@@ -19,4 +21,8 @@ export class MainpanelComponent {
     };
   }
 
+  ngOnInit(): void {
+    let user = this.signalstoresvc.RetrieveUserData();
+    console.log('USER RECUPERADO EN INICIO PANEL : ', user())
+  }
 }

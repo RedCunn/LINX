@@ -1,7 +1,8 @@
 export interface IArticle{
-    idart: string;
-    postedOn : Date;
+    artid: string;
+    postedOn : string;
     title : string;
-    content: string;
+    bodycontent: string;
+    img : string;
     useAsUserPic : boolean;
 }

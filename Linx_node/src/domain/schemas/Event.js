@@ -19,8 +19,7 @@ let eventSchema = mongoose.Schema({
     },
     tags : [{tag : {type : String}}],
     name : {type : String, required : true,   maxLength : [60, '* Máx. número de caracteres 60']},
-    description : {type : String,   maxLength : [300, '* Máx. número de caracteres 300']},
-    picture : {type : String}
+    description : {type : String,   maxLength : [300, '* Máx. número de caracteres 300']}
 
 })
 

@@ -59,7 +59,7 @@ module.exports = {
                 token: null,
                 userData: null,
                 others: userlocation
-            })
+           })
 
         } catch (error) {
             res.status(400).send({

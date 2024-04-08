@@ -1,16 +1,16 @@
 <header class="flex flex-row justify-between">
     <div class="mt-6 ms-5">
         @if(this.rotatelogo()){
-            <a (click)="this.goHome()"><img src="../../../../../assets/imgs/logos/eslabon6.png" class="rotate-90"
+            <a (click)="this.goInit()"><img src="../../../../../assets/imgs/logos/eslabon6.png" class="rotate-90"
                 style="width: 250px; height: 110px;"></a>
         }@else {
-            <a (click)="this.goHome()"><img src="../../../../../assets/imgs/logos/eslabon6.png"
+            <a (click)="this.goInit()"><img src="../../../../../assets/imgs/logos/eslabon6.png"
                 style="width: 250px; height: 110px;"></a>
         }
         
     </div>
     <div class="flex flex-row px-15 pt-5 me-5">
-        @if(!loggedUser()){
+        @if(!isLogged()){
         <div class="text-violet-500 me-4">
             <a (click)="this.goToSignin()" class="text-lg me-2 hover:text-violet-800">Inicio sesión </a>
             <span class="material-symbols-outlined"> diversity_2</span>
@@ -21,7 +21,7 @@
         </div>
         }@else {
         <div class="text-violet-300">
-            <a (click)="this.goToSignup()" class="me-2 text-5xl">
+            <a (click)="this.goHome()" class="me-2 text-5xl">
                 <img src="../../../../assets/imgs/account/myaccounticon.jpg" style="width: 80px;" class="rounded-lg opacity-30 hover:opacity-70">
             </a>
         </div>

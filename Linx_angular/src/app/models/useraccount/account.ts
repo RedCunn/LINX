@@ -2,7 +2,7 @@ import { IAlbum } from "../media/album";
 import { IArticle } from "./article";
 import { IArtist } from "../media/artist";
 import { IBook } from "../media/book";
-import { IExItem } from "../exchanger/exitem";
+import { IExItem } from "./exitem";
 import { IFilm } from "../media/film";
 import { IPodcast } from "../media/podcast";
 import { ITrack } from "../media/track";

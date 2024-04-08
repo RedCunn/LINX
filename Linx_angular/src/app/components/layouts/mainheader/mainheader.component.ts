@@ -1,6 +1,8 @@
-import { Component, Renderer2, signal } from '@angular/core';
+import { Component, OnInit, Renderer2, Signal, computed, inject, signal } from '@angular/core';
 import { Event, NavigationStart, Router } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
+import { SignalStorageService } from '../../../services/signal-storage.service';
+import { IUser } from '../../../models/userprofile/user';
 
 @Component({
   selector: 'app-mainheader',
@@ -9,13 +11,13 @@ import { MatIcon } from '@angular/material/icon';
   templateUrl: './mainheader.component.html',
   styleUrl: './mainheader.component.css'
 })
-export class MainheaderComponent {
+export class MainheaderComponent{
 
-  public loggedUser = signal(false);
+  private signalStoreSvc : SignalStorageService = inject(SignalStorageService);
+  public isLogged! : Signal<boolean> ;
 
   public routePattern : RegExp = new RegExp("/Linx/Inicio", "g");
-  public rotatelogo = signal(true);
-
+  public rotatelogo = signal(true); 
 
   constructor(private router : Router, private renderer : Renderer2){
     
@@ -29,11 +31,17 @@ export class MainheaderComponent {
       }
     })
 
+    let _userdata = this.signalStoreSvc.RetrieveUserData();
+    this.isLogged = computed(()=>  _userdata() !== null)
+
   }
 
+  goInit(){
+    this.router.navigateByUrl('/Linx/Inicio');    
+  }
 
   goHome(){
-    this.router.navigateByUrl('/Linx/Inicio');
+    this.router.navigateByUrl('/Linx/Home');
   }
 
   goToSignup(){
