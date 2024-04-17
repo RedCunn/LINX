@@ -1,4 +1,4 @@
-let Account = require('../domain/schemas/Account');
+let Account = require('../schemas/Account');
 
 class AccountRepository {
 

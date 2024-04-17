@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
-import { IFiltering } from '../../../../../models/userprofile/filteringProfile';
-import { IUser } from '../../../../../models/userprofile/user';
+import { IFiltering } from '../../../../../models/userprofile/IFilteringProfile';
+import { IUser } from '../../../../../models/userprofile/IUser';
 
 @Component({
   selector: 'app-workfilter',

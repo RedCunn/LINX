@@ -1,6 +1,6 @@
 import { Injectable, Signal, WritableSignal, signal } from '@angular/core';
 import { IStorageService } from '../models/IStorageService';
-import { IUser } from '../models/userprofile/user';
+import { IUser } from '../models/userprofile/IUser';
 
 @Injectable({
   providedIn: 'root'

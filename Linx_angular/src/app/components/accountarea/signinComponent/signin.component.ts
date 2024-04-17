@@ -1,7 +1,7 @@
 import { Component, ElementRef, Renderer2, ViewChild, inject, signal } from '@angular/core';
 import { NgForm, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { IRestMessage } from '../../../models/restmessage';
+import { IRestMessage } from '../../../models/IRestMessage';
 import { RestnodeService } from '../../../services/restnode.service';
 import { SignalStorageService } from '../../../services/signal-storage.service';
 

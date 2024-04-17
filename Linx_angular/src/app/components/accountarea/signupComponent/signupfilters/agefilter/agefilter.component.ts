@@ -1,6 +1,6 @@
 import { Component, Input, Output , EventEmitter, signal, OnInit, forwardRef} from '@angular/core';
 import { MatSliderModule } from '@angular/material/slider';
-import { IFiltering } from '../../../../../models/userprofile/filteringProfile';
+import { IFiltering } from '../../../../../models/userprofile/IFilteringProfile';
 import { AbstractControl, ControlValueAccessor, FormBuilder, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveFormsModule, ValidationErrors, Validator, Validators } from '@angular/forms';
 import { debounceTime } from 'rxjs';
 

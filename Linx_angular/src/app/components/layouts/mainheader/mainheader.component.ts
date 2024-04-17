@@ -2,7 +2,7 @@ import { Component, OnInit, Renderer2, Signal, computed, inject, signal } from '
 import { Event, NavigationStart, Router } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
 import { SignalStorageService } from '../../../services/signal-storage.service';
-import { IUser } from '../../../models/userprofile/user';
+import { IUser } from '../../../models/userprofile/IUser';
 
 @Component({
   selector: 'app-mainheader',

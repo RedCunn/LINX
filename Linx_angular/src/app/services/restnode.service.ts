@@ -1,9 +1,9 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { IRestMessage } from '../models/restmessage';
+import { IRestMessage } from '../models/IRestMessage';
 import { Observable, lastValueFrom } from 'rxjs';
-import { IUser } from '../models/userprofile/user';
-import { IArticle } from '../models/useraccount/article';
+import { IUser } from '../models/userprofile/IUser';
+import { IArticle } from '../models/useraccount/IArticle';
 
 @Injectable({
   providedIn: 'root'

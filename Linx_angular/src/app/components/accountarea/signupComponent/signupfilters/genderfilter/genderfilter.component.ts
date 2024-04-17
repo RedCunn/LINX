@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
-import { IFiltering } from '../../../../../models/userprofile/filteringProfile';
+import { IFiltering } from '../../../../../models/userprofile/IFilteringProfile';
 import { ReactiveFormsModule } from '@angular/forms';
-import { IUser } from '../../../../../models/userprofile/user';
+import { IUser } from '../../../../../models/userprofile/IUser';
 
 @Component({
   selector: 'app-genderfilter',

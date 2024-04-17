@@ -1,5 +1,5 @@
 import { Signal, WritableSignal, signal } from "@angular/core";
-import { IUser } from "./userprofile/user";
+import { IUser } from "./userprofile/IUser";
 
 export interface IStorageService {
     //#region ---------------------------- [ SYNC ] --------------------

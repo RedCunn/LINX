@@ -1,11 +1,14 @@
 require('dotenv').config();
 const express = require('express');
-var serverExpress = express();
+
 
 const configServer = require('./config/config_pipeline');
+const websocket = require('./config/config_websocket');
+let app = express();
+let server = app.listen(3000,()=> console.log('escuchando en el puerto 3000 🏠'));
 
-serverExpress.listen(3000,()=> console.log('escuchando en el puerto 3000 🏠'));
-configServer(serverExpress);
+configServer(app);
+websocket(server);
 
 const mongoose = require('mongoose');
 

@@ -1,5 +1,5 @@
-import { IAccount } from "../useraccount/account";
-import { IFiltering } from "./filteringProfile";
+import { IAccount } from "../useraccount/IAccount";
+import { IFiltering } from "./IFilteringProfile";
 
 export interface IUser {
     userid : string;

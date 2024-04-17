@@ -1,5 +1,5 @@
 import { IAlbum } from "../media/album";
-import { IArticle } from "./article";
+import { IArticle } from "./IArticle";
 import { IArtist } from "../media/artist";
 import { IBook } from "../media/book";
 import { IExItem } from "./exitem";

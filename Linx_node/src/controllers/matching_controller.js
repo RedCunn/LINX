@@ -2,9 +2,9 @@ const bcrypt = require('bcrypt');
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
 
-let User = require('../domain/schemas/User');
-let Account = require('../domain/schemas/Account');
-let Filtering = require('../domain/schemas/Filtering');
+let User = require('../schemas/User');
+let Account = require('../schemas/Account');
+let Filtering = require('../schemas/Filtering');
 
 const jsondiff =  require('json-diff');
 
@@ -65,148 +65,147 @@ async function shuffleProfilesBasedOnUserPreferences (user) {
             'birthday': { $gte:  fromDateToISO , $lte: toDateToISO} 
         });
 
-        //--------------BELIEFS
-        let _filteredByBeliefs = [];
+        // //--------------BELIEFS
+        // let _filteredByBeliefs = [];
 
-        if(user.beliefs.shareBeliefs){
+        // if(user.beliefs.shareBeliefs){
 
-            if(user.beliefs.hasReligion){
+        //     if(user.beliefs.hasReligion){
 
-                _filteredByBeliefs = await Filtering.find({
-                    '_id': { $in: _filteredByAge.map(doc => doc._id) }, 
-                    'beliefs.hasReligion': true,
-                    'beliefs.religion' : user.beliefs.religion 
-                })
+        //         _filteredByBeliefs = await Filtering.find({
+        //             '_id': { $in: _filteredByAge.map(doc => doc._id) }, 
+        //             'beliefs.hasReligion': true,
+        //             'beliefs.religion' : user.beliefs.religion 
+        //         })
 
-            }else{
-                _filteredByBeliefs = await Filtering.find({
-                    '_id': { $in: _filteredByAge.map(doc => doc._id) }, 
-                    'beliefs.hasReligion': false 
-                })
-            }
-        }else{
-            _filteredByBeliefs = _filteredByAge
-        }
+        //     }else{
+        //         _filteredByBeliefs = await Filtering.find({
+        //             '_id': { $in: _filteredByAge.map(doc => doc._id) }, 
+        //             'beliefs.hasReligion': false 
+        //         })
+        //     }
+        // }else{
+        //     _filteredByBeliefs = _filteredByAge
+        // }
 
 
-        //-------------POLITICS 
-        // autho-left || libe-left || autho-right || libe-right || some-left || some-right || center || none
-        let _filteredByPolitics = [];
+        // //-------------POLITICS 
+        // // autho-left || libe-left || autho-right || libe-right || some-left || some-right || center || none
+        // let _filteredByPolitics = [];
 
-        if(user.politics.sharePolitcs !== 'false'){
-            // true || false || lessright || lessleft || lessautho || lesslibe || lessnone || lesscenter
-            switch(user.politics.sharePolitcs){
-                case 'true':
-                    _filteredByPolitics = await Filtering.find({
-                        '_id': { $in: _filteredByBeliefs.map(doc => doc._id) }, 
-                        'politics.userPoliticalSpec': user.politics.userPoliticalSpec 
-                    })
-                    break;
-                case 'lessright':
-                    _filteredByPolitics = await Filtering.find({
-                        '_id': { $in: _filteredByBeliefs.map(doc => doc._id) }, 
-                        'politics.userPoliticalSpec': { $not: /.*right.*/ }
-                    })
-                    break;
-                case 'lessleft':
-                    _filteredByPolitics = await Filtering.find({
-                        '_id': { $in: _filteredByBeliefs.map(doc => doc._id) }, 
-                        'politics.userPoliticalSpec': { $not: /.*left.*/ }
-                    })
-                    break;
-                case 'lessautho':
-                    _filteredByPolitics = await Filtering.find({
-                        '_id': { $in: _filteredByBeliefs.map(doc => doc._id) }, 
-                        'politics.userPoliticalSpec': { $not: /.*autho.*/ }
-                    })
-                    break;
-                case 'lesslibe':
-                    _filteredByPolitics = await Filtering.find({
-                        '_id': { $in: _filteredByBeliefs.map(doc => doc._id) }, 
-                        'politics.userPoliticalSpec': { $not: /.*libe.*/ }
-                    })
-                    break;
-                case 'lessnone':
-                    _filteredByPolitics = await Filtering.find({
-                        '_id': { $in: _filteredByBeliefs.map(doc => doc._id) }, 
-                        'politics.userPoliticalSpec': { $ne: 'none' }
-                    })
-                    break;
-                case 'lesscenter':
-                    _filteredByPolitics = await Filtering.find({
-                        '_id': { $in: _filteredByBeliefs.map(doc => doc._id) }, 
-                        'politics.userPoliticalSpec': { $ne: 'center' }
-                    })
-                    break;
+        // if(user.politics.sharePolitcs !== 'false'){
+        //     // true || false || lessright || lessleft || lessautho || lesslibe || lessnone || lesscenter
+        //     switch(user.politics.sharePolitcs){
+        //         case 'true':
+        //             _filteredByPolitics = await Filtering.find({
+        //                 '_id': { $in: _filteredByBeliefs.map(doc => doc._id) }, 
+        //                 'politics.userPoliticalSpec': user.politics.userPoliticalSpec 
+        //             })
+        //             break;
+        //         case 'lessright':
+        //             _filteredByPolitics = await Filtering.find({
+        //                 '_id': { $in: _filteredByBeliefs.map(doc => doc._id) }, 
+        //                 'politics.userPoliticalSpec': { $not: /.*right.*/ }
+        //             })
+        //             break;
+        //         case 'lessleft':
+        //             _filteredByPolitics = await Filtering.find({
+        //                 '_id': { $in: _filteredByBeliefs.map(doc => doc._id) }, 
+        //                 'politics.userPoliticalSpec': { $not: /.*left.*/ }
+        //             })
+        //             break;
+        //         case 'lessautho':
+        //             _filteredByPolitics = await Filtering.find({
+        //                 '_id': { $in: _filteredByBeliefs.map(doc => doc._id) }, 
+        //                 'politics.userPoliticalSpec': { $not: /.*autho.*/ }
+        //             })
+        //             break;
+        //         case 'lesslibe':
+        //             _filteredByPolitics = await Filtering.find({
+        //                 '_id': { $in: _filteredByBeliefs.map(doc => doc._id) }, 
+        //                 'politics.userPoliticalSpec': { $not: /.*libe.*/ }
+        //             })
+        //             break;
+        //         case 'lessnone':
+        //             _filteredByPolitics = await Filtering.find({
+        //                 '_id': { $in: _filteredByBeliefs.map(doc => doc._id) }, 
+        //                 'politics.userPoliticalSpec': { $ne: 'none' }
+        //             })
+        //             break;
+        //         case 'lesscenter':
+        //             _filteredByPolitics = await Filtering.find({
+        //                 '_id': { $in: _filteredByBeliefs.map(doc => doc._id) }, 
+        //                 'politics.userPoliticalSpec': { $ne: 'center' }
+        //             })
+        //             break;
                     
-            }
+        //     }
 
-        }else{
-            _filteredByPolitics = _filteredByBeliefs
-        }
+        // }else{
+        //     _filteredByPolitics = _filteredByBeliefs
+        // }
 
-        //-----------DIET
+        // //-----------DIET
 
-        let _filteredByDiet = []
+        // let _filteredByDiet = []
 
-        if(user.diet.shareDiet){
-            _filteredByDiet = await Filtering.find({
-                '_id': { $in: _filteredByPolitics.map(doc => doc._id) }, 
-                'diet.userDiet': user.diet.userDiet
-            })
-        }else{
-            _filteredByDiet = _filteredByPolitics
-        }
+        // if(user.diet.shareDiet){
+        //     _filteredByDiet = await Filtering.find({
+        //         '_id': { $in: _filteredByPolitics.map(doc => doc._id) }, 
+        //         'diet.userDiet': user.diet.userDiet
+        //     })
+        // }else{
+        //     _filteredByDiet = _filteredByPolitics
+        // }
 
 
-        //-----------LANG
+        // //-----------LANG
 
-        let _filteredByLang = await Filtering.findOne({
-            '_id': { $in: _filteredByDiet.map(doc => doc._id) }, 
-            'language.userLanguages' : { $in: user.language.langPreferences }
-        })
+        // let _filteredByLang = await Filtering.findOne({
+        //     '_id': { $in: _filteredByDiet.map(doc => doc._id) }, 
+        //     'language.userLanguages' : { $in: user.language.langPreferences }
+        // })
 
-        //--------------WORK
+        // //--------------WORK
 
-        let _filteredByWork = [];
+        // let _filteredByWork = [];
 
-        if(user.work.shareIndustry !== 'false'){
+        // if(user.work.shareIndustry !== 'false'){
             
-            if(user.work.shareIndustry !== 'true'){
+        //     if(user.work.shareIndustry !== 'true'){
                 
-                if(user.work.userIndustry !== 'other'){
-                    _filteredByWork = await Filtering.findOne({
-                        '_id': { $in: _filteredByLang.map(doc => doc._id) }, 
-                        'work.userIndustry' : user.work.userIndustry
-                    })
-                }else{
-                    _filteredByWork = await Filtering.findOne({
-                        '_id': { $in: _filteredByLang.map(doc => doc._id) }, 
-                        'work.other' : user.work.other
-                    })
-                }
+        //         if(user.work.userIndustry !== 'other'){
+        //             _filteredByWork = await Filtering.findOne({
+        //                 '_id': { $in: _filteredByLang.map(doc => doc._id) }, 
+        //                 'work.userIndustry' : user.work.userIndustry
+        //             })
+        //         }else{
+        //             _filteredByWork = await Filtering.findOne({
+        //                 '_id': { $in: _filteredByLang.map(doc => doc._id) }, 
+        //                 'work.other' : user.work.other
+        //             })
+        //         }
                 
-            }else{
+        //     }else{
                 
-                if(user.work.userIndustry !== 'other'){
-                    _filteredByWork = await Filtering.findOne({
-                        '_id': { $in: _filteredByLang.map(doc => doc._id) }, 
-                        'work.userIndustry' : {$ne : user.work.userIndustry}
-                    })
-                }else{
-                    _filteredByWork = await Filtering.findOne({
-                        '_id': { $in: _filteredByLang.map(doc => doc._id) }, 
-                        'work.other' : {$ne : user.work.other}
-                    })
-                }   
-            }
+        //         if(user.work.userIndustry !== 'other'){
+        //             _filteredByWork = await Filtering.findOne({
+        //                 '_id': { $in: _filteredByLang.map(doc => doc._id) }, 
+        //                 'work.userIndustry' : {$ne : user.work.userIndustry}
+        //             })
+        //         }else{
+        //             _filteredByWork = await Filtering.findOne({
+        //                 '_id': { $in: _filteredByLang.map(doc => doc._id) }, 
+        //                 'work.other' : {$ne : user.work.other}
+        //             })
+        //         }   
+        //     }
             
-        }else{
-            _filteredByWork = _filteredByLang
-        }
+        // }else{
+        //     _filteredByWork = _filteredByLang
+        // }
         
-
-        return _filteredByWork;
+        return _filteredByAge;
     } catch (error) {
         console.log('ERROR SHUFFLING PROFILES : : ', error)
         return [];
