@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output, forwardRef, inject } from '@angular/core';
 import { RestnodeService } from '../../../../../services/restnode.service';
-import { IFiltering } from '../../../../../models/userprofile/filteringProfile';
-import { IRestMessage } from '../../../../../models/restmessage';
+import { IFiltering } from '../../../../../models/userprofile/IFilteringProfile';
+import { IRestMessage } from '../../../../../models/IRestMessage';
 import { NG_VALIDATORS, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { IUser } from '../../../../../models/userprofile/user';
+import { IUser } from '../../../../../models/userprofile/IUser';
 
 @Component({
   selector: 'app-proxyfilter',

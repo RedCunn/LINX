@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, lastValueFrom } from 'rxjs';
-import { IRestMessage } from '../models/restmessage';
+import { IRestMessage } from '../models/IRestMessage';
 
 @Injectable({
   providedIn: 'root'

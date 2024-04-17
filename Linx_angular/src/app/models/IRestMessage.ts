@@ -1,4 +1,4 @@
-import { IUser } from "./userprofile/user";
+import { IUser } from "./userprofile/IUser";
 
 export interface IRestMessage {
     code: number,

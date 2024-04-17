@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { IFiltering } from '../../../../models/userprofile/filteringProfile';
+import { IFiltering } from '../../../../models/userprofile/IFilteringProfile';
 import { AgefilterComponent } from '../signupfilters/agefilter/agefilter.component';
 import { GenderfilterComponent } from '../signupfilters/genderfilter/genderfilter.component';
 import { BeliefsfilterComponent } from '../signupfilters/beliefsfilter/beliefsfilter.component';
@@ -10,10 +10,10 @@ import { DietfilterComponent } from '../signupfilters/dietfilter/dietfilter.comp
 import { LangfilterComponent } from '../signupfilters/langfilter/langfilter.component';
 import { WorkfilterComponent } from '../signupfilters/workfilter/workfilter.component';
 import { ProxyfilterComponent } from '../signupfilters/proxyfilter/proxyfilter.component';
-import { IUser } from '../../../../models/userprofile/user';
-import { IAccount } from '../../../../models/useraccount/account';
+import { IUser } from '../../../../models/userprofile/IUser';
+import { IAccount } from '../../../../models/useraccount/IAccount';
 import { compareToValidator } from '../../../../validators/compareTo';
-import { IRestMessage } from '../../../../models/restmessage';
+import { IRestMessage } from '../../../../models/IRestMessage';
 import { RestnodeService } from '../../../../services/restnode.service';
 import { Router } from '@angular/router';
 
@@ -97,8 +97,6 @@ export class SignupUserdataComponent {
     }
   }
   constructor(private _formBuilder: FormBuilder, private router: Router) {
-
-
 
     this.userDataForm = _formBuilder.group({
       userAge: _formBuilder.control({

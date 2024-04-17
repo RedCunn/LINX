@@ -1,7 +1,7 @@
-const routingMatching = require('./routingMatching');
-const routingSearchmedia = require('./routingSearchmedia');
-const routingAccount = require('./routingAccount');
-const routingProfile = require('./routingProfile');
+const routingMatching = require('../routes/routingMatching');
+const routingSearchmedia = require('../routes/routingSearchmedia');
+const routingAccount = require('../routes/routingAccount');
+const routingProfile = require('../routes/routingProfile');
 
 module.exports = function(serverExpress){
     serverExpress.use('/api/Matching', routingMatching);

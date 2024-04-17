@@ -1,4 +1,4 @@
-let Filtering = require('../domain/schemas/Filtering');
+let Filtering = require('../schemas/Filtering');
 
 class FilteringRepository{
 

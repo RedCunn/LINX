@@ -1,4 +1,4 @@
-let User = require('../domain/schemas/User');
+let User = require('../schemas/User');
 
 class UserRepository{
     
