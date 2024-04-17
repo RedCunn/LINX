@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { IRestMessage } from '../models/restmessage';
 import { Observable, lastValueFrom } from 'rxjs';
 import { IUser } from '../models/userprofile/user';
+import { IArticle } from '../models/useraccount/article';
 
 @Injectable({
   providedIn: 'root'
@@ -37,6 +38,20 @@ export class RestnodeService {
 
     const _obs = this._httpClient.post<IRestMessage>("http://localhost:3000/api/Matching/signin",
       credentials,
+      {
+        headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+      });
+
+    return lastValueFrom(_obs);
+  }
+
+  //#endregion
+
+  //#region ---------------------- UPDATE PROFILE -------------------------------
+
+  public uploadArticle (content : {userid : string , article : IArticle}) : Promise<IRestMessage>{
+    const _obs = this._httpClient.post<IRestMessage>("http://localhost:3000/api/Profile/uploadArticle",
+      content,
       {
         headers: new HttpHeaders({ 'Content-Type': 'application/json' })
       });
