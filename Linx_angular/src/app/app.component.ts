@@ -32,10 +32,12 @@ export class AppComponent implements OnInit, OnDestroy{
     })
   }
   ngOnInit(): void {
-    this.websocketsvc.connect()
+    // this.websocketsvc.connect()
+    console.log('hi')
   }
   ngOnDestroy(): void {
-    this.websocketsvc.disconnect()
+    //this.websocketsvc.disconnect()
+    console.log('adioh')
   }
 
 

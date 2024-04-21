@@ -1,6 +1,8 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { SignalStorageService } from '../../../services/signal-storage.service';
+import {Carousel, initCarousels, initFlowbite} from 'flowbite';
+import './mainpanel.component.css';
 
 @Component({
   selector: 'app-mainpanel',
@@ -22,7 +24,10 @@ export class MainpanelComponent implements OnInit{
   }
 
   ngOnInit(): void {
+    initFlowbite();
+    initCarousels();
     let user = this.signalstoresvc.RetrieveUserData();
     console.log('USER RECUPERADO EN INICIO PANEL : ', user())
+
   }
 }
