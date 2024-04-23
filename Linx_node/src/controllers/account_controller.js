@@ -2,12 +2,27 @@ const bcrypt = require('bcrypt');
 const multer = require('multer');
 const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
+const jwt = require('jsonwebtoken');
+const moment = require('moment');
+const mailer = require('./utils/mailer')
 
 const { default: mongoose } = require('mongoose');
 
 const UserRepository = require('../data_access/userRepo');
 const AccountRepository = require('../data_access/accountRepo');
 const FilteringRepository = require('../data_access/filteringRepo');
+const Account = require('../schemas/Account');
+
+
+function generateToken(userdata){
+    
+    const payload = {
+            userid : userdata.userid,
+            email : userdata.email
+    }
+    const token = jwt.sign(payload, process.env.JWT_SECRETKEY,{expiresIn:'2h'})
+    return token;
+}
 
 module.exports = {
     
@@ -101,9 +116,14 @@ module.exports = {
                         shareIndustry : preferences.shareIndustry
     
                     }
+
             let _filteringInsertResult = await FilteringRepo.createUserFiltering(_filtering, session);
             if(!_filteringInsertResult) await session.abortTransaction();
             console.log("INSERT RESULT - FILTERING - : ", _filteringInsertResult)
+            
+            const actToken = generateToken(); 
+            let now = moment();
+            let expires = now.add(2,'hours');
 
             let _account = {
                         userid : _user_id,
@@ -112,7 +132,8 @@ module.exports = {
                         email : account.email,
                         password : bcrypt.hashSync(account.password,10),
                         active : false,
-                        myCircle : []
+                        activeToken : actToken,
+                        activeExpires : expires
                     }
             let _accountInsertResult = await AccountRepo.createAccount(_account, session);
             if(!_accountInsertResult) await session.abortTransaction();
@@ -122,7 +143,7 @@ module.exports = {
             const _findAccountID = await AccountRepo.findUserAccount(_user_id);
 
             let _user = {
-                        userid : _user_id,
+                    userid : _user_id,
                     accountid : _findAccountID.id,
                     name : req.body.name,
                     lastname : req.body.lastname,
@@ -146,7 +167,8 @@ module.exports = {
                     work : {
                         industry : req.body.work.industry,
                         other : req.body.work.other
-                    }
+                    },
+                    myCircle : []
             }
             let _userInsertResult = await UserRepo.createUser(_user, session);
             if(!_userInsertResult) await session.abortTransaction();
@@ -155,6 +177,8 @@ module.exports = {
             await session.commitTransaction();
             session.endSession();
             console.log("Todas las inserciones fueron exitosas.");
+
+            mailer.sendAccountActivationEmail(_account.email, actToken);
 
             res.status(200).send({
                 code: 0,
@@ -180,9 +204,39 @@ module.exports = {
     },
     activateAccount : async (req, res, next)=>{
         try {
+            const token = req.params.token;
+            const decoded = jwt.verify(token,process.env.JWT_SECRETKEY)
 
+            if(moment().isAfter(decoded.exp)){
+                res.status(400).send({
+                    code: 1,
+                    error: error.message,
+                    message: 'EXPIRED TOKEN',
+                    token: null,
+                    userData: null,
+                    others: null
+                })
+            }
+
+            await Account.updateOne({userid:decoded.userid},{active:true});
+
+            res.status(200).send({
+                code: 0,
+                error: null,
+                message: 'CUENTA USER ACTIVA',
+                token: null,
+                userData: null,
+                others: null
+            })
         } catch (error) {
-            
+            res.status(400).send({
+                code: 1,
+                error: error.message,
+                message: 'ERROR AL ACTIVAR CUENTA USER',
+                token: null,
+                userData: null,
+                others: null
+            })
         }
     },
     resetPassword : async (req, res, next)=>{

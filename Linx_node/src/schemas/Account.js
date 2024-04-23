@@ -29,15 +29,10 @@ let accountSchema = new mongoose.Schema ({
     },
     active : {
         type : Boolean,
-        required : true,
         default : false
     },
-    myChain : [
-        
-        {
-            accountid : {type : mongoose.Schema.Types.ObjectId, ref : 'Account'}
-        }
-    ]
+    activeToken : String,
+    activeExpires : Date
 })
 
 module.exports=mongoose.model('Account',accountSchema,'Accounts');

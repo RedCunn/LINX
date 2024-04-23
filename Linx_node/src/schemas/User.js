@@ -47,7 +47,12 @@ let userSchema = new mongoose.Schema({
   },
   preferences : { type : mongoose.Schema.Types.ObjectId, ref : 'Filtering'} ,
   exchanger: [{exitemid : {type : mongoose.Schema.Types.ObjectId, ref : 'Exitem'}}],
-  agenda : [{eventid : {type : mongoose.Schema.Types.ObjectId, ref : 'Event'}}]
+  agenda : [{eventid : {type : mongoose.Schema.Types.ObjectId, ref : 'Event'}}],
+  myChain : [       
+    {
+        accountid : {type : mongoose.Schema.Types.ObjectId, ref : 'User'}
+    }
+]
 })
 
 module.exports=mongoose.model('User',userSchema,'Users');

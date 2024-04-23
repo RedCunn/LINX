@@ -6,8 +6,6 @@ let User = require('../schemas/User');
 let Account = require('../schemas/Account');
 let Filtering = require('../schemas/Filtering');
 
-const jsondiff = require('json-diff');
-
 async function shuffleProfilesBasedOnUserPreferences(user) {
     try {
 
@@ -18,33 +16,33 @@ async function shuffleProfilesBasedOnUserPreferences(user) {
 
         switch (user.userLocation.proxyRange) {
             case 'city':
-                _filteredByLocation = await Filtering.find({
+                _filteredByLocation = await User.find({
                     '_id': { $in: _activeAccounts.map(doc => doc._id) },
-                    'userLocation.city_id ': user.userLocation.city_id
+                    'geolocation.city_id ': user.geolocation.city_id
                 });
                 break;
             case 'country':
-                _filteredByLocation = await Filtering.find({
+                _filteredByLocation = await User.find({
                     '_id': { $in: _activeAccounts.map(doc => doc._id) },
-                    'userLocation.country_id ': user.userLocation.country_id
+                    'geolocation.country_id ': user.geolocation.country_id
                 });
                 break;
             case 'area1':
-                _filteredByLocation = await Filtering.find({
+                _filteredByLocation = await User.find({
                     '_id': { $in: _activeAccounts.map(doc => doc._id) },
-                    'userLocation.area1_id ': user.userLocation.area1_id
+                    'geolocation.area1_id ': user.geolocation.area1_id
                 });
                 break;
             case 'area2':
-                _filteredByLocation = await Filtering.find({
+                _filteredByLocation = await User.find({
                     '_id': { $in: _activeAccounts.map(doc => doc._id) },
-                    'userLocation.area2_id ': user.userLocation.area2_id
+                    'geolocation.area2_id ': user.geolocation.area2_id
                 });
                 break;
             case 'continent':
-                _filteredByLocation = await Filtering.find({
+                _filteredByLocation = await User.find({
                     '_id': { $in: _activeAccounts.map(doc => doc._id) },
-                    'userLocation.continent ': user.userLocation.continent
+                    'geolocation.continent ': user.geolocation.global_code
                 });
                 break;
             case 'global':
@@ -54,75 +52,55 @@ async function shuffleProfilesBasedOnUserPreferences(user) {
         }
 
         //--------------GENDER 
-        let userId = "ID_DEL_USUARIO_ACTUAL"; // Aquí debes proporcionar el ID del usuario actual
+        const userGenderPrefs = user.preferences.genders;
 
-        let _matchingGender = await User.aggregate([
-            // Coincidir con el usuario actual por su userid
+        let _filteredByGender = await User.aggregate([
             {
                 $match: {
-                    userid: userId
+                    '_id': { $in: _filteredByLocation.map(doc => doc._id) },
+                    'gender': { $in: userGenderPrefs }
                 }
             },
-            // Unir con la colección Filtering por el campo 'userid'
             {
                 $lookup: {
-                    from: "Filterings",
-                    localField: "userid", // Campo en la colección Users
-                    foreignField: "userid", // Campo en la colección Filtering
-                    as: "Filtering"
+                    from: "Filterings", 
+                    localField: "_id",
+                    foreignField: "userid",
+                    as: "userFilterings"
                 }
             },
-            // Descomponer el array de documentos de Filtering para que cada documento esté separado
-            { $unwind: "$Filtering" },
-            // Obtener los géneros del usuario actual y de sus preferencias de género
             {
-                $project: {
-                    _id: 0, // Excluimos el campo _id del usuario
-                    userGender: "$gender", // Género del usuario actual
-                    userPreferences: "$Filtering.genders" // Preferencias de género del usuario actual
+                $addFields: {
+                    matchesPreferences: {
+                        $gt: [{ $size: { $setIntersection: ["$userFilterings.preferences.genders", user.gender] } }, 0]
+                    }
                 }
             },
-            // Unir nuevamente con la colección User para encontrar usuarios con géneros similares
             {
-                $lookup: {
-                    from: "Users",
-                    let: { userPreferences: "$userPreferences", userGender: "$userGender" },
-                    pipeline: [
-                        // Filtrar los usuarios por género que esté dentro de las preferencias del usuario actual
-                        {
-                            $match: {
-                                $expr: {
-                                    $and: [
-                                        { $in: ["$gender", "$$userPreferences"] }, // Género del usuario en las preferencias
-                                        { $in: ["$$userGender", "$Filtering.genders"] } // Género del usuario actual en las preferencias del otro usuario
-                                    ]
-                                }
-                            }
-                        }
-                    ],
-                    as: "matchedUsers"
+                $match: {
+                    matchesPreferences: true
                 }
             }
         ]);
 
-        console.log(_matchingGender);
+        console.log(_filteredByGender);
 
 
         //----------------AGE 
-        let fromAge = user.ageRange.fromAge
-        let toAge = user.ageRange.toAge
+        // let fromAge = user.ageRange.fromAge
+        // let toAge = user.ageRange.toAge
 
-        let fromDate = new Date();
-        fromDate.setFullYear(fromDate.getFullYear() - fromAge);
-        let fromDateToISO = fromDate.toISOString();
-        let toDate = new Date();
-        toDate.setFullYear(toDate.getFullYear() - toAge);
-        let toDateToISO = toDate.toISOString();
+        // let fromDate = new Date();
+        // fromDate.setFullYear(fromDate.getFullYear() - fromAge);
+        // let fromDateToISO = fromDate.toISOString();
+        // let toDate = new Date();
+        // toDate.setFullYear(toDate.getFullYear() - toAge);
+        // let toDateToISO = toDate.toISOString();
 
-        let _filteredByAge = await Filtering.find({
-            '_id': { $in: _filteredByGender.map(doc => doc._id) },
-            'birthday': { $gte: fromDateToISO, $lte: toDateToISO }
-        });
+        // let _filteredByAge = await Filtering.find({
+        //     '_id': { $in: _filteredByGender.map(doc => doc._id) },
+        //     'birthday': { $gte: fromDateToISO, $lte: toDateToISO }
+        // });
 
         // //--------------BELIEFS
         // let _filteredByBeliefs = [];
@@ -264,7 +242,7 @@ async function shuffleProfilesBasedOnUserPreferences(user) {
         //     _filteredByWork = _filteredByLang
         // }
 
-        return _filteredByAge;
+        return _filteredByGender;
     } catch (error) {
         console.log('ERROR SHUFFLING PROFILES : : ', error)
         return [];
@@ -332,14 +310,7 @@ module.exports = {
 
                 let _userProf = await User.findOne({ userid: _account.userid });
 
-                // let _filteringDocs = await Filtering.find();
-
-                // _filteringDocs.forEach(d => {
-                //     let diff = jsondiff.diff(_userPrefs, d)
-                //     let stringdiff = jsondiff.diffString(_userPrefs, d)
-                //     console.log('DIFF : ',diff)
-                //     console.log('STRING DIFF : ', stringdiff)
-                // })
+                
 
                 let userData = { _userProf, preferences: _userPrefs, account: _account }
 
