@@ -9,5 +9,5 @@
     font-size: 50px;
   }
 #thumb:hover{
-    filter: brightness(30%);
+    filter: brightness(150%);
 }

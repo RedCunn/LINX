@@ -6,48 +6,107 @@ let User = require('../schemas/User');
 let Account = require('../schemas/Account');
 let Filtering = require('../schemas/Filtering');
 
-const jsondiff =  require('json-diff');
+const jsondiff = require('json-diff');
 
-async function shuffleProfilesBasedOnUserPreferences (user) {
+async function shuffleProfilesBasedOnUserPreferences(user) {
     try {
 
-        let _activeAccounts = retrieveFilteringWithActiveAccounts();
+        let _activeAccounts = await retrieveFilteringWithActiveAccounts();
 
         //-----------LOCATION
         let _filteredByLocation = [];
 
-        switch(user.userLocation.proxyRange){
+        switch (user.userLocation.proxyRange) {
             case 'city':
-                _filteredByLocation= await Filtering.find({'_id': { $in: _activeAccounts.map(doc => doc._id) },
-                    'userLocation.city_id ': user.userLocation.city_id});
+                _filteredByLocation = await Filtering.find({
+                    '_id': { $in: _activeAccounts.map(doc => doc._id) },
+                    'userLocation.city_id ': user.userLocation.city_id
+                });
                 break;
             case 'country':
-                _filteredByLocation= await Filtering.find({'_id': { $in: _activeAccounts.map(doc => doc._id) },
-                'userLocation.country_id ': user.userLocation.country_id});
+                _filteredByLocation = await Filtering.find({
+                    '_id': { $in: _activeAccounts.map(doc => doc._id) },
+                    'userLocation.country_id ': user.userLocation.country_id
+                });
                 break;
-            case 'area1': 
-                _filteredByLocation= await Filtering.find({'_id': { $in: _activeAccounts.map(doc => doc._id) },
-                'userLocation.area1_id ': user.userLocation.area1_id});
+            case 'area1':
+                _filteredByLocation = await Filtering.find({
+                    '_id': { $in: _activeAccounts.map(doc => doc._id) },
+                    'userLocation.area1_id ': user.userLocation.area1_id
+                });
                 break;
             case 'area2':
-                _filteredByLocation= await Filtering.find({'_id': { $in: _activeAccounts.map(doc => doc._id) },
-                'userLocation.area2_id ': user.userLocation.area2_id});
+                _filteredByLocation = await Filtering.find({
+                    '_id': { $in: _activeAccounts.map(doc => doc._id) },
+                    'userLocation.area2_id ': user.userLocation.area2_id
+                });
                 break;
             case 'continent':
-                _filteredByLocation= await Filtering.find({'_id': { $in: _activeAccounts.map(doc => doc._id) },
-                'userLocation.continent ': user.userLocation.continent});
+                _filteredByLocation = await Filtering.find({
+                    '_id': { $in: _activeAccounts.map(doc => doc._id) },
+                    'userLocation.continent ': user.userLocation.continent
+                });
                 break;
             case 'global':
                 _filteredByLocation = _activeAccounts;
                 break;
 
         }
-        
+
         //--------------GENDER 
-        let _filteredByGender = await Filtering.find({
-            '_id': { $in: _filteredByLocation.map(doc => doc._id) },
-            'userGender': { $in: user.genders } 
-        });
+        let userId = "ID_DEL_USUARIO_ACTUAL"; // Aquí debes proporcionar el ID del usuario actual
+
+        let _matchingGender = await User.aggregate([
+            // Coincidir con el usuario actual por su userid
+            {
+                $match: {
+                    userid: userId
+                }
+            },
+            // Unir con la colección Filtering por el campo 'userid'
+            {
+                $lookup: {
+                    from: "Filterings",
+                    localField: "userid", // Campo en la colección Users
+                    foreignField: "userid", // Campo en la colección Filtering
+                    as: "Filtering"
+                }
+            },
+            // Descomponer el array de documentos de Filtering para que cada documento esté separado
+            { $unwind: "$Filtering" },
+            // Obtener los géneros del usuario actual y de sus preferencias de género
+            {
+                $project: {
+                    _id: 0, // Excluimos el campo _id del usuario
+                    userGender: "$gender", // Género del usuario actual
+                    userPreferences: "$Filtering.genders" // Preferencias de género del usuario actual
+                }
+            },
+            // Unir nuevamente con la colección User para encontrar usuarios con géneros similares
+            {
+                $lookup: {
+                    from: "Users",
+                    let: { userPreferences: "$userPreferences", userGender: "$userGender" },
+                    pipeline: [
+                        // Filtrar los usuarios por género que esté dentro de las preferencias del usuario actual
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $in: ["$gender", "$$userPreferences"] }, // Género del usuario en las preferencias
+                                        { $in: ["$$userGender", "$Filtering.genders"] } // Género del usuario actual en las preferencias del otro usuario
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    as: "matchedUsers"
+                }
+            }
+        ]);
+
+        console.log(_matchingGender);
+
 
         //----------------AGE 
         let fromAge = user.ageRange.fromAge
@@ -61,8 +120,8 @@ async function shuffleProfilesBasedOnUserPreferences (user) {
         let toDateToISO = toDate.toISOString();
 
         let _filteredByAge = await Filtering.find({
-            '_id': { $in: _filteredByGender.map(doc => doc._id) }, 
-            'birthday': { $gte:  fromDateToISO , $lte: toDateToISO} 
+            '_id': { $in: _filteredByGender.map(doc => doc._id) },
+            'birthday': { $gte: fromDateToISO, $lte: toDateToISO }
         });
 
         // //--------------BELIEFS
@@ -138,7 +197,7 @@ async function shuffleProfilesBasedOnUserPreferences (user) {
         //                 'politics.userPoliticalSpec': { $ne: 'center' }
         //             })
         //             break;
-                    
+
         //     }
 
         // }else{
@@ -171,9 +230,9 @@ async function shuffleProfilesBasedOnUserPreferences (user) {
         // let _filteredByWork = [];
 
         // if(user.work.shareIndustry !== 'false'){
-            
+
         //     if(user.work.shareIndustry !== 'true'){
-                
+
         //         if(user.work.userIndustry !== 'other'){
         //             _filteredByWork = await Filtering.findOne({
         //                 '_id': { $in: _filteredByLang.map(doc => doc._id) }, 
@@ -185,9 +244,9 @@ async function shuffleProfilesBasedOnUserPreferences (user) {
         //                 'work.other' : user.work.other
         //             })
         //         }
-                
+
         //     }else{
-                
+
         //         if(user.work.userIndustry !== 'other'){
         //             _filteredByWork = await Filtering.findOne({
         //                 '_id': { $in: _filteredByLang.map(doc => doc._id) }, 
@@ -200,11 +259,11 @@ async function shuffleProfilesBasedOnUserPreferences (user) {
         //             })
         //         }   
         //     }
-            
+
         // }else{
         //     _filteredByWork = _filteredByLang
         // }
-        
+
         return _filteredByAge;
     } catch (error) {
         console.log('ERROR SHUFFLING PROFILES : : ', error)
@@ -212,7 +271,7 @@ async function shuffleProfilesBasedOnUserPreferences (user) {
     }
 }
 
-async function setProfilesForUser(shuffledProfs){
+async function setProfilesForUser(shuffledProfs) {
 
     const candidateProfs = shuffledProfs;
 
@@ -237,41 +296,41 @@ async function setProfilesForUser(shuffledProfs){
     return candidateProfs;
 }
 
-async function retrieveFilteringWithActiveAccounts(){
+async function retrieveFilteringWithActiveAccounts() {
 
     User.find({ accountid: { $ne: null } })
-    .populate([
-        {path : 'accountid', model : 'Account'},
-        {path : 'userPreferences', model: 'Filtering'}
-    ]) 
-    .exec(function(err, users) { 
-      if (err) {
-        console.log('ERROR RETRIEVING ACTIVE ACCOUNTS ', err)
-        return [];
-      } else {
-        const activeUsers = users.filter(user => user.accountid.active);
-        const activeUserPreferences = activeUsers.map(user => user.userPreferences);
-        return activeUserPreferences;
-      }
-  });
+        .populate([
+            { path: 'accountid', model: 'Account' },
+            { path: 'userPreferences', model: 'Filtering' }
+        ])
+        .exec(function (err, users) {
+            if (err) {
+                console.log('ERROR RETRIEVING ACTIVE ACCOUNTS ', err)
+                return [];
+            } else {
+                const activeUsers = users.filter(user => user.accountid.active);
+                const activeUserPreferences = activeUsers.map(user => user.userPreferences);
+                return activeUserPreferences;
+            }
+        });
 }
 
 module.exports = {
-    signin : async (req, res, next)=>{
-        let {emailorlinxname, password} = req.body;
+    signin: async (req, res, next) => {
+        let { emailorlinxname, password } = req.body;
         try {
 
-            let _account = await Account.findOne({$or : [{email : emailorlinxname}, {linxname : emailorlinxname}]})
+            let _account = await Account.findOne({ $or: [{ email: emailorlinxname }, { linxname: emailorlinxname }] })
 
-            if(!_account) throw new Error ('no existe cuenta con ese email o linxname...................');
+            if (!_account) throw new Error('no existe cuenta con ese email o linxname...................');
 
-            if(bcrypt.compareSync(password, _account.password)){
+            if (bcrypt.compareSync(password, _account.password)) {
 
-                if(!_account.active) throw new Error ('ESTA CUENTA NO ESTA ACTIVADA...................');
+                if (!_account.active) throw new Error('ESTA CUENTA NO ESTA ACTIVADA...................');
 
-                let _userPrefs = await Filtering.findOne({userid : _account.userid})
+                let _userPrefs = await Filtering.findOne({ userid: _account.userid })
 
-                let _userProf = await User.findOne({userid : _account.userid});
+                let _userProf = await User.findOne({ userid: _account.userid });
 
                 // let _filteringDocs = await Filtering.find();
 
@@ -282,20 +341,20 @@ module.exports = {
                 //     console.log('STRING DIFF : ', stringdiff)
                 // })
 
-                let userData = {_userProf, preferences : _userPrefs, account : _account} 
+                let userData = { _userProf, preferences: _userPrefs, account: _account }
 
                 console.log('BACK USERDATA : ', userData)
 
                 let _jwt = jwt.sign(
-                        {
-                            userid : _account.userid,
-                            username : _account.username,
-                            email : _account.email
+                    {
+                        userid: _account.userid,
+                        username: _account.username,
+                        email: _account.email
                     },
                     process.env.JWT_SECRETKEY,
                     {
                         expiresIn: '1h',
-                            issuer: 'http://localhost:3000'
+                        issuer: 'http://localhost:3000'
                     }
                 )
 
@@ -306,12 +365,12 @@ module.exports = {
                     token: _jwt,
                     userdata: userData,
                     others: null
-               })
+                })
             }
 
         } catch (error) {
-            console.log("ERROR EN EL LOGIN .....", error)   
-            
+            console.log("ERROR EN EL LOGIN .....", error)
+
             res.status(200).send({
                 code: 1,
                 error: error.message,
@@ -319,8 +378,8 @@ module.exports = {
                 token: null,
                 userdata: null,
                 others: null
-           })
+            })
         }
     }
-    
+
 }
