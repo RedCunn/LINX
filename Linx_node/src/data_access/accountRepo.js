@@ -3,7 +3,7 @@ let Account = require('../schemas/Account');
 class AccountRepository {
 
     async createAccount(account, session){
-
+        //comprobar linxname no repetido
         try {
             await Account.create([account],session);        
             return true;
