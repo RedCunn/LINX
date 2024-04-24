@@ -241,6 +241,11 @@ const compatibilityPercentage = 0;
         //     _filteredByWork = _filteredByLang
         // }
 
+        /*
+        if(compatibilityPercentage < 0,5){
+            //no pasan el filtro
+        }
+        */
         return _filteredByGender;
     } catch (error) {
         console.log('ERROR SHUFFLING PROFILES : : ', error)
