@@ -85,7 +85,6 @@ async function shuffleProfilesBasedOnUserPreferences(user) {
 
         console.log(_filteredByGender);
 
-
         //----------------AGE 
         // let fromAge = user.ageRange.fromAge
         // let toAge = user.ageRange.toAge
@@ -101,8 +100,16 @@ async function shuffleProfilesBasedOnUserPreferences(user) {
         //     '_id': { $in: _filteredByGender.map(doc => doc._id) },
         //     'birthday': { $gte: fromDateToISO, $lte: toDateToISO }
         // });
+        // //-----------LANG
 
-        // //--------------BELIEFS
+        // let _filteredByLang = await Filtering.findOne({
+        //     '_id': { $in: _filteredByDiet.map(doc => doc._id) }, 
+        //     'language.userLanguages' : { $in: user.language.langPreferences }
+        // })
+/*
+const compatibilityPercentage = 0;
+*/
+        // //--------------BELIEFS (1/8 = 0,125)
         // let _filteredByBeliefs = [];
 
         // if(user.beliefs.shareBeliefs){
@@ -126,7 +133,7 @@ async function shuffleProfilesBasedOnUserPreferences(user) {
         // }
 
 
-        // //-------------POLITICS 
+        // //-------------POLITICS (4/8 = 0,5)
         // // autho-left || libe-left || autho-right || libe-right || some-left || some-right || center || none
         // let _filteredByPolitics = [];
 
@@ -182,7 +189,7 @@ async function shuffleProfilesBasedOnUserPreferences(user) {
         //     _filteredByPolitics = _filteredByBeliefs
         // }
 
-        // //-----------DIET
+        // //-----------DIET (2/8 = 0,25)
 
         // let _filteredByDiet = []
 
@@ -195,15 +202,7 @@ async function shuffleProfilesBasedOnUserPreferences(user) {
         //     _filteredByDiet = _filteredByPolitics
         // }
 
-
-        // //-----------LANG
-
-        // let _filteredByLang = await Filtering.findOne({
-        //     '_id': { $in: _filteredByDiet.map(doc => doc._id) }, 
-        //     'language.userLanguages' : { $in: user.language.langPreferences }
-        // })
-
-        // //--------------WORK
+        // //--------------WORK (1/8 = 0,125)
 
         // let _filteredByWork = [];
 
