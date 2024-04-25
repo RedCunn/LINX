@@ -16,6 +16,7 @@
                             <option value="artist">Artista</option>
                             <option value="album">Álbum</option>
                             <option value="track">Track</option>
+                            <option value="show">Podcast</option>
                         </select>
                         <button class="bg-indigo-500 text-white text-base rounded-lg px-4 py-2 font-thin">
                             <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -79,6 +80,19 @@
                     }
                     <p>Fecha de lanzamiento : {{item.release_date}}</p>
                     <p>Formato : {{item.album_type}}</p>
+                </div>
+            }@empty {
+                <p>No se encontraron resultados...</p>
+            }
+        }
+        @case ('show') {
+            @for(item of this.showsResults; track item.id){
+                <div>
+                    <img class="h-auto max-w-full rounded-lg" [src]="item.imgurl"
+                        alt="">
+                    <p>{{item.name}}</p>
+                    <p><strong>Presentadoras :</strong>{{item.publisher}}</p>
+                    <p><strong>Descripción :</strong> {{item.description}}</p>
                 </div>
             }@empty {
                 <p>No se encontraron resultados...</p>

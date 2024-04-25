@@ -27,21 +27,6 @@ async function requestSpotifyAccessToken() {
 }
 
 module.exports = {
-    fetchFilms: async (req, res, next) => {
-        try {
-
-        } catch (error) {
-
-        }
-    },
-    fetchPodcasts: async (req, res, next) => {
-        try {
-
-        } catch (error) {
-
-        }
-    },
-
     fetchSpotifyItems: async (req, res, next) => {
 
         let { q, type } = req.query;
@@ -85,9 +70,6 @@ module.exports = {
                         };
                         retrievedItems.push(selectedTrack);
                     });
-                    
-                                
-                    console.log("TRACKS RECUPERADOS : :: : :", retrievedItems);
                     break;
                 case 'artist':
                     _result.data.artists.items.forEach(item => {
@@ -131,8 +113,22 @@ module.exports = {
                     }
                     retrievedItems.push(selectedAlbum);
                 });                
+                    break;
+                case 'show' : 
+                    _result.data.shows.items.forEach(item => {
+                        const empturl = 'https://community.spotify.com/t5/image/serverpage/image-id/55829iC2AD64ADB887E2A5/image-size/large?v=v2&px=999';
+                        let {url} = '';
+                        if(item.images.length > 0){
+                            ({url} = item.images.find(img => img.url));
+                        }
                     
-
+                        const selectedShow = {
+                            id : item.id,
+                            
+                        }
+                        retrievedItems.push(selectedShow);
+                    });                
+                    console.log("POsCAS RECUPERADOS : :: : :", retrievedItems);
                     break;
             }
 
@@ -158,14 +154,7 @@ module.exports = {
             })
         }
     },
-    fetchAlbums: async (req, res, next) => {
-        try {
-
-        } catch (error) {
-
-        }
-    },
-    fetchArtists: async (req, res, next) => {
+    fetchFilms: async (req, res, next) => {
         try {
 
         } catch (error) {

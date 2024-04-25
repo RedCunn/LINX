@@ -5,6 +5,7 @@ import { IRestMessage } from '../../../../models/IRestMessage';
 import { ITrack } from '../../../../models/media/track';
 import { IArtist } from '../../../../models/media/artist';
 import { IAlbum } from '../../../../models/media/album';
+import { IPodcast } from '../../../../models/media/podcast';
 
 @Component({
   selector: 'app-mymusic',
@@ -22,6 +23,7 @@ export class MymusicComponent {
   public tracksResults : ITrack[] = [];
   public artistsResults : IArtist[] = [];
   public albumsResults : IAlbum[] = [];
+  public showsResults : IPodcast[] = [];
 
   async search(searchForm : NgForm){
     this.searchParams = {
@@ -58,7 +60,11 @@ export class MymusicComponent {
             _res.others.forEach((item : any)=> {
               this.albumsResults.push(item );
             });
-      
+            break;
+            case 'show': 
+            _res.others.forEach((item : any)=> {
+              this.showsResults.push(item );
+            });
             break;
         }
         
