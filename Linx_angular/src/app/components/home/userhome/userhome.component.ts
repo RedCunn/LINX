@@ -8,11 +8,11 @@ import { IArticle } from '../../../models/useraccount/IArticle';
 import { isPlatformBrowser } from '@angular/common';
 import { NgForm, FormsModule } from '@angular/forms';
 import { RestnodeService } from '../../../services/restnode.service';
-
+import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-userhome',
   standalone: true,
-  imports: [UserhomeasideComponent, MatIcon, FormsModule],
+  imports: [UserhomeasideComponent, MatIcon, FormsModule, RouterModule],
   templateUrl: './userhome.component.html',
   styleUrl: './userhome.component.css'
 })

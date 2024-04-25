@@ -1,6 +1,4 @@
 import { Routes } from '@angular/router';
-import { SpotifyService } from './services/spotify.service';
-import path from 'path';
 
 export const routes: Routes = [
     {
@@ -30,7 +28,11 @@ export const routes: Routes = [
             },
             {
                 path: 'Home',
-                loadComponent : () => import('./components/home/userhome/userhome.component').then(m=>m.UserhomeComponent)
+                loadComponent : () => import('./components/home/userhome/userhome.component').then(m=>m.UserhomeComponent),
+            },
+            {
+                path:'Home/Profile',
+                loadComponent : () => import('./components/home/userprofile/userprofile.component').then(m=>m.UserprofileComponent)
             },
             {
                 path: 'Events',
@@ -74,5 +76,10 @@ export const routes: Routes = [
             }
         ]
     
+    },
+    {
+        path:'',
+        redirectTo:'Linx/Login',
+        pathMatch:'full'
     }
 ];

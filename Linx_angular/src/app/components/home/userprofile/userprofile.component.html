@@ -1,0 +1,183 @@
+<div class="grid grid-cols-4 gap-5 mt-10">
+    <div class="col-start-2 col-span-2">
+        <ul class="grid w-full gap-6 md:grid-cols-3">
+            <li>
+                <input type="radio" (change)="selectSection($event)" checked id="hosting-small" name="section"
+                    value="account" class="hidden peer" required />
+                <label for="hosting-small"
+                    class="inline-flex items-center justify-between w-full p-3 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-blue-500 peer-checked:border-green-600 peer-checked:text-green-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">
+                    <div class="block">
+                        <div class="w-full text-lg font-semibold">Cuenta</div>
+                    </div>
+                </label>
+            </li>
+            <li>
+                <input type="radio" (change)="selectSection($event)" id="hosting-big" name="section" value="profile"
+                    class="hidden peer">
+                <label for="hosting-big"
+                    class="inline-flex items-center justify-between w-full p-3 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-blue-500 peer-checked:border-cyan-600 peer-checked:text-cyan-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">
+                    <div class="block">
+                        <div class="w-full text-lg font-semibold">Perfil</div>
+                    </div>
+                </label>
+            </li>
+            <li>
+                <input type="radio" (change)="selectSection($event)" id="hosting-big" name="section" value="preferences"
+                    class="hidden peer">
+                <label for="hosting-big"
+                    class="inline-flex items-center justify-between w-full p-3 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-blue-500 peer-checked:border-purple-600 peer-checked:text-purple-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">
+                    <div class="block">
+                        <div class="w-full text-lg font-semibold">Preferencias</div>
+                    </div>
+                </label>
+            </li>
+        </ul>
+    </div>
+    <div class="col-span-1">
+    </div>
+    <div class="col-start-2 col-span-2">
+        @if(this.isAccount()){
+        <form>
+            <div class="grid grid-cols-4 gap-5">
+                <div class="col-span-4 flex flex-col items-center mt-8">
+                    <div class="w-1/2">
+                        <label for="linxname" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Nombre de LINX</label>
+                        <input type="text" id="linxname" formControlName="linxname"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            placeholder="Giogio" required />
+                    </div>
+                </div>
+                <div class="col-span-4 flex flex-col items-center">
+                    <div class="w-1/2">
+                        <label for="email"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
+                        <input type="text" id="email" formControlName="email"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            placeholder="mail@mail.com" required />
+                    </div>
+                </div>
+                <div class="col-span-2 flex flex-col items-center">
+                    <div class="w-full">
+                        <label for="name"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nombre</label>
+                        <input type="text" id="name" formControlName="name"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            placeholder="Giorgio" required />
+                    </div>
+                </div>
+                <div class="col-span-2 flex flex-col items-center">
+                    <div class="w-full">
+                        <label for="lastname"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Apellidos</label>
+                        <input type="text" id="lastname" formControlName="lastname"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            placeholder="Apellidos" required />
+                    </div>
+                </div>
+                <div class="col-span-4 flex flex-col items-end">
+                    <button type="button" (click)="changePwd()" style="text-decoration: underline;color: green;">Cambiar contraseña</button>
+                </div>
+
+                @if(this.isChangePwd()){
+
+                    <div class="col-span-4 grid grid-cols-2 gap-5 bg-purple-200 p-6 rounded-lg">
+                        <div class="col-span-1 flex flex-col items-center mt-8">
+                            <div class="w-full">
+                                <label for="password"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Introduce tu
+                                    Contraseña</label>
+                                    <div class="flex flex-row">
+                                        <input type="password" id="password" formControlName="password"
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                            placeholder="Contraseña" required style="height: 40px;" />
+                                        <button type="button"
+                                            class="text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                                            style="height: 40px;">Autenticarme</button>
+                                    </div>                                
+                            </div>
+                        </div>
+                        <div class="col-span-1 flex flex-col justify-end">
+                            <p class="text-green-600 font-bold">Cuenta autenticada ✔</p>
+                        </div>
+                        <div class="col-span-1 flex flex-col items-center mt-3">
+                            <div class="w-full">
+                                <label for="password"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nueva
+                                    Contraseña</label>
+                                <input type="password" id="password" formControlName="password" disabled="this.isAuthenticated()"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    placeholder="Contraseña" required />
+                            </div>
+                        </div>
+                        <div class="col-span-1 flex flex-col items-center mt-3">
+                            <div class="w-full">
+                                <label for="reppassword"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Repite
+                                    la contraseña</label>
+                                <input type="password" id="reppassword" formControlName="reppassword" disabled="this.isAuthenticated()"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    placeholder="Repite tu contraseña" required/>
+                            </div>
+                        </div>
+                        <div class="col-span-1">
+                            <button type="button" (click)="this.isChangePwd.set(false)" class="pt-5" style="text-decoration: underline;">Cerrar</button>
+                        </div>
+                        <div class="col-span-1 flex justify-end">
+                            <button type="submit"
+                            class="text-white bg-purple-400 hover:bg-purple-500 focus:outline-none focus:ring-4 focus:ring-purple-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">
+                            Cambiar contraseña
+                        </button>
+                        </div>
+                    </div>
+    
+                }
+                <div class="col-span-4 text-center mt-5">
+                    <button type="submit"
+                        class="text-white bg-purple-400 hover:bg-purple-500 focus:outline-none focus:ring-4 focus:ring-purple-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">
+                        Guardar cambios
+                    </button>
+                </div>
+            </div>
+        </form>
+        }
+        @if(this.isPreference()){
+        <form>
+            <div class="grid grid-cols-4 gap-5">
+                <div class="col-span-1 flex flex-row">
+                    <div class="flex flex-col">
+                        <label>Año</label>
+                        <select id="anio" formControlName="year" class="w-fit">
+                            @for(y of this.years ; track $index){
+                            <option [value]="y">{{y}}</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="flex flex-col">
+                        <label>Mes</label>
+                        <select id="month" formControlName="month" (change)="this.loadDaysOfMonth($any($event.target).value)"
+                            class="w-fit">
+                            @for(m of this.months ; track $index){
+                            <option [value]="$index + 1">{{ m }}</option>
+                            }
+            
+                        </select>
+                    </div>
+                    <div class="flex flex-col">
+                        <label>Día</label>
+                        <select id="day" formControlName="day" class="w-fit">
+                            @for(d of this.days; track $index){
+                            <option [value]="d">{{d}}</option>
+                            }@empty {
+                            <option value="-1">día</option>
+                            }
+                        </select>
+            
+                    </div>
+                </div>
+            </div>
+        </form>
+        }
+    </div>
+
+</div>
