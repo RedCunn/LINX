@@ -5,7 +5,6 @@ export interface IFiltering{
     };
     genders : String [];
     proxyRange : string;
-    shareBeliefs : boolean;
     sharePolitics: string;
     shareDiet : boolean;
     languages : String [];

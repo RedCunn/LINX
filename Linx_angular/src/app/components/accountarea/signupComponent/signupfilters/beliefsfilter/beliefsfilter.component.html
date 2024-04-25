@@ -3,7 +3,7 @@
         <h1 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Creencias 👽</h1>
         <div class="flex flex-col">
             <fieldset class="flex flex-col">
-                <label>¿Crees que existe vida inteligente en el espacio?</label>
+                <label>¿Crees que el futuro será feminista y ecologista o no será?</label>
                 <div class="mt-5">
                     <input type="radio" name="religion" value="true" [checked]="this.userProfile.beliefs.hasReligion" (change)="this.setHasReligion($event)">
                     <label class="ms-2 me-5">Sí</label>
@@ -12,24 +12,6 @@
                 </div>
             </fieldset>
         </div>
-        <div class="flex flex-col mt-8">
-            <label>¿Quieres que nos encuentren?</label>
-            <fieldset class="flex flex-col mt-5">
-                <div>
-                    <input type="radio" name="sharebeliefs" value="true" [checked]="this.userPreferences.shareBeliefs" (change)="this.setUserBeliefsPref($event)">
-                    <label class="ms-2 me-5">Sí, quiero que nos encuentren</label>
-                </div>
-                <div>
-                    <input type="radio" name="sharebeliefs" value="false" [checked]="!this.userPreferences.shareBeliefs" (change)="this.setUserBeliefsPref($event)">
-                    <label class="ms-2 me-5">No me importa</label>
-                </div>
-                <div>
-                    <input type="radio" name="sharebeliefs" value="false" [checked]="!this.userPreferences.shareBeliefs" (change)="this.setUserBeliefsPref($event)">
-                    <label class="ms-2 me-5">No quiero que nos encuentren</label>
-                </div>
-            </fieldset>
-        </div>
-            
     </div>
     
     

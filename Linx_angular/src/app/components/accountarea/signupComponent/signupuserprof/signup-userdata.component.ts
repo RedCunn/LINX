@@ -53,7 +53,6 @@ export class SignupUserdataComponent {
     },
     genders: [],
     proxyRange: 'city',
-    shareBeliefs: false,
     sharePolitics: 'false',
     shareDiet: false,
     languages: ['Español'],
@@ -85,8 +84,7 @@ export class SignupUserdataComponent {
       global_code: ''
     },
     beliefs: {
-      hasReligion: false,
-      religion: ''
+      hasReligion: true
     },
     diet: 'omnivore',
     languages: ['Español'],

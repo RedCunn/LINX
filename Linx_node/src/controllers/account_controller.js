@@ -10,7 +10,6 @@ const { default: mongoose } = require('mongoose');
 
 const UserRepository = require('../data_access/userRepo');
 const AccountRepository = require('../data_access/accountRepo');
-const FilteringRepository = require('../data_access/filteringRepo');
 const Account = require('../schemas/Account');
 
 
@@ -95,32 +94,11 @@ module.exports = {
 
         const UserRepo = new UserRepository();
         const AccountRepo = new AccountRepository();
-        const FilteringRepo = new FilteringRepository();
 
         try {            
 
             const _user_id = uuidv4();
 
-            let _filtering = {
-                        userid : _user_id,
-                        ageRange : {
-                            fromAge : parseInt(preferences.ageRange.fromAge),
-                            toAge : parseInt(preferences.ageRange.toAge)
-                        },
-                        genders : preferences.genders,
-                        proxyRange: preferences.proxyRange,
-                        shareBeliefs :  preferences.shareBeliefs,
-                        sharePolitics : preferences.sharePolitics,
-                        shareDiet : preferences.shareDiet,
-                        languages : preferences.languages,
-                        shareIndustry : preferences.shareIndustry
-    
-                    }
-
-            let _filteringInsertResult = await FilteringRepo.createUserFiltering(_filtering, session);
-            if(!_filteringInsertResult) await session.abortTransaction();
-            console.log("INSERT RESULT - FILTERING - : ", _filteringInsertResult)
-            
             const actToken = generateToken(); 
             let now = moment();
             let expires = now.add(2,'hours');
@@ -139,7 +117,6 @@ module.exports = {
             if(!_accountInsertResult) await session.abortTransaction();
             console.log("INSERT RESULT - ACCOUNT - : ", _accountInsertResult)
             
-            const _findFilteringID = await FilteringRepo.findUserFiltering(_user_id);
             const _findAccountID = await AccountRepo.findUserAccount(_user_id);
 
             let _user = {
@@ -147,7 +124,18 @@ module.exports = {
                     accountid : _findAccountID.id,
                     name : req.body.name,
                     lastname : req.body.lastname,
-                    preferences : _findFilteringID.id,
+                    preferences : {
+                        ageRange : {
+                            fromAge : parseInt(preferences.ageRange.fromAge),
+                            toAge : parseInt(preferences.ageRange.toAge)
+                        },
+                        genders : preferences.genders,
+                        proxyRange: preferences.proxyRange,
+                        sharePolitics : preferences.sharePolitics,
+                        shareDiet : preferences.shareDiet,
+                        languages : preferences.languages,
+                        shareIndustry : preferences.shareIndustry
+                    },
                     birthday : req.body.birthday,
                     gender : req.body.gender,
                     geolocation : {
@@ -158,8 +146,7 @@ module.exports = {
                         global_code : location.global_code
                     },
                     beliefs : {
-                        hasReligion : req.body.beliefs.hasReligion,
-                        religion : req.body.beliefs.religion
+                        hasReligion : req.body.beliefs.hasReligion
                     },
                     politics : req.body.politics,
                     diet : req.body.diet,
@@ -168,7 +155,7 @@ module.exports = {
                         industry : req.body.work.industry,
                         other : req.body.work.other
                     },
-                    myCircle : []
+                    myChain : []
             }
             let _userInsertResult = await UserRepo.createUser(_user, session);
             if(!_userInsertResult) await session.abortTransaction();

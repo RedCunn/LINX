@@ -19,7 +19,6 @@ export interface IUser {
     };
     beliefs : {
         hasReligion : boolean;
-        religion? : string;
     };
     politics: string;
     diet : string;
