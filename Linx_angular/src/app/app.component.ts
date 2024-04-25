@@ -19,7 +19,7 @@ export class AppComponent implements OnInit, OnDestroy{
   title = 'Linx_angular';  
   
   public websocketsvc : WebsocketService = inject(WebsocketService);
-  public routePattern : RegExp = new RegExp("/Linx/(Login|Registro)", "g");
+  public routePattern : RegExp = new RegExp("/Linx/(Login|Registro|error)", "g");
   public showStickyFooter = signal(true);
 
 

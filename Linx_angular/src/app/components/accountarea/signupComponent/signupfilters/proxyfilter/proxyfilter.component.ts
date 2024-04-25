@@ -33,7 +33,6 @@ export class ProxyfilterComponent implements OnInit{
     navigator.geolocation.getCurrentPosition((position)=>{
       this.userCurrentLocation.latitude = position.coords.latitude;
       this.userCurrentLocation.longitude = position.coords.longitude;
-      console.log("LOCATION : ", this.userCurrentLocation);
 
       this.getCurrentAddress(this.userCurrentLocation.latitude, this.userCurrentLocation.longitude)
     })

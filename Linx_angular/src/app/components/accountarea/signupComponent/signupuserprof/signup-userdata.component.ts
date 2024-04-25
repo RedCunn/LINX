@@ -129,11 +129,8 @@ export class SignupUserdataComponent {
       this.UserProfile.account = this.UserAccount;
       this.UserProfile.preferences = this.UserPreferences;
 
-      console.log('TUS ASQUEROSAS TENDENCIAS : ', this.UserProfile)
-
       try {
         const _response: IRestMessage = await this.restnodeSvc.signupNewUser(this.UserProfile);
-        console.log('RESPUESTA DE NODE AL INTENTO DE REGISTRO : ', _response);
 
         if (_response.code === 0) {
           this.router.navigateByUrl('/Linx/SignedUp');
@@ -141,7 +138,7 @@ export class SignupUserdataComponent {
 
 
       } catch (error) {
-        console.log('ERROR EN NODE AL HACER REGISTRO DE USER : ', error)
+        this.router.navigateByUrl('/Linx/error');
       }
 
     } else {

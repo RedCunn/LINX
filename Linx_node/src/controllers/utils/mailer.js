@@ -7,7 +7,7 @@ const config = {
     secure: true,
     auth: {
         user: 'concepcion3espinas@gmail.com',
-        pass: '123mongomerge'
+        pass: 'lxmh lcyz vtnj fvey'
     }
 }
 
@@ -28,7 +28,7 @@ module.exports = {
             from: 'Concepcion Tres Espinas <concepcion3espinas@gmail.com>',
             to: mail,
             subject: 'Activa tu cuenta de LINX',
-            html: `<p>Haz clic en el siguiente enlace para activar tu cuenta: <a href="http://localhost:3000/activate_account?token=${token}">Activar cuenta LINX</a></p>`
+            html: `<p>Haz clic en el siguiente enlace para activar tu cuenta: <a href="http://localhost:3000/api/Account/activate_account?token=${token}">Activar cuenta LINX</a></p>`
         }
 
         transporter.sendMail(options, function (error, info) {

@@ -6,6 +6,10 @@ export const routes: Routes = [
         children: 
         [
             {
+                path:'error',
+                loadComponent: () => import('./components/error/errorpage.component').then(c=>c.ErrorpageComponent)
+            },
+            {
                 path : 'Inicio',
                 loadComponent : () => import('./components/meetingzone/mainComponents/mainpanel.component').then(c => c.MainpanelComponent)
             },

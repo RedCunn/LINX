@@ -35,5 +35,5 @@ router.post('/signup', AccountController.signup);
 router.post('/deleteAccount',checkJWT, AccountController.deleteAccount);
 router.post('/modifyAccount', checkJWT, AccountController.modifyAccountData);
 router.post('/resetPwd', checkJWT, AccountController.resetPassword);
-router.get('/activate_account/:token', AccountController.activateAccount)
+router.get('/activate_account', AccountController.activateAccount)
 module.exports = router;

@@ -8,11 +8,8 @@ const mailer = require('./utils/mailer')
 const places = require('./utils/googleplaces');
 
 const { default: mongoose } = require('mongoose');
-
-const UserRepository = require('../data_access/userRepo');
-const AccountRepository = require('../data_access/accountRepo');
 const Account = require('../schemas/Account');
-
+const User = require('../schemas/User');
 
 function generateToken(userdata){
     
@@ -32,8 +29,6 @@ module.exports = {
             let {lat, long} = req.query;
 
             const userlocation = await places.geocode(lat, long);
-
-            console.log('RELEVANT ADDRESS --------', userlocation.formatAddr);
 
             res.status(200).send({
                 code: 0,
@@ -57,18 +52,15 @@ module.exports = {
     },
     signup : async (req, res, next)=>{
         
-        let {preferences, account, location} = req.body; 
+        let {account, location} = req.body; 
         const session = await mongoose.startSession();
         session.startTransaction();
-
-        const UserRepo = new UserRepository();
-        const AccountRepo = new AccountRepository();
 
         try {            
 
             const _user_id = uuidv4();
 
-            const actToken = generateToken(); 
+            const actToken = generateToken({userid : _user_id, email : account.email}); 
             let now = moment();
             let expires = now.add(2,'hours');
 
@@ -82,11 +74,11 @@ module.exports = {
                         activeToken : actToken,
                         activeExpires : expires
                     }
-            let _accountInsertResult = await AccountRepo.createAccount(_account, session);
-            if(!_accountInsertResult) await session.abortTransaction();
-            console.log("INSERT RESULT - ACCOUNT - : ", _accountInsertResult)
+            let _accountInsertResult = await Account.create([_account], session);
             
-            const _findAccountID = await AccountRepo.findUserAccount(_user_id);
+            console.log("INSERT RESULT - ACCOUNT - : ", _accountInsertResult)
+                    
+            const _findAccountID = Account.findOne({ userid: _user_id });
 
             let _user = {
                     userid : _user_id,
@@ -95,15 +87,15 @@ module.exports = {
                     lastname : req.body.lastname,
                     preferences : {
                         ageRange : {
-                            fromAge : parseInt(preferences.ageRange.fromAge),
-                            toAge : parseInt(preferences.ageRange.toAge)
+                            fromAge : parseInt(req.body.preferences.ageRange.fromAge),
+                            toAge : parseInt(req.body.preferences.ageRange.toAge)
                         },
-                        genders : preferences.genders,
-                        proxyRange: preferences.proxyRange,
-                        sharePolitics : preferences.sharePolitics,
-                        shareDiet : preferences.shareDiet,
-                        languages : preferences.languages,
-                        shareIndustry : preferences.shareIndustry
+                        genders : req.body.preferences.genders,
+                        proxyRange: req.body.preferences.proxyRange,
+                        sharePolitics : req.body.preferences.sharePolitics,
+                        shareDiet : req.body.preferences.shareDiet,
+                        languages : req.body.preferences.languages,
+                        shareIndustry : req.body.preferences.shareIndustry
                     },
                     birthday : req.body.birthday,
                     gender : req.body.gender,
@@ -126,8 +118,7 @@ module.exports = {
                     },
                     myChain : []
             }
-            let _userInsertResult = await UserRepo.createUser(_user, session);
-            if(!_userInsertResult) await session.abortTransaction();
+            let _userInsertResult = await User.create([_user], session);
             console.log("INSERT RESULT - USER - : ", _userInsertResult);
 
             await session.commitTransaction();
@@ -160,30 +151,16 @@ module.exports = {
     },
     activateAccount : async (req, res, next)=>{
         try {
-            const token = req.params.token;
+            const token = req.query.token;
             const decoded = jwt.verify(token,process.env.JWT_SECRETKEY)
+            
+            console.log('DECODE : ', decoded)
 
             if(moment().isAfter(decoded.exp)){
-                res.status(400).send({
-                    code: 1,
-                    error: error.message,
-                    message: 'EXPIRED TOKEN',
-                    token: null,
-                    userData: null,
-                    others: null
-                })
+                throw Error('Expired TOken')
             }
-
             await Account.updateOne({userid:decoded.userid},{active:true});
-
-            res.status(200).send({
-                code: 0,
-                error: null,
-                message: 'CUENTA USER ACTIVA',
-                token: null,
-                userData: null,
-                others: null
-            })
+            res.redirect('http://localhost:4200/Linx/Inicio')
         } catch (error) {
             res.status(400).send({
                 code: 1,
