@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 
 let User = require('../schemas/User');
 let Account = require('../schemas/Account');
-let Filtering = require('../schemas/Filtering');
 
 async function shuffleProfilesBasedOnUserPreferences(user) {
     try {

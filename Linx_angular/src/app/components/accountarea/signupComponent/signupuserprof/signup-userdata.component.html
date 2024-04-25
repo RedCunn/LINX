@@ -35,8 +35,7 @@
             [userProfile]="this.UserProfile" (userProfileChange)="this.onUserProfileChange($event)"></app-politicsfilter>
             }
             @case (4) {
-            <app-beliefsfilter [userPreferences]="this.UserPreferences" (userPreferencesChange)="this.onUserPreferencesChange($event)"
-            [userProfile]="this.UserProfile" (userProfileChange)="this.onUserProfileChange($event)"></app-beliefsfilter>
+            <app-beliefsfilter [userProfile]="this.UserProfile" (userProfileChange)="this.onUserProfileChange($event)"></app-beliefsfilter>
             }
             @case (5) {
             <app-dietfilter [userPreferences]="this.UserPreferences" (userPreferencesChange)="this.onUserPreferencesChange($event)"

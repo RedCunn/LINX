@@ -1,6 +1,6 @@
 <div class="grid grid-cols-4 gap-5 mt-10">
-    <div class="col-auto">
-        <button (click)="goToSearchExchange()" class=" bg-lime-200 hover:bg-lime-300 flex flex-row w-full py-3 rounded-xl  justify-center">
+    <div class="col-span-1 ms-10 me-8">
+        <button (click)="goToSearchExchange()" class=" bg-lime-200 hover:bg-lime-300 flex flex-row w-full py-3 mb-2  rounded-xl  justify-center">
             <span class="material-symbols-outlined">find_replace</span>
             <p class="ps-2 pt-1">Intercambios en cadena</p>
         </button>
@@ -9,7 +9,7 @@
             <p class="ps-2 pt-1">Crear intercambiable</p>
         </button>
     </div>
-    <div class="col-span-3">
+    <div class="col-span-2">
         <ul class="grid w-full gap-6 md:grid-cols-2">
             <li>
                 <input type="radio" id="hosting-small" name="hosting" value="hosting-small" class="hidden peer" required />
@@ -28,6 +28,34 @@
                 </label>
             </li>
         </ul>
-        
     </div>
+    <div class="col-span-1">
+        <!-- nombre , descrip, tags, fotos, lista deseos -->
+    </div>
+    <div class="col-start-2 col-span-2 grid grid-cols-3 gap-3 mb-12">
+        <div class="col-span-1 mb-3 max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+            <h3 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Nombre del item</h3>
+            <p class="text-gray-400">San Fernando de Henares , Madrid , España</p>
+            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology
+                acquisitions of 2021 so far, in reverse chronological order.</p>
+            <div class="flex flex-wrap mb-5">
+                <div class="bg-gray-300 text-gray-600 w-fit rounded-lg flex flex-row px-2 me-1 mb-1">
+                    <p class="pt-1">Videojuego</p>
+                </div>
+                <div class="bg-gray-300 text-gray-600 w-fit rounded-lg flex flex-row px-2 me-1 mb-1">
+                    <p class="pt-1">Zelda</p>
+                </div>
+                <div class="bg-gray-300 text-gray-600 w-fit rounded-lg flex flex-row px-2 me-1 mb-1">
+                    <p class="pt-1">Playstation 4</p>
+                </div>
+            </div>
+            <div class="text-end">
+                <a href="#"
+                    class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-lime-500 rounded-lg hover:bg-lime-600 focus:outline-none dark:bg-lime-500 dark:hover:bg-lime-600 ">
+                    <span class="material-symbols-outlined">
+                        visibility
+                    </span>
+                </a>
+            </div>
+        </div>
 </div>

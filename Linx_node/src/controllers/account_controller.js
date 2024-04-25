@@ -5,6 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
 const mailer = require('./utils/mailer')
+const places = require('./utils/googleplaces');
 
 const { default: mongoose } = require('mongoose');
 
@@ -30,41 +31,9 @@ module.exports = {
             
             let {lat, long} = req.query;
 
-            const _res = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${long}&key=${process.env.GOOGLE_MAPS_APIKEY}`)
+            const userlocation = await places.geocode(lat, long);
 
-            //PLACE DETAILS :
-            //  const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=${campos}&key=${apiKey}`;
-
-            console.log("GOOGLE RESPONSE : ", _res.data);
-
-            
-            const countryResult = _res.data.results.find(result => result.types.includes('country'));
-            console.log("PAIS : ", countryResult)
-            
-            const cityResult = _res.data.results.find(result => result.types.includes('locality') || result.types.includes('administrative_area_level_3') ||
-            result.types.includes('postal_code'));
-            console.log("CIUDAD : ", cityResult)
-
-            const communityResult = _res.data.results.find(result => result.types.includes('administrative_area_level_1'));
-            console.log("COMUNIDAD: ", communityResult)
-            
-            const provinceResult = _res.data.results.find(result => result.types.includes('administrative_area_level_2'));
-            console.log('PROVINCIA: ', provinceResult)
-
-            const continentResult = _res.data.plus_code.global_code;
-            console.log('CONTINENTE : ', continentResult)
-
-            const relevantAddress = cityResult.formatted_address;
-
-            const userlocation = {fullLoc : {
-                country_id : countryResult.place_id,
-                city_id : cityResult.place_id,
-                area1_id : communityResult.place_id,
-                area2_id : provinceResult.place_id,
-                global_code : continentResult
-            }, formatAddr : relevantAddress};
-
-            console.log('RELEVANT ADDRESS --------', relevantAddress);
+            console.log('RELEVANT ADDRESS --------', userlocation.formatAddr);
 
             res.status(200).send({
                 code: 0,

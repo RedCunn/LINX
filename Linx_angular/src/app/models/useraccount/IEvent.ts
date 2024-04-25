@@ -6,5 +6,6 @@ export interface IEvent {
  available : boolean;
  tags : String[];
  name : String ;
+ location : String;
  description : String;
 }
