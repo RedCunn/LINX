@@ -11,7 +11,7 @@ export const routes: Routes = [
             },
             {
                 path : 'Inicio',
-                loadComponent : () => import('./components/meetingzone/mainComponents/mainpanel.component').then(c => c.MainpanelComponent)
+                loadComponent : () => import('./components/main/mainpanel.component').then(c => c.MainpanelComponent)
             },
             {
                 path: 'Registro',

@@ -309,13 +309,9 @@ module.exports = {
 
                 if (!_account.active) throw new Error('ESTA CUENTA NO ESTA ACTIVADA...................');
 
-                let _userPrefs = await Filtering.findOne({ userid: _account.userid })
+                let _userProf = await User.findOne({ userid: _account.userid });                
 
-                let _userProf = await User.findOne({ userid: _account.userid });
-
-                
-
-                let userData = { _userProf, preferences: _userPrefs, account: _account }
+                let userData = { _userProf, account: _account }
 
                 console.log('BACK USERDATA : ', userData)
 
