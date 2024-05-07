@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
-import { IFiltering } from '../../../../../models/userprofile/IFilteringProfile';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IUser } from '../../../../../models/userprofile/IUser';
 
@@ -16,8 +15,6 @@ export class GenderfilterComponent {
   @Input() validateGender! : boolean;
   @Input() userProfile! : IUser;
   @Output() userProfileChange = new EventEmitter<IUser>();
-  @Input() userPreferences !: IFiltering;
-  @Output() userPreferencesChange = new EventEmitter<IFiltering>();
   @Output() isValidGenders = new EventEmitter<boolean>;
 
   public isValid : boolean = false;
@@ -37,18 +34,16 @@ export class GenderfilterComponent {
     }else{
       this.userGenderPrefsList.update(values =>   values.filter(g => g !== selectedGen))
     }
-    this.userPreferences.genders = this.userGenderPrefsList();
+    this.userProfile.preferences.genders = this.userGenderPrefsList();
 
-    if(this.userPreferences.genders.length > 0 && this.userProfile.gender !== ''){
+    if(this.userProfile.preferences.genders.length > 0 && this.userProfile.gender !== ''){
       this.isValid = true;
       this.isValidGenders.emit(true);
       this.userProfileChange.emit(this.userProfile);
-      this.userPreferencesChange.emit(this.userPreferences)
     }else{
       this.isValid = false;
       this.isValidGenders.emit(false);
       this.userProfileChange.emit(this.userProfile);
-      this.userPreferencesChange.emit(this.userPreferences)
     }
 
   }

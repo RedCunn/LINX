@@ -67,7 +67,6 @@ let userSchema = new mongoose.Schema({
     languages: [String],
     // true || false || avoid
     shareIndustry: { type: String, default: 'false' }
-
   },
   exchanger: [{ exitemid: { type: mongoose.Schema.Types.ObjectId, ref: 'Exitem' } }],
   agenda: [{ eventid: { type: mongoose.Schema.Types.ObjectId, ref: 'Event' } }],

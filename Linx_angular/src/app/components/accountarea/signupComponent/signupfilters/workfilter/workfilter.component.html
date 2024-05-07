@@ -45,15 +45,15 @@
         <label class="mb-5">¿Quieres que encontremos a gente que trabaja en tu sector?</label>
         <fieldset>
             <div>
-                <input type="radio" name="sharejob" value="true" [checked]="this.userPreferences.shareIndustry === 'true'" (change)="this.setUserWorkPref($event)">
+                <input type="radio" name="sharejob" value="true" [checked]="this.userProfile.preferences.shareIndustry === 'true'" (change)="this.setUserWorkPref($event)">
                 <label class="ms-2 me-5">Sí, deseo conocer a gente de mi sector</label>
             </div>
             <div>
-                <input type="radio" name="sharejob" value="false" [checked]="this.userPreferences.shareIndustry === 'false'" (change)="this.setUserWorkPref($event)">
+                <input type="radio" name="sharejob" value="false" [checked]="this.userProfile.preferences.shareIndustry === 'false'" (change)="this.setUserWorkPref($event)">
                 <label class="ms-2 me-5">No me importa</label>
             </div>
             <div>
-                <input type="radio" name="sharejob" value="avoid" [checked]="this.userPreferences.shareIndustry === 'avoid'" (change)="this.setUserWorkPref($event)">
+                <input type="radio" name="sharejob" value="avoid" [checked]="this.userProfile.preferences.shareIndustry === 'avoid'" (change)="this.setUserWorkPref($event)">
                 <label class="ms-2 me-5">Deseo evitar a gente que trabaje en el mismo sector</label>
             </div>
         </fieldset>

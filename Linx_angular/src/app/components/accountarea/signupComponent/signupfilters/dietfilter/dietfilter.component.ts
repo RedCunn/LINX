@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { IFiltering } from '../../../../../models/userprofile/IFilteringProfile';
 import { IUser } from '../../../../../models/userprofile/IUser';
 
 @Component({
@@ -13,8 +12,6 @@ export class DietfilterComponent {
 
   @Input() userProfile! : IUser;
   @Output() userProfileChange = new EventEmitter<IUser>();
-  @Input() userPreferences !: IFiltering;
-  @Output() userPreferencesChange = new EventEmitter<IFiltering>();
 
   setUserDiet(event : any){
     this.userProfile.diet = event.target.value;
@@ -23,7 +20,7 @@ export class DietfilterComponent {
   setUserDietPref(event : any){
     const value = event.target.value;
     const shareDiet : boolean = (value === 'true');
-    this.userPreferences.shareDiet = shareDiet;
-    this.userPreferencesChange.emit(this.userPreferences);
+    this.userProfile.preferences.shareDiet = shareDiet;
+    this.userProfileChange.emit(this.userProfile);
   }
 }

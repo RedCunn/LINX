@@ -1,8 +1,8 @@
 import { Component, Input, Output , EventEmitter, signal, OnInit, forwardRef} from '@angular/core';
 import { MatSliderModule } from '@angular/material/slider';
-import { IFiltering } from '../../../../../models/userprofile/IFilteringProfile';
 import { AbstractControl, ControlValueAccessor, FormBuilder, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveFormsModule, ValidationErrors, Validator, Validators } from '@angular/forms';
 import { debounceTime } from 'rxjs';
+import { IUser } from '../../../../../models/userprofile/IUser';
 
 
 @Component({
@@ -19,8 +19,8 @@ import { debounceTime } from 'rxjs';
 export class AgefilterComponent implements ControlValueAccessor, Validator{
   
   @Input() validateAgeForm! : boolean;
-  @Input() userPreferences !: IFiltering;
-  @Output() userPreferencesChange = new EventEmitter<IFiltering>();
+  @Input() userProfile !: IUser;
+  @Output() userProfileChange = new EventEmitter<IUser>();
 
   private _onChange : Function = (_value : {year: number, month : number , day : number}) => {}
   private _onTouch : Function = (_value : {year: number, month : number , day : number}) => {}
@@ -85,12 +85,12 @@ export class AgefilterComponent implements ControlValueAccessor, Validator{
 
   }
   setFromAgeRange(event : any){
-   this.userPreferences.ageRange.fromAge = event.target.value;
-   this.userPreferencesChange.emit(this.userPreferences);
+   this.userProfile.preferences.ageRange.fromAge = event.target.value;
+   this.userProfileChange.emit(this.userProfile);
   }
   setToAgeRange(event : any){
-    this.userPreferences.ageRange.toAge = event.target.value;
-    this.userPreferencesChange.emit(this.userPreferences);
+    this.userProfile.preferences.ageRange.toAge = event.target.value;
+    this.userProfileChange.emit(this.userProfile);
   }
 
 

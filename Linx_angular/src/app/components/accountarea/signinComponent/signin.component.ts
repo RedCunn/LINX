@@ -47,9 +47,7 @@ export class SigninComponent {
     
     if(_response.code === 0){
       this.signalstoresvc.StoreUserData(_response.userdata);
-      console.log('RETRIEVED USERDATA : ', _response.userdata)
       this.signalstoresvc.StoreJWT(_response.token!);
-      console.log('RETRIEVED JWT : ',_response.token!)
       this.router.navigateByUrl('/Linx/Inicio');
     }else{
       this.loginerrors.update(v=> true);

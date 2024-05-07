@@ -19,37 +19,28 @@
 
             @switch (this.sectionPag()) {
             @case (0) {
-            <app-agefilter formControlName="userAge" [validateAgeForm]="validateAge" [userPreferences]="this.UserPreferences"
-                (userPreferencesChange)="this.onUserPreferencesChange($event)"></app-agefilter>
+            <app-agefilter formControlName="userAge" [validateAgeForm]="validateAge" [userProfile]="this.UserProfile"
+                (userProfileChange)="this.onUserProfileChange($event)"></app-agefilter>
             }
             @case (1) {
-            <app-proxyfilter [userPreferences]="this.UserPreferences" (userPreferencesChange)="this.onUserPreferencesChange($event)"
-            [userProfile]="this.UserProfile" (userProfileChange)="this.onUserProfileChange($event)"></app-proxyfilter>
+            <app-proxyfilter [userProfile]="this.UserProfile" (userProfileChange)="this.onUserProfileChange($event)"></app-proxyfilter>
             }
             @case (2) {
-            <app-genderfilter [validateGender]="validateGender" [userPreferences]="this.UserPreferences" [userProfile]="this.UserProfile" (userProfileChange)="this.onUserProfileChange($event)"
-                (userPreferencesChange)="this.onUserPreferencesChange($event)" (isValidGenders)="this.onValidGenders($event)"></app-genderfilter>
+            <app-genderfilter [userProfile]="this.UserProfile" (userProfileChange)="this.onUserProfileChange($event)" (isValidGenders)="this.onValidGenders($event)"></app-genderfilter>
             }
             @case (3) {
-            <app-politicsfilter [userPreferences]="this.UserPreferences" (userPreferencesChange)="this.onUserPreferencesChange($event)"
-            [userProfile]="this.UserProfile" (userProfileChange)="this.onUserProfileChange($event)"></app-politicsfilter>
+            <app-politicsfilter [userProfile]="this.UserProfile" (userProfileChange)="this.onUserProfileChange($event)"></app-politicsfilter>
             }
             @case (4) {
-            <app-beliefsfilter [userProfile]="this.UserProfile" (userProfileChange)="this.onUserProfileChange($event)"></app-beliefsfilter>
+            <app-dietfilter [userProfile]="this.UserProfile" (userProfileChange)="this.onUserProfileChange($event)"></app-dietfilter>
             }
             @case (5) {
-            <app-dietfilter [userPreferences]="this.UserPreferences" (userPreferencesChange)="this.onUserPreferencesChange($event)"
-            [userProfile]="this.UserProfile" (userProfileChange)="this.onUserProfileChange($event)"></app-dietfilter>
+            <app-langfilter [userProfile]="this.UserProfile" (userProfileChange)="this.onUserProfileChange($event)"></app-langfilter>
             }
             @case (6) {
-            <app-langfilter [userPreferences]="this.UserPreferences" (userPreferencesChange)="this.onUserPreferencesChange($event)"
-            [userProfile]="this.UserProfile" (userProfileChange)="this.onUserProfileChange($event)"></app-langfilter>
+            <app-workfilter [userProfile]="this.UserProfile" (userProfileChange)="this.onUserProfileChange($event)"></app-workfilter>
             }
             @case (7) {
-            <app-workfilter [userPreferences]="this.UserPreferences" (userPreferencesChange)="this.onUserPreferencesChange($event)"
-            [userProfile]="this.UserProfile" (userProfileChange)="this.onUserProfileChange($event)"></app-workfilter>
-            }
-            @case (8) {
             <div class="bg-purple-600 rounded-xl p-20">
                 <h1 class="font-bold text-lg text-lime-400">LO TENEMOS CASI 🥳🎊 </h1>
             </div>
@@ -65,7 +56,7 @@
                 <mat-icon>arrow_back</mat-icon>
             </button>
             }
-            @if (this.sectionPag() < 8) { <button type="button" (click)="this.nextPag()"
+            @if (this.sectionPag() < 7) { <button type="button" (click)="this.nextPag()"
                 class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                 Siguiente
                 <mat-icon>arrow_forward</mat-icon>

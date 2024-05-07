@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable} from '@angular/core';
 import { IRestMessage } from '../models/IRestMessage';
 import { Observable, lastValueFrom } from 'rxjs';
 import { IUser } from '../models/userprofile/IUser';
@@ -16,19 +16,19 @@ export class RestnodeService {
 
   public trackUserLocationGoogleGeocode(lat : number , long : number) : Promise<IRestMessage>{
 
-    const _obs = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Account/trackLocationGeocode?lat=${lat}&long=${long}`) as Observable<IRestMessage>;
-    return lastValueFrom(_obs);
+    const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Account/trackLocationGeocode?lat=${lat}&long=${long}`) as Observable<IRestMessage>;
+    return lastValueFrom(res);
 
   }
 
   public signupNewUser (newuser : IUser) : Promise<IRestMessage>{
-   const _obs = this._httpClient.post<IRestMessage>("http://localhost:3000/api/Account/signup",
+   const res = this._httpClient.post<IRestMessage>("http://localhost:3000/api/Account/signup",
    newuser,
    {
     headers: new HttpHeaders({'Content-Type' : 'application/json'})
    }
    )
-   return lastValueFrom(_obs);
+   return lastValueFrom(res);
   }
   //#endregion
 
@@ -36,13 +36,13 @@ export class RestnodeService {
 
   public signin(credentials: { emailorlinxname: string, password: string }) : Promise<IRestMessage>{
 
-    const _obs = this._httpClient.post<IRestMessage>("http://localhost:3000/api/Matching/signin",
+    const res = this._httpClient.post<IRestMessage>("http://localhost:3000/api/Account/signin",
       credentials,
       {
         headers: new HttpHeaders({ 'Content-Type': 'application/json' })
       });
 
-    return lastValueFrom(_obs);
+    return lastValueFrom(res);
   }
 
   //#endregion
@@ -50,14 +50,27 @@ export class RestnodeService {
   //#region ---------------------- UPDATE PROFILE -------------------------------
 
   public uploadArticle (content : {userid : string , article : IArticle}) : Promise<IRestMessage>{
-    const _obs = this._httpClient.post<IRestMessage>("http://localhost:3000/api/Profile/uploadArticle",
+    const res = this._httpClient.post<IRestMessage>("http://localhost:3000/api/Profile/uploadArticle",
       content,
       {
         headers: new HttpHeaders({ 'Content-Type': 'application/json' })
       });
 
-    return lastValueFrom(_obs);
+    return lastValueFrom(res);
   }
 
+  //#endregion
+
+  //#region -------------------------- SHUFFLE MATCH CANDIDATE PROFILES ----------
+
+  public shuffleCandidateProfiles (id : {userid : string}) : Promise<IRestMessage> {
+    const res = this._httpClient.post<IRestMessage>("http://localhost:3000/api/Match/shuffle",
+      id,
+      {
+        headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+      }) 
+
+    return lastValueFrom(res);
+  }
   //#endregion
 }

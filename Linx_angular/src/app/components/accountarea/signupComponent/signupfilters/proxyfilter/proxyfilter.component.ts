@@ -1,8 +1,6 @@
-import { Component, EventEmitter, Input, OnInit, Output, forwardRef, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { RestnodeService } from '../../../../../services/restnode.service';
-import { IFiltering } from '../../../../../models/userprofile/IFilteringProfile';
 import { IRestMessage } from '../../../../../models/IRestMessage';
-import { NG_VALIDATORS, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { IUser } from '../../../../../models/userprofile/IUser';
 
 @Component({
@@ -17,16 +15,14 @@ export class ProxyfilterComponent implements OnInit{
   private restnodeSvc : RestnodeService = inject(RestnodeService);
   @Input() userProfile! : IUser;
   @Output() userProfileChange = new EventEmitter<IUser>();
-  @Input() userPreferences !: IFiltering;
-  @Output() userPreferencesChange = new EventEmitter<IFiltering>();
-  
+
   public userCurrentLocation = {latitude : 0, longitude : 0}
   public userCurrentAddress : string = '';
 
   private _locationData! : any;
 
   onProxyRangeChange(){
-    this.userPreferencesChange.emit(this.userPreferences);
+    this.userProfileChange.emit(this.userProfile);
   }
 
   async trackUserCurrentLocation(){

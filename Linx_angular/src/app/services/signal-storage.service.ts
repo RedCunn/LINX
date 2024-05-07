@@ -9,7 +9,7 @@ export class SignalStorageService implements IStorageService{
 
   private _userstatesignal : WritableSignal<IUser | null> = signal<IUser | null>(null);
   private _jwtsignal : WritableSignal<string> = signal<string>('');
-
+  private _candidateprofiles : WritableSignal<IUser[] | null> = signal<IUser[] | null> (null);
 
   constructor() { }
 

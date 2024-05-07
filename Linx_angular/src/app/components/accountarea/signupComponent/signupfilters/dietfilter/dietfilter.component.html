@@ -22,11 +22,11 @@
         <label>¿Buscas gente que comparta tu dieta?</label>
         <fieldset>
             <div>
-                <input type="radio" name="sharediet" value="true" [checked]="this.userPreferences.shareDiet" (change)="this.setUserDietPref($event)">
+                <input type="radio" name="sharediet" value="true" [checked]="this.userProfile.preferences.shareDiet" (change)="this.setUserDietPref($event)">
                 <label class="ms-2 me-5">Sí, quiero que compartan mi dieta</label>
             </div>
             <div>
-                <input type="radio" name="sharediet" value="false" [checked]="!this.userPreferences.shareDiet" (change)="this.setUserDietPref($event)">
+                <input type="radio" name="sharediet" value="false" [checked]="!this.userProfile.preferences.shareDiet" (change)="this.setUserDietPref($event)">
                 <label class="ms-2 me-5">No me importa</label>
             </div>
         </fieldset>

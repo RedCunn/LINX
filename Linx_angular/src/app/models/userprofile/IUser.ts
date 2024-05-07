@@ -1,12 +1,22 @@
 import { IAccount } from "../useraccount/IAccount";
-import { IFiltering } from "./IFilteringProfile";
 
 export interface IUser {
     userid : string;
     accountid : string;
     name : string;
     lastname : string;
-    preferences : IFiltering;
+    preferences : {
+        ageRange : {
+            fromAge : number;
+            toAge : number;
+        };
+        genders : String [];
+        proxyRange : string;
+        sharePolitics: string;
+        shareDiet : boolean;
+        languages : String [];
+        shareIndustry : string;
+    };
     account : IAccount;
     birthday: string;
     gender : string;
@@ -16,9 +26,6 @@ export interface IUser {
         area1_id : string;
         area2_id : string;
         global_code : string;
-    };
-    beliefs : {
-        hasReligion : boolean;
     };
     politics: string;
     diet : string;

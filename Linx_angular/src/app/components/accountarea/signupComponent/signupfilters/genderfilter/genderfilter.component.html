@@ -16,22 +16,22 @@
                 <label>Géneros que buscas</label>
                 <fieldset class="flex flex-col mt-5">
                     <div>
-                        <input id="checkwoman" [checked]="this.userPreferences.genders.includes('woman')" type="checkbox" value="woman" (change)="this.setGenderPref($event)"
+                        <input id="checkwoman" [checked]="this.userProfile.preferences.genders.includes('woman')" type="checkbox" value="woman" (change)="this.setGenderPref($event)"
                         class="w-4 h-4 text-orange-500 bg-gray-100 border-gray-300 rounded focus:ring-orange-500 dark:focus:ring-orange-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                         <label class="ms-3">Mujer</label>
                     </div>
                     <div>
-                        <input id="checkman" [checked]="this.userPreferences.genders.includes('man')" type="checkbox"  value="man" (change)="this.setGenderPref($event)"
+                        <input id="checkman" [checked]="this.userProfile.preferences.genders.includes('man')" type="checkbox"  value="man" (change)="this.setGenderPref($event)"
                         class="w-4 h-4 text-orange-500 bg-gray-100 border-gray-300 rounded focus:ring-orange-500 dark:focus:ring-orange-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                         <label class="ms-3">Hombre</label>
                     </div>
                     <div>
-                        <input id="checknonbin" [checked]="this.userPreferences.genders.includes('nonbin')" type="checkbox"  value="nonbin" (change)="this.setGenderPref($event)"
+                        <input id="checknonbin" [checked]="this.userProfile.preferences.genders.includes('nonbin')" type="checkbox"  value="nonbin" (change)="this.setGenderPref($event)"
                         class="w-4 h-4 text-orange-500 bg-gray-100 border-gray-300 rounded focus:ring-orange-500 dark:focus:ring-orange-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                         <label class="ms-3">No binarie</label>
                     </div>
                     <div>
-                        <input id="checkfluid" [checked]="this.userPreferences.genders.includes('fluid')" type="checkbox" value="fluid" (change)="this.setGenderPref($event)"
+                        <input id="checkfluid" [checked]="this.userProfile.preferences.genders.includes('fluid')" type="checkbox" value="fluid" (change)="this.setGenderPref($event)"
                         class="w-4 h-4 text-orange-500 bg-gray-100 border-gray-300 rounded focus:ring-orange-500 dark:focus:ring-orange-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                         <label class="ms-3">Género fluido</label>
                     </div>

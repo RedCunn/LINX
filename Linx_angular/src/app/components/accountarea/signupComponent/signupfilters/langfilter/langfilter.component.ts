@@ -1,5 +1,4 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, signal } from '@angular/core';
-import { IFiltering } from '../../../../../models/userprofile/IFilteringProfile';
 import { IUser } from '../../../../../models/userprofile/IUser';
 
 @Component({
@@ -13,8 +12,6 @@ export class LangfilterComponent implements OnInit{
   
   @Input() userProfile! : IUser;
   @Output() userProfileChange = new EventEmitter<IUser>();
-  @Input() userPreferences !: IFiltering;
-  @Output() userPreferencesChange = new EventEmitter<IFiltering>();
   @ViewChild('selectUserLangs') selectUserLangs !: ElementRef;
   @ViewChild('selectUserLangPrefs') selectUserLangPrefs !: ElementRef;
   public userLangList = signal<String[]>([]);
@@ -24,8 +21,8 @@ export class LangfilterComponent implements OnInit{
    if(this.userProfile.languages.length > 0){
     this.userLangList.set(this.userProfile.languages)
    } 
-   if(this.userPreferences.languages.length > 0){
-    this.userLangPrefsList.set(this.userPreferences.languages)
+   if(this.userProfile.preferences.languages.length > 0){
+    this.userLangPrefsList.set(this.userProfile.preferences.languages)
    }
   }
 
@@ -61,13 +58,13 @@ export class LangfilterComponent implements OnInit{
       return [...values, newLang]
     })
 
-    this.userPreferences.languages = this.userLangPrefsList();
-    this.userPreferencesChange.emit(this.userPreferences);
+    this.userProfile.preferences.languages = this.userLangPrefsList();
+    this.userProfileChange.emit(this.userProfile);
   }
   removeUserLangPref(item : String) {
     this.userLangPrefsList.update(values => values.filter(l => l !== item));
-    this.userPreferences.languages = this.userLangPrefsList();
-    this.userPreferencesChange.emit(this.userPreferences);
+    this.userProfile.preferences.languages = this.userLangPrefsList();
+    this.userProfileChange.emit(this.userProfile);
   }
 
 

@@ -32,6 +32,7 @@ async function checkJWT(req, res, next) {
 
 router.get('/trackLocationGeocode', AccountController.trackLocationGeocode);
 router.post('/signup', AccountController.signup);
+router.post('/signin', AccountController.signin);
 router.post('/deleteAccount',checkJWT, AccountController.deleteAccount);
 router.post('/modifyAccount', checkJWT, AccountController.modifyAccountData);
 router.post('/resetPwd', checkJWT, AccountController.resetPassword);

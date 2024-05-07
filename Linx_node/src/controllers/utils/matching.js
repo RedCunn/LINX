@@ -1,42 +1,148 @@
 const User = require("../../schemas/User");
 
+const retrieveUsersWithActiveAccounts = async () => {
+    return User
+            .find({})
+            .populate({
+                path: 'accountid',
+                match: { active: true }
+            })
+            .then(users => {
+                return users;
+            })
+            .catch(err => {
+                console.log('ERROR RETRIEVING ACTIVE ACCOUNTS ', err)
+                return [];
+            });
+}
+
+const retrieveMatchingProfilesByLocation = async (user, searchgroup) => {
+
+    try {
+        let _filteredByUserLocationPref = [];
+        const locationkey = user.preferences.proxyRange;
+
+        const userPrefQuery = {
+            '_id': { $in: searchgroup.map(doc => doc._id) }
+        }
+
+        if (locationkey === 'global') {
+            _filteredByUserLocationPref = searchgroup
+        } else {
+            userPrefQuery[`geolocation.${locationkey}_id`] = user.geolocation[`${locationkey}_id`]
+            _filteredByUserLocationPref = await User.find(userPrefQuery);
+        }
+
+        const userMatchQuery = {
+            '_id': { $in: _filteredByUserLocationPref.map(doc => doc._id) },
+            'preferences.proxyRange': locationkey
+        }
+
+        let matchingByUsersLocationPref = await User.find(userMatchQuery);
+        return matchingByUsersLocationPref;
+
+    } catch (error) {
+        console.error('Error al recuperar perfiles coincidentes por ubicación:', error);
+        throw error;
+    }
+}
+
+const retrieveMatchingProfilesByGender = async (user, searchgroup) => {
+    try {
+        const userPrefQuery = {
+            '_id': { $in: searchgroup.map(doc => doc._id) },
+            'gender': { $in: user.preferences.genders }
+        }
+        let _filteredByUserGendersPref = await User.find(userPrefQuery)
+
+        const userMatchQuery = {
+            '_id': { $in: _filteredByUserGendersPref.map(doc => doc._id) },
+            'preferences.genders': { $in: [user.gender] }
+        }
+        let matchingByUsersGendersPref = await User.find(userMatchQuery);
+        console.log('FILTERED BY gen __________________________________________',matchingByUsersGendersPref);
+        return matchingByUsersGendersPref;
+
+    } catch (error) {
+        console.error('Error al recuperar perfiles coincidentes por género:', error);
+        throw error;
+    }
+}
+
+const retrieveMatchingProfilesByAge = async (user, searchgroup) => {
+    try {
+        const userPrefQuery = {
+            '_id': { $in: searchgroup.map(doc => doc._id) },
+            'birthday': {
+                $gte: new Date(user.preferences.ageRange.fromAge),
+                $lte: new Date(user.preferences.ageRange.toAge)
+            }
+        }
+        let _filteredByUserAgePref = await User.find(userPrefQuery);
+
+        const userMatchQuery = {
+            '_id': { $in: _filteredByUserAgePref.map(doc => doc._id) },
+            $and: [
+                { 'preferences.ageRange.fromAge': { $lte: user.birthday } },
+                { 'preferences.ageRange.toAge': { $gte: user.birthday } }
+            ]
+        }
+        
+        let matchingByUsersAgePref = await User.find(userMatchQuery);
+        console.log('FILTERED BY age __________________________________________',matchingByUsersAgePref);
+        return matchingByUsersAgePref;
+    } catch (error) {
+        console.error('Error al recuperar perfiles coincidentes por edad:', error);
+        throw error;
+    }
+}
+
+const retrieveMatchingProfilesByLanguage = async (user, searchgroup) => {
+    try {
+        const userPrefQuery = {
+            '_id': { $in: searchgroup.map(doc => doc._id) },
+            'languages': { $in: [user.preferences.languages] }
+        }
+        let _filteredByUserLangsPref = await User.find(userPrefQuery)
+
+        const userMatchQuery = {
+            '_id': { $in: _filteredByUserLangsPref.map(doc => doc._id) },
+            'preferences.languages': { $in: [user.languages] }
+        }
+        let matchingByUsersLangsPref = await User.find(userMatchQuery);
+
+        return matchingByUsersLangsPref;
+    } catch (error) {
+        console.error('Error al recuperar perfiles coincidentes por lengua:', error);
+        throw error;
+    }
+}
+
 module.exports = {
-    retrieveProfilesBasedOnUserPreferences: async (user, activeAccounts) => {
+    retrieveProfilesBasedOnCompatibility: async (user) => {
         try {
 
+            let _activeAccounts = await retrieveUsersWithActiveAccounts();
             //-----------LOCATION
 
-            let _filteredByLocation = await this.retrieveMatchingProfilesByLocation(user, activeAccounts);
-            //--------------GENDER 
-            let _filteredByGender = await this.retrieveMatchingProfilesByGender(user, _filteredByLocation);
+            let _filteredByLocation = await retrieveMatchingProfilesByLocation(user, _activeAccounts);
 
-            console.log(_filteredByGender);
+            //--------------GENDER 
+
+            let _filteredByGender = await retrieveMatchingProfilesByGender(user, _filteredByLocation);
 
             //----------------AGE 
-            // let fromAge = user.ageRange.fromAge
-            // let toAge = user.ageRange.toAge
 
-            // let fromDate = new Date();
-            // fromDate.setFullYear(fromDate.getFullYear() - fromAge);
-            // let fromDateToISO = fromDate.toISOString();
-            // let toDate = new Date();
-            // toDate.setFullYear(toDate.getFullYear() - toAge);
-            // let toDateToISO = toDate.toISOString();
+            let _filteredByAge = await retrieveMatchingProfilesByAge(user, _filteredByGender);
 
-            // let _filteredByAge = await Filtering.find({
-            //     '_id': { $in: _filteredByGender.map(doc => doc._id) },
-            //     'birthday': { $gte: fromDateToISO, $lte: toDateToISO }
-            // });
-            // //-----------LANG
+            //-----------LANG
 
-            // let _filteredByLang = await Filtering.findOne({
-            //     '_id': { $in: _filteredByDiet.map(doc => doc._id) }, 
-            //     'language.userLanguages' : { $in: user.language.langPreferences }
-            // })
+            let _filteredByLang = await retrieveMatchingProfilesByLanguage(user, _filteredByAge);
+
             /*
             const compatibilityPercentage = 0;
             */
-            // //--------------BELIEFS (1/8 = 0,125)
+            //--------------BELIEFS (1/8 = 0,125)
             // let _filteredByBeliefs = [];
 
             // if(user.beliefs.shareBeliefs){
@@ -60,7 +166,7 @@ module.exports = {
             // }
 
 
-            // //-------------POLITICS (4/8 = 0,5)
+            //-------------POLITICS (4/8 = 0,5)
             // // autho-left || libe-left || autho-right || libe-right || some-left || some-right || center || none
             // let _filteredByPolitics = [];
 
@@ -116,7 +222,7 @@ module.exports = {
             //     _filteredByPolitics = _filteredByBeliefs
             // }
 
-            // //-----------DIET (2/8 = 0,25)
+            //-----------DIET (2/8 = 0,25)
 
             // let _filteredByDiet = []
 
@@ -129,7 +235,7 @@ module.exports = {
             //     _filteredByDiet = _filteredByPolitics
             // }
 
-            // //--------------WORK (1/8 = 0,125)
+            //--------------WORK (1/8 = 0,125)
 
             // let _filteredByWork = [];
 
@@ -173,75 +279,10 @@ module.exports = {
                 //no pasan el filtro
             }
             */
-            return _filteredByGender;
+            return _filteredByLang;
         } catch (error) {
-            console.log('ERROR SHUFFLING PROFILES : : ', error)
-            return [];
-        }
-    },
-    retrieveUsersWithActiveAccounts: () => {
-        User
-            .find({ accountid: { $ne: null } })
-            .populate([
-                { path: 'accountid', model: 'Account' }
-            ])
-            .exec(function (err, users) {
-                if (err) {
-                    console.log('ERROR RETRIEVING ACTIVE ACCOUNTS ', err)
-                    return [];
-                } else {
-                    const activeUsers = users.filter(user => user.accountid.active);
-                    return activeUsers;
-                }
-            });
-    },
-    retrieveMatchingProfilesByLocation: async (user, searchgroup) => {
-
-        try {
-            let _filteredByUserLocationPref = [];
-            const locationkey = user.preferences.proxyRange;
-
-            const query1 = {
-                '_id': { $in: searchgroup.map(doc => doc._id) }
-            }
-
-            if (locationkey === 'global') {
-                _filteredByUserLocationPref = searchgroup
-            } else {
-                query1[`user.geolocation.${locationkey}_id`] = user.geolocation[`${locationkey}_id`]
-                _filteredByUserLocationPref = await User.find(query1);
-            }
-
-            let _matchingByUsersLocationPref = []
-
-            const query2 = {
-                '_id': { $in: _filteredByUserLocationPref.map(doc => doc._id) },
-                'user.preferences.proxyRange': locationkey
-            }
-
-            _matchingByUsersLocationPref = await User.find(query2);
-
-            let matchingProfiles = _filteredByUserLocationPref
-                .filter(user => _matchingByUsersLocationPref
-                    .some(prefUser => prefUser._id.equals(user._id))
-                );
-
-            return matchingProfiles;
-
-        } catch (error) {
-            console.error('Error al recuperar perfiles coincidentes por ubicación:', error);
+            console.error('ERROR AL RECUPERAR PERFILES COMPATIBLES', error);
             throw error;
-        }
-    },
-    retrieveMatchingProfilesByGender : async (user, searchgroup) => {
-        try {
-            let _filteredByUserGendersPref = [];
-            const query = {
-                '_id' : {$in : searchgroup.map(doc => doc._id)},
-            }
-
-        } catch (error) {
-            
         }
     }
 }

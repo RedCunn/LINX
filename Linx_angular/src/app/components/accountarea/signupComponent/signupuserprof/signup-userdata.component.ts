@@ -1,10 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { IFiltering } from '../../../../models/userprofile/IFilteringProfile';
 import { AgefilterComponent } from '../signupfilters/agefilter/agefilter.component';
 import { GenderfilterComponent } from '../signupfilters/genderfilter/genderfilter.component';
-import { BeliefsfilterComponent } from '../signupfilters/beliefsfilter/beliefsfilter.component';
 import { PoliticsfilterComponent } from '../signupfilters/politicsfilter/politicsfilter.component';
 import { DietfilterComponent } from '../signupfilters/dietfilter/dietfilter.component';
 import { LangfilterComponent } from '../signupfilters/langfilter/langfilter.component';
@@ -23,7 +21,6 @@ import { Router } from '@angular/router';
   imports: [ReactiveFormsModule, MatIconModule,
     AgefilterComponent,
     GenderfilterComponent,
-    BeliefsfilterComponent,
     PoliticsfilterComponent,
     DietfilterComponent,
     LangfilterComponent,
@@ -46,18 +43,6 @@ export class SignupUserdataComponent {
   public validateGender: boolean = false;
   public isValidGenders: boolean = false;
 
-  public UserPreferences: IFiltering = {
-    ageRange: {
-      fromAge: 16,
-      toAge: 120
-    },
-    genders: [],
-    proxyRange: 'city',
-    sharePolitics: 'false',
-    shareDiet: false,
-    languages: ['Español'],
-    shareIndustry: 'false'
-  }
   private UserAccount: IAccount = {
     accountid: '',
     userid: '',
@@ -72,7 +57,18 @@ export class SignupUserdataComponent {
     accountid: '',
     name: '',
     lastname: '',
-    preferences: this.UserPreferences,
+    preferences: {
+      ageRange: {
+        fromAge: 16,
+        toAge: 120
+      },
+      genders: [],
+      proxyRange: 'city',
+      sharePolitics: 'false',
+      shareDiet: false,
+      languages: ['Español'],
+      shareIndustry: 'false'
+    },
     account: this.UserAccount,
     birthday: '',
     gender: '',
@@ -82,9 +78,6 @@ export class SignupUserdataComponent {
       area1_id: '',
       area2_id: '',
       global_code: ''
-    },
-    beliefs: {
-      hasReligion: true
     },
     diet: 'omnivore',
     languages: ['Español'],
@@ -127,7 +120,6 @@ export class SignupUserdataComponent {
       this.UserProfile.name = this.userDataForm.get('name')?.value;
       this.UserProfile.lastname = this.userDataForm.get('lastname')?.value;
       this.UserProfile.account = this.UserAccount;
-      this.UserProfile.preferences = this.UserPreferences;
 
       try {
         const _response: IRestMessage = await this.restnodeSvc.signupNewUser(this.UserProfile);
@@ -166,7 +158,7 @@ export class SignupUserdataComponent {
 
     if (this.userDataForm.get('userAge')!.errors === null) {
       this.sectionPag.update((value) => {
-        if (value < 8) {
+        if (value < 7) {
           if (value === 2 && !this.isValidGenders) {
             this.validateGender = true;
             return value;
@@ -197,11 +189,7 @@ export class SignupUserdataComponent {
   onValidGenders(valid: boolean) {
     this.isValidGenders = valid;
   }
-
-  onUserPreferencesChange(newPref: any) {
-    this.UserPreferences = newPref;
-  }
-
+  
   onUserProfileChange(newProf: any) {
     this.UserProfile = newProf;
   }
