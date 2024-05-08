@@ -118,55 +118,57 @@ const retrieveMatchingProfilesByLanguage = async (user, searchgroup) => {
     }
 }
 
+const getPoliticsCompatibility = (user, linx) => {
+    try {
+        
+    } catch (error) {
+        
+    }
+}
+const getDietCompatibility = (user, linx) => {
+    try {
+        
+    } catch (error) {
+        
+    }
+}
+const getWorkCompatibility = (user, linx) => {
+    try {
+        
+    } catch (error) {
+        
+    }
+}
+
+const getCompatibilityPercentage = async (user, searchgroup) => {
+    try {
+        searchgroup.map((linx , i) => {
+            console.log(linx);
+        })
+    } catch (error) {
+        
+    }
+}
+
 module.exports = {
     retrieveProfilesBasedOnCompatibility: async (user) => {
         try {
 
+            //----------- active accounts 
             let _activeAccounts = await retrieveUsersWithActiveAccounts();
             //-----------LOCATION
-
             let _filteredByLocation = await retrieveMatchingProfilesByLocation(user, _activeAccounts);
-
             //--------------GENDER 
-
             let _filteredByGender = await retrieveMatchingProfilesByGender(user, _filteredByLocation);
-
             //----------------AGE 
-
             let _filteredByAge = await retrieveMatchingProfilesByAge(user, _filteredByGender);
-
             //-----------LANG
-
             let _filteredByLang = await retrieveMatchingProfilesByLanguage(user, _filteredByAge);
 
-            /*
-            const compatibilityPercentage = 0;
-            */
-            //--------------BELIEFS (1/8 = 0,125)
-            // let _filteredByBeliefs = [];
-
-            // if(user.beliefs.shareBeliefs){
-
-            //     if(user.beliefs.hasReligion){
-
-            //         _filteredByBeliefs = await Filtering.find({
-            //             '_id': { $in: _filteredByAge.map(doc => doc._id) }, 
-            //             'beliefs.hasReligion': true,
-            //             'beliefs.religion' : user.beliefs.religion 
-            //         })
-
-            //     }else{
-            //         _filteredByBeliefs = await Filtering.find({
-            //             '_id': { $in: _filteredByAge.map(doc => doc._id) }, 
-            //             'beliefs.hasReligion': false 
-            //         })
-            //     }
-            // }else{
-            //     _filteredByBeliefs = _filteredByAge
-            // }
-
-
-            //-------------POLITICS (4/8 = 0,5)
+            let compatibilityPercentage = 0;
+        
+            this.getCompatibilityPercentage(user, _filteredByLang);
+            //-------------POLITICS (2/4 = 0,5)
             // // autho-left || libe-left || autho-right || libe-right || some-left || some-right || center || none
             // let _filteredByPolitics = [];
 
@@ -222,7 +224,7 @@ module.exports = {
             //     _filteredByPolitics = _filteredByBeliefs
             // }
 
-            //-----------DIET (2/8 = 0,25)
+            //-----------DIET (1/4 = 0,25)
 
             // let _filteredByDiet = []
 
@@ -235,7 +237,7 @@ module.exports = {
             //     _filteredByDiet = _filteredByPolitics
             // }
 
-            //--------------WORK (1/8 = 0,125)
+            //--------------WORK (1/4 = 0,25)
 
             // let _filteredByWork = [];
 
