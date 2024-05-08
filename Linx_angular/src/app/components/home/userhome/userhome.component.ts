@@ -8,7 +8,7 @@ import { IArticle } from '../../../models/useraccount/IArticle';
 import { isPlatformBrowser } from '@angular/common';
 import { NgForm, FormsModule } from '@angular/forms';
 import { RestnodeService } from '../../../services/restnode.service';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 @Component({
   selector: 'app-userhome',
   standalone: true,
@@ -27,7 +27,7 @@ export class UserhomeComponent implements OnInit{
   private _imgbase64 : string = "";
   
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object){
+  constructor(@Inject(PLATFORM_ID) private platformId: Object, private router : Router){
     let _userdata = this.signalStoreSvc.RetrieveUserData();
 
     if(_userdata() !== null){
@@ -74,6 +74,12 @@ export class UserhomeComponent implements OnInit{
     }else{
       //EDITAR
     }
+  }
+
+  logout(){
+    this.signalStoreSvc.StoreUserData(null);
+    this.signalStoreSvc.StoreJWT(null);
+    this.router.navigateByUrl('/Linx/Login');
   }
 
   ngOnInit(): void {

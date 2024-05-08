@@ -5,6 +5,7 @@ import { SignalStorageService } from '../../services/signal-storage.service';
 import { IUser } from '../../models/userprofile/IUser';
 import { IRestMessage } from '../../models/IRestMessage';
 import { Router } from '@angular/router';
+import { IAccount } from '../../models/useraccount/IAccount';
 
 @Component({
   selector: 'app-linxscarousel',
@@ -19,10 +20,10 @@ export class LinxscarouselComponent implements OnInit{
   private signalStoreSvc : SignalStorageService = inject(SignalStorageService);
   
   public userdata! : IUser |null;
-  public candidateProfiles! : IUser[] | null ;
+  public candidateProfiles! : IAccount[] | null ;
 
   public loading = signal(true);
-  public next = signal(false);
+  public currentIndex = signal(0);
 
   constructor(private router : Router) {
     let _userdata = this.signalStoreSvc.RetrieveUserData();
@@ -34,9 +35,8 @@ export class LinxscarouselComponent implements OnInit{
   async setCandidateProfiles (){
     try{
       const response : IRestMessage = await this.restsvc.shuffleCandidateProfiles({userid : this.userdata?.userid!});
-      console.log('RESRESRES _> ', response)
       if(response.code === 0){
-        this.candidateProfiles = response.others;
+        this.candidateProfiles = response.others as IAccount[];
         this.loading.set(false);
       }else{
         this.loading.set(false);
@@ -48,8 +48,20 @@ export class LinxscarouselComponent implements OnInit{
     }
   } 
 
-  goNext(){
-    this.next() ? this.next.set(false) : this.next.set(true);
+  nextProfile(){
+    if(this.currentIndex() < this.candidateProfiles?.length!-1){
+      this.currentIndex.update((i) => i + 1); 
+    }else{
+      this.currentIndex.set(0);
+    }
+  
+  }
+  previousProfile(){
+    if(this.currentIndex() > 0){
+      this.currentIndex.update((i) => i - 1); 
+    }else{
+      this.currentIndex.set(this.candidateProfiles?.length!-1);
+    }
   }
 
  async ngOnInit(): Promise<void> {

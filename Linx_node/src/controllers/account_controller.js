@@ -15,9 +15,10 @@ function generateToken(userdata){
     
     const payload = {
             userid : userdata.userid,
-            email : userdata.email
+            email : userdata.email,
+            exp: moment().add(2, 'hours').unix()
     }
-    const token = jwt.sign(payload, process.env.JWT_SECRETKEY,{expiresIn:'2h'})
+    const token = jwt.sign(payload, process.env.JWT_SECRETKEY)
     return token;
 }
 
@@ -72,11 +73,15 @@ module.exports = {
                         password : bcrypt.hashSync(account.password,10),
                         active : false,
                         activeToken : actToken,
-                        activeExpires : expires
+                        activeExpires : expires,
+                        myChain : [],
+                        exchanger : [],
+                        agenda : []
                     }
+        
+            console.log('TOKEN EXPIRES .........', expires);
+
             let _accountInsertResult = await Account.create([_account], session);
-            
-            console.log("INSERT RESULT - ACCOUNT - : ", _accountInsertResult)
                     
             const _findAccountID = Account.findOne({ userid: _user_id });
 
@@ -106,17 +111,13 @@ module.exports = {
                         area2_id : location.area2_id,
                         global_code : location.global_code
                     },
-                    beliefs : {
-                        hasReligion : req.body.beliefs.hasReligion
-                    },
                     politics : req.body.politics,
                     diet : req.body.diet,
                     languages : req.body.languages,
                     work : {
                         industry : req.body.work.industry,
                         other : req.body.work.other
-                    },
-                    myChain : []
+                    }
             }
             let _userInsertResult = await User.create([_user], session);
             console.log("INSERT RESULT - USER - : ", _userInsertResult);
@@ -156,11 +157,11 @@ module.exports = {
             
             console.log('DECODE : ', decoded)
 
-            if(moment().isAfter(decoded.exp)){
+            if(moment().unix() > decoded.exp){
                 throw Error('Expired TOken')
             }
             await Account.updateOne({userid:decoded.userid},{active:true});
-            res.redirect('http://localhost:4200/Linx/Inicio')
+            res.redirect('http://localhost:4200/Linx/Activa')
         } catch (error) {
             res.status(400).send({
                 code: 1,

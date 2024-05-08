@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { mustloginGuard } from './guards/mustlogin.guard';
 
 export const routes: Routes = [
     {
@@ -23,6 +24,10 @@ export const routes: Routes = [
                 loadComponent : () => import('./components/accountarea/signupComponent/signedupOK/signedup-ok.component').then(c => c.SignedupOKComponent)
             },
             {
+                path : 'Activa',
+                loadComponent : () => import('./components/accountarea/signupComponent/signedupOK/activatedAccountOK/activated-ok.component').then(c => c.ActivatedOkComponent)
+            },
+            {
                 path : 'Buscaraudio',
                 loadComponent : ()=> import('./components/mediazone/musicComponents/searchaudio/mymusic.component').then(m=> m.MymusicComponent)
             },
@@ -33,10 +38,12 @@ export const routes: Routes = [
             {
                 path: 'Home',
                 loadComponent : () => import('./components/home/userhome/userhome.component').then(m=>m.UserhomeComponent),
+                canActivate : [mustloginGuard]
             },
             {
                 path:'Home/Profile',
-                loadComponent : () => import('./components/home/userprofile/userprofile.component').then(m=>m.UserprofileComponent)
+                loadComponent : () => import('./components/home/userprofile/userprofile.component').then(m=>m.UserprofileComponent),
+                canActivate : [mustloginGuard]
             },
             {
                 path: 'Events',

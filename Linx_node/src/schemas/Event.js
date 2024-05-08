@@ -2,9 +2,8 @@ const mongoose = require('mongoose');
 
 let eventSchema = mongoose.Schema({
 
-    userid : {type: String, 
-        required : [true, '*Necesitas un user_id que asociar a este evento']
-    },
+    userid : {type: String, required : [true, '*Necesitas un user_id que asociar a este evento']},
+    accountid: { type: mongoose.Schema.Types.ObjectId, ref: 'Account' , required : [true, '*Necesitas un account_id que asociar a este evento']},
     postedAt : {
         type: Date,
         required : true,

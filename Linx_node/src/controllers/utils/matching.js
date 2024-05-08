@@ -1,152 +1,244 @@
-const User = require("../../schemas/User");
+const usersFilterRepo = require('./usersFilterRepository');
 
-const retrieveUsersWithActiveAccounts = async () => {
-    return User
-            .find({})
-            .populate({
-                path: 'accountid',
-                match: { active: true }
-            })
-            .then(users => {
-                return users;
-            })
-            .catch(err => {
-                console.log('ERROR RETRIEVING ACTIVE ACCOUNTS ', err)
-                return [];
-            });
-}
-
-const retrieveMatchingProfilesByLocation = async (user, searchgroup) => {
+const getMatchingLocation = async (user, searchgroup) => {
 
     try {
-        let _filteredByUserLocationPref = [];
+        let _filteredByUserPreferences = [];
         const locationkey = user.preferences.proxyRange;
 
-        const userPrefQuery = {
-            '_id': { $in: searchgroup.map(doc => doc._id) }
-        }
-
         if (locationkey === 'global') {
-            _filteredByUserLocationPref = searchgroup
+            _filteredByUserPreferences = searchgroup;
         } else {
-            userPrefQuery[`geolocation.${locationkey}_id`] = user.geolocation[`${locationkey}_id`]
-            _filteredByUserLocationPref = await User.find(userPrefQuery);
+            _filteredByUserPreferences = searchgroup.filter(doc =>
+                doc.geolocation[`${locationkey}_id`] === user.geolocation[`${locationkey}_id`]
+            );
         }
 
-        const userMatchQuery = {
-            '_id': { $in: _filteredByUserLocationPref.map(doc => doc._id) },
-            'preferences.proxyRange': locationkey
-        }
+        const filteredByOthersPreferences = _filteredByUserPreferences.filter(doc =>
+            doc.preferences.proxyRange === locationkey
+        );
 
-        let matchingByUsersLocationPref = await User.find(userMatchQuery);
-        return matchingByUsersLocationPref;
-
+        return filteredByOthersPreferences;
     } catch (error) {
         console.error('Error al recuperar perfiles coincidentes por ubicación:', error);
         throw error;
     }
 }
 
-const retrieveMatchingProfilesByGender = async (user, searchgroup) => {
+const getMatchingGenders = async (user, searchgroup) => {
     try {
-        const userPrefQuery = {
-            '_id': { $in: searchgroup.map(doc => doc._id) },
-            'gender': { $in: user.preferences.genders }
-        }
-        let _filteredByUserGendersPref = await User.find(userPrefQuery)
+        const _filteredByUserPreferences = searchgroup.filter(doc =>
+            user.preferences.genders.includes(doc.gender)
+        );
 
-        const userMatchQuery = {
-            '_id': { $in: _filteredByUserGendersPref.map(doc => doc._id) },
-            'preferences.genders': { $in: [user.gender] }
-        }
-        let matchingByUsersGendersPref = await User.find(userMatchQuery);
-        console.log('FILTERED BY gen __________________________________________',matchingByUsersGendersPref);
-        return matchingByUsersGendersPref;
+        const filteredByOthersPreferences = _filteredByUserPreferences.filter(doc =>
+            doc.preferences.genders.includes(user.gender)
+        );
 
+        return filteredByOthersPreferences;
     } catch (error) {
         console.error('Error al recuperar perfiles coincidentes por género:', error);
         throw error;
     }
 }
 
-const retrieveMatchingProfilesByAge = async (user, searchgroup) => {
+const getMatchingAge = async (user, searchgroup) => {
     try {
-        const userPrefQuery = {
-            '_id': { $in: searchgroup.map(doc => doc._id) },
-            'birthday': {
-                $gte: new Date(user.preferences.ageRange.fromAge),
-                $lte: new Date(user.preferences.ageRange.toAge)
-            }
-        }
-        let _filteredByUserAgePref = await User.find(userPrefQuery);
+        const currentYear = new Date().getFullYear();
+        const userAge = currentYear - new Date(user.birthday).getFullYear();
 
-        const userMatchQuery = {
-            '_id': { $in: _filteredByUserAgePref.map(doc => doc._id) },
-            $and: [
-                { 'preferences.ageRange.fromAge': { $lte: user.birthday } },
-                { 'preferences.ageRange.toAge': { $gte: user.birthday } }
-            ]
-        }
-        
-        let matchingByUsersAgePref = await User.find(userMatchQuery);
-        console.log('FILTERED BY age __________________________________________',matchingByUsersAgePref);
-        return matchingByUsersAgePref;
+        const _filteredByUserPreferences = searchgroup.filter(doc => {
+            return userAge >= user.preferences.ageRange.fromAge && userAge <= user.preferences.ageRange.toAge;
+        });
+
+        const filteredByOthersPreferences = _filteredByUserPreferences.filter(doc =>
+            doc.preferences.ageRange.fromAge <= userAge && doc.preferences.ageRange.toAge >= userAge
+        );
+
+        return filteredByOthersPreferences;
     } catch (error) {
         console.error('Error al recuperar perfiles coincidentes por edad:', error);
         throw error;
     }
 }
 
-const retrieveMatchingProfilesByLanguage = async (user, searchgroup) => {
+const getMatchingLanguages = async (user, searchgroup) => {
     try {
-        const userPrefQuery = {
-            '_id': { $in: searchgroup.map(doc => doc._id) },
-            'languages': { $in: [user.preferences.languages] }
-        }
-        let _filteredByUserLangsPref = await User.find(userPrefQuery)
+        const _filteredByUserPreferences = searchgroup.filter(doc =>
+            doc.languages.some(lang => user.preferences.languages.includes(lang))
+        );
 
-        const userMatchQuery = {
-            '_id': { $in: _filteredByUserLangsPref.map(doc => doc._id) },
-            'preferences.languages': { $in: [user.languages] }
-        }
-        let matchingByUsersLangsPref = await User.find(userMatchQuery);
+        const filteredByOthersPreferences = _filteredByUserPreferences.filter(doc =>
+            doc.preferences.languages.some(lang => user.languages.includes(lang))
+        );
 
-        return matchingByUsersLangsPref;
+        return filteredByOthersPreferences;
     } catch (error) {
         console.error('Error al recuperar perfiles coincidentes por lengua:', error);
         throw error;
     }
 }
+const getAxisFromPolitics = (politics) => {
+    if (politics === 'center' || politics === 'none') {
+        return politics;
+    } else {
+        const [abs, ord] = politics.split('-');
+        return { abs, ord };
+    }
+};
+const compareAxis = (axisA, axisB) => {
+
+    if (typeof axisA === 'string' && typeof axisB === 'string') {
+        return axisA === axisB;
+    }
+    if (typeof axisA === 'object' && typeof axisB === 'object') {
+
+        return axisA.abs === axisB.abs && axisA.ord === axisB.ord;
+    }
+
+    return false;
+}
+
+const comparePolitics = (userAxis, axisToCompare, preference) => {
+    if (preference === 'true') {
+        return compareAxis(userAxis, axisToCompare);
+    } else if (preference === 'false') {
+        return true;
+    } else {
+        const prefValue = preference.split('-')[1];
+        switch (prefValue) {
+            case 'center':
+                return axisToCompare !== 'center';
+            case 'autho':
+                return axisToCompare.abs !== 'autho';
+            case 'right':
+                return axisToCompare.ord !== 'right';
+            case 'left':
+                return axisToCompare.ord !== 'left';
+            case 'none':
+                return axisToCompare !== 'none';
+            default:
+                return false;
+        }
+    }
+};
 
 const getPoliticsCompatibility = (user, linx) => {
     try {
-        
+        let percentage = 0;
+        const userAxis = getAxisFromPolitics(user.politics);
+        const linxAxis = getAxisFromPolitics(linx.politics);
+        const userPref = user.preferences.sharePolitics;
+        const linxPref = linx.preferences.sharePolitics;
+        const userMatch = comparePolitics(userAxis, linxAxis, userPref);
+        const linxMatch = comparePolitics(linxAxis, userAxis, linxPref);
+
+        if (userMatch && linxMatch) {
+            percentage += 0.5;
+        }
+
+        return percentage;
     } catch (error) {
-        
+        console.error('Error al recuperar porcentaje de compatibilidad por política:', error);
+        throw error;
+    }
+};
+
+const compareDietPreferences = (share, dietA, dietB) => {
+
+    if (share) {
+        if (dietA === dietB) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return true;
     }
 }
+
 const getDietCompatibility = (user, linx) => {
+    //-----------DIET (1/4 = 0,25)
     try {
-        
+        let percentage = 0;
+
+        const userPref = user.preferences.shareDiet;
+        const linxPref = linx.preferences.shareDiet;
+        const userMatch = compareDietPreferences(userPref, user.diet, linx.diet);
+        const linxMatch = compareDietPreferences(linxPref, linx.diet, user.diet);
+
+        if (userMatch && linxMatch) {
+            percentage += 0.25;
+        }
+
+        return percentage;
     } catch (error) {
-        
+        console.error('Error al recuperar porcentaja de compatibilidad por dieta:', error);
+        throw error;
     }
 }
+
+const compareWorkPreferences = (preference, workA, workB) => {
+    switch (preference) {
+        case 'true':
+            return workA === workB;
+        case 'false':
+            return true;
+        case 'avoid':
+            return workA !== workB;
+        default:
+            return false; 
+    }
+}
+
+
 const getWorkCompatibility = (user, linx) => {
+    //--------------WORK (1/4 = 0,25)
     try {
-        
+        // true || false || avoid
+        let percentage = 0;
+        const userWork = user.work.industry ? user.work.industry : user.work.other;
+        const linxWork = linx.work.industry ? linx.work.industry : linx.work.other;
+
+        if(userWork === '' && linxWork === ''){
+            return 0.25;
+        }
+
+        const userPref = user.preferences.shareIndustry;
+        const linxPref = linx.preferences.shareIndustry;
+        const userMatch = compareWorkPreferences(userPref, userWork, linxWork);
+        const linxMatch = compareWorkPreferences(linxPref, linxWork, userWork);
+
+        if (userMatch && linxMatch) {
+            percentage += 0.25;
+        }
+
+        return percentage;
     } catch (error) {
-        
+        console.error('Error al recuperar porcentaja de compatibilidad por trabajo:', error);
+        throw error;
     }
 }
 
 const getCompatibilityPercentage = async (user, searchgroup) => {
     try {
-        searchgroup.map((linx , i) => {
-            console.log(linx);
+        let candidateGroup = [];
+        let rate = 0;
+        searchgroup.map((linx) => {
+            const politicsRate = getPoliticsCompatibility(user, linx);
+            const dietRate = getDietCompatibility(user, linx);
+            const workRate = getWorkCompatibility(user, linx);
+
+            rate = politicsRate + dietRate + workRate;
+
+            if (rate >= 0.5) {
+                candidateGroup.push(linx)
+            }
         })
+        return candidateGroup;
     } catch (error) {
-        
+        console.error('Error al recuperar porcentaje de compatibilidad............:', error);
+        throw error;
     }
 }
 
@@ -155,133 +247,21 @@ module.exports = {
         try {
 
             //----------- active accounts 
-            let _activeAccounts = await retrieveUsersWithActiveAccounts();
+            let _activeAccounts = await usersFilterRepo.retrieveUsersWithActiveAccounts(user);
             //-----------LOCATION
-            let _filteredByLocation = await retrieveMatchingProfilesByLocation(user, _activeAccounts);
+            let _filteredByLocation = await getMatchingLocation(user, _activeAccounts);
             //--------------GENDER 
-            let _filteredByGender = await retrieveMatchingProfilesByGender(user, _filteredByLocation);
+            let _filteredByGender = await getMatchingGenders(user, _filteredByLocation);
             //----------------AGE 
-            let _filteredByAge = await retrieveMatchingProfilesByAge(user, _filteredByGender);
+            let _filteredByAge = await getMatchingAge(user, _filteredByGender);
             //-----------LANG
-            let _filteredByLang = await retrieveMatchingProfilesByLanguage(user, _filteredByAge);
+            let _filteredByLang = await getMatchingLanguages(user, _filteredByAge);
 
-            let compatibilityPercentage = 0;
-        
-            this.getCompatibilityPercentage(user, _filteredByLang);
-            //-------------POLITICS (2/4 = 0,5)
-            // // autho-left || libe-left || autho-right || libe-right || some-left || some-right || center || none
-            // let _filteredByPolitics = [];
+            const finalGroup = await getCompatibilityPercentage(user, _filteredByLang);
 
-            // if(user.politics.sharePolitcs !== 'false'){
-            //     // true || false || lessright || lessleft || lessautho || lesslibe || lessnone || lesscenter
-            //     switch(user.politics.sharePolitcs){
-            //         case 'true':
-            //             _filteredByPolitics = await Filtering.find({
-            //                 '_id': { $in: _filteredByBeliefs.map(doc => doc._id) }, 
-            //                 'politics.userPoliticalSpec': user.politics.userPoliticalSpec 
-            //             })
-            //             break;
-            //         case 'lessright':
-            //             _filteredByPolitics = await Filtering.find({
-            //                 '_id': { $in: _filteredByBeliefs.map(doc => doc._id) }, 
-            //                 'politics.userPoliticalSpec': { $not: /.*right.*/ }
-            //             })
-            //             break;
-            //         case 'lessleft':
-            //             _filteredByPolitics = await Filtering.find({
-            //                 '_id': { $in: _filteredByBeliefs.map(doc => doc._id) }, 
-            //                 'politics.userPoliticalSpec': { $not: /.*left.*/ }
-            //             })
-            //             break;
-            //         case 'lessautho':
-            //             _filteredByPolitics = await Filtering.find({
-            //                 '_id': { $in: _filteredByBeliefs.map(doc => doc._id) }, 
-            //                 'politics.userPoliticalSpec': { $not: /.*autho.*/ }
-            //             })
-            //             break;
-            //         case 'lesslibe':
-            //             _filteredByPolitics = await Filtering.find({
-            //                 '_id': { $in: _filteredByBeliefs.map(doc => doc._id) }, 
-            //                 'politics.userPoliticalSpec': { $not: /.*libe.*/ }
-            //             })
-            //             break;
-            //         case 'lessnone':
-            //             _filteredByPolitics = await Filtering.find({
-            //                 '_id': { $in: _filteredByBeliefs.map(doc => doc._id) }, 
-            //                 'politics.userPoliticalSpec': { $ne: 'none' }
-            //             })
-            //             break;
-            //         case 'lesscenter':
-            //             _filteredByPolitics = await Filtering.find({
-            //                 '_id': { $in: _filteredByBeliefs.map(doc => doc._id) }, 
-            //                 'politics.userPoliticalSpec': { $ne: 'center' }
-            //             })
-            //             break;
+            const accounts = await usersFilterRepo.retrieveAccountsFromUsers(finalGroup);
 
-            //     }
-
-            // }else{
-            //     _filteredByPolitics = _filteredByBeliefs
-            // }
-
-            //-----------DIET (1/4 = 0,25)
-
-            // let _filteredByDiet = []
-
-            // if(user.diet.shareDiet){
-            //     _filteredByDiet = await Filtering.find({
-            //         '_id': { $in: _filteredByPolitics.map(doc => doc._id) }, 
-            //         'diet.userDiet': user.diet.userDiet
-            //     })
-            // }else{
-            //     _filteredByDiet = _filteredByPolitics
-            // }
-
-            //--------------WORK (1/4 = 0,25)
-
-            // let _filteredByWork = [];
-
-            // if(user.work.shareIndustry !== 'false'){
-
-            //     if(user.work.shareIndustry !== 'true'){
-
-            //         if(user.work.userIndustry !== 'other'){
-            //             _filteredByWork = await Filtering.findOne({
-            //                 '_id': { $in: _filteredByLang.map(doc => doc._id) }, 
-            //                 'work.userIndustry' : user.work.userIndustry
-            //             })
-            //         }else{
-            //             _filteredByWork = await Filtering.findOne({
-            //                 '_id': { $in: _filteredByLang.map(doc => doc._id) }, 
-            //                 'work.other' : user.work.other
-            //             })
-            //         }
-
-            //     }else{
-
-            //         if(user.work.userIndustry !== 'other'){
-            //             _filteredByWork = await Filtering.findOne({
-            //                 '_id': { $in: _filteredByLang.map(doc => doc._id) }, 
-            //                 'work.userIndustry' : {$ne : user.work.userIndustry}
-            //             })
-            //         }else{
-            //             _filteredByWork = await Filtering.findOne({
-            //                 '_id': { $in: _filteredByLang.map(doc => doc._id) }, 
-            //                 'work.other' : {$ne : user.work.other}
-            //             })
-            //         }   
-            //     }
-
-            // }else{
-            //     _filteredByWork = _filteredByLang
-            // }
-
-            /*
-            if(compatibilityPercentage < 0,5){
-                //no pasan el filtro
-            }
-            */
-            return _filteredByLang;
+            return accounts;
         } catch (error) {
             console.error('ERROR AL RECUPERAR PERFILES COMPATIBLES', error);
             throw error;

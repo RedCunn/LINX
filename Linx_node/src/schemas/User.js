@@ -38,7 +38,6 @@ let userSchema = new mongoose.Schema({
     hasReligion: { type: Boolean, default: false },
     religion: { type: String, default: '' }
   },
-  // autho-left || libe-left || autho-right || libe-right || some-left || some-right || center || none
   politics: { type: String },
   diet: { type: String },
   languages: [String],
@@ -65,16 +64,8 @@ let userSchema = new mongoose.Schema({
     sharePolitics: { type: String, default: 'false' },
     shareDiet: { type: Boolean, default: false },
     languages: [String],
-    // true || false || avoid
     shareIndustry: { type: String, default: 'false' }
-  },
-  exchanger: [{ exitemid: { type: mongoose.Schema.Types.ObjectId, ref: 'Exitem' } }],
-  agenda: [{ eventid: { type: mongoose.Schema.Types.ObjectId, ref: 'Event' } }],
-  myChain: [
-    {
-      accountid: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
-    }
-  ]
+  }
 })
 
 module.exports = mongoose.model('User', userSchema, 'Users');

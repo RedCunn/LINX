@@ -7,6 +7,7 @@ import { IFilm } from "../media/film";
 import { IPodcast } from "../media/podcast";
 import { ITrack } from "../media/track";
 import { IGame } from "../media/game";
+import { IEvent } from "./IEvent";
 
 export interface IAccount {
     accountid : string;
@@ -17,7 +18,6 @@ export interface IAccount {
     password: string;
     active : boolean;
     articles ?: Array<IArticle>;
-    exchanger ?: Array<IExItem>;
     media ?: {
         books : Array<IBook>;
         podcasts : Array<IPodcast>;
@@ -30,5 +30,7 @@ export interface IAccount {
         }
         games : Array<IGame>;
     },
-    myCircle ?: Array<string>;
+    myChain ?: Array<string>;
+    agenda ? : Array<IEvent>;
+    exchanger ?: Array<IExItem>;
 }
