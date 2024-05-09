@@ -78,8 +78,6 @@ module.exports = {
                         exchanger : [],
                         agenda : []
                     }
-        
-            console.log('TOKEN EXPIRES .........', expires);
 
             let _accountInsertResult = await Account.create([_account], session);
                     
@@ -120,7 +118,6 @@ module.exports = {
                     }
             }
             let _userInsertResult = await User.create([_user], session);
-            console.log("INSERT RESULT - USER - : ", _userInsertResult);
 
             await session.commitTransaction();
             session.endSession();
@@ -154,8 +151,6 @@ module.exports = {
         try {
             const token = req.query.token;
             const decoded = jwt.verify(token,process.env.JWT_SECRETKEY)
-            
-            console.log('DECODE : ', decoded)
 
             if(moment().unix() > decoded.exp){
                 throw Error('Expired TOken')
@@ -188,8 +183,6 @@ module.exports = {
                 let _userProfQuery = await User.findOne({ userid: _account.userid });                
                 let _userProf = _userProfQuery.toObject();
                 let userData = { ..._userProf, accountid : _account._id, account: _account };
-
-                console.log('BACK USERDATA : ', userData)
 
                 let _jwt = jwt.sign(
                     {
@@ -246,6 +239,37 @@ module.exports = {
 
         } catch (error) {
             
+        }
+    },
+    getMyChain : async (req, res, next) => {
+        try {
+            const _userid = req.params.userid;
+
+            let _userAccount = await Account.findOne({userid : _userid});
+            
+            const _myChainPromises = _userAccount.myChain.map(async(id, i ) => {
+                const account = await Account.find({userid : id});
+                return account;
+            })
+            const accounts = await Promise.all(_myChainPromises);
+
+            res.status(200).send({
+                code: 0,
+                error: null,
+                message: 'Cadena recuperada',
+                token: null,
+                userdata: null,
+                others: accounts.flat()
+            })
+        } catch (error) {
+            res.status(200).send({
+                code: 1,
+                error: error.message,
+                message: 'Error al recuperar cadena...',
+                token: null,
+                userdata: null,
+                others: null
+            })
         }
     }
 

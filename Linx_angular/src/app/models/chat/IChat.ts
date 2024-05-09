@@ -1,7 +1,7 @@
-import { IUser } from "../userprofile/IUser";
+import { IAccount } from "../useraccount/IAccount";
 import { IMessage } from "./IMessage";
 
 export interface IChat {
-    participants : Array<IUser>;
+    participants : Array<IAccount>;
     messages : Array<IMessage>;
 }

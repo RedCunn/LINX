@@ -10,7 +10,7 @@ async function checkJWT(req, res, next) {
         let _jwt = req.headers.authorization.split(' ')[1];
         console.log('JWT en cabecera mandado por cliente...', _jwt);
 
-        const _payload = await jsonwebtoken.verify(_jwt, process.env.JWT_SECRETKEY);
+        const _payload = await jwt.verify(_jwt, process.env.JWT_SECRETKEY);
         req.payload = _payload;
         next();
 
@@ -37,4 +37,5 @@ router.post('/deleteAccount',checkJWT, AccountController.deleteAccount);
 router.post('/modifyAccount', checkJWT, AccountController.modifyAccountData);
 router.post('/resetPwd', checkJWT, AccountController.resetPassword);
 router.get('/activate_account', AccountController.activateAccount)
+router.get('/:userid/myChain', checkJWT, AccountController.getMyChain)
 module.exports = router;

@@ -36,7 +36,7 @@ let accountSchema = new mongoose.Schema({
     activeExpires: Date,
     exchanger: [{ exitemid: { type: mongoose.Schema.Types.ObjectId, ref: 'Exitem' } }],
     agenda: [{ eventid: { type: mongoose.Schema.Types.ObjectId, ref: 'Event' } }],
-    myChain: [{ accountid: { type: mongoose.Schema.Types.ObjectId, ref: 'Account' } }]
+    myChain: [{ type: String }]
 })
 
 module.exports = mongoose.model('Account', accountSchema, 'Accounts');

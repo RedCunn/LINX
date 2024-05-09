@@ -25,15 +25,21 @@
             <!-- Modal body -->
             <div class="p-4 md:p-5">
                 <ul class="my-4 space-y-3">
-                    <li>
-                        <div
-                            class="flex items-center w-full p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 dark:bg-gray-600 dark:text-white">
-                            <p class="px-2 pt-2"> <span class="material-symbols-outlined">
-                                    account_circle
-                                </span> </p>
-                            <a href="#" style="color: purple;">Giorgio Moroder</a>
+                    @for(linx of this.myChain; track linx.accountid){
+                        <li>
+                            <div
+                                class="flex items-center w-full p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 dark:bg-gray-600 dark:text-white">
+                                <p class="px-2 pt-2"> <span class="material-symbols-outlined">
+                                        account_circle
+                                    </span> </p>
+                                <a href="#" style="color: purple;">{{linx.linxname}}</a>
+                            </div>
+                        </li>
+                    }@empty {
+                        <div>
+                            <p style="color: green;">Todavía no has hecho linx...</p>
                         </div>
-                    </li>
+                    }
                 </ul>
             </div>
         </div>

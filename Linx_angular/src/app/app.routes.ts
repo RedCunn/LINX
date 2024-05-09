@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { mustloginGuard } from './guards/mustlogin.guard';
+import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
     {
@@ -38,12 +38,12 @@ export const routes: Routes = [
             {
                 path: 'Home',
                 loadComponent : () => import('./components/home/userhome/userhome.component').then(m=>m.UserhomeComponent),
-                canActivate : [mustloginGuard]
+                canActivate: [AuthGuard]
             },
             {
                 path:'Home/Profile',
                 loadComponent : () => import('./components/home/userprofile/userprofile.component').then(m=>m.UserprofileComponent),
-                canActivate : [mustloginGuard]
+                canActivate: [AuthGuard]
             },
             {
                 path: 'Events',

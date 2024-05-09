@@ -1,5 +1,6 @@
 import { Signal, WritableSignal, signal } from "@angular/core";
 import { IUser } from "./userprofile/IUser";
+import { IAccount } from "./useraccount/IAccount";
 
 export interface IStorageService {
     //#region ---------------------------- [ SYNC ] --------------------
@@ -10,6 +11,8 @@ export interface IStorageService {
     RetrieveUserData () : WritableSignal<IUser | null> ;
     RetrieveJWT () : Signal<string | null>;
 
+    StoreLinxData (newstate : IAccount | null) : void ;
+    RetrieveLinxData () : WritableSignal<IAccount | null> ;
     //#endregion
 
     //#region ---------------------------- [ ASYNC ] --------------------

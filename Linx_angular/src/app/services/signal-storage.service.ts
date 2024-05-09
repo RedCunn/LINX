@@ -1,6 +1,7 @@
 import { Injectable, Signal, WritableSignal, signal } from '@angular/core';
 import { IStorageService } from '../models/IStorageService';
 import { IUser } from '../models/userprofile/IUser';
+import { IAccount } from '../models/useraccount/IAccount';
 
 @Injectable({
   providedIn: 'root'
@@ -9,9 +10,20 @@ export class SignalStorageService implements IStorageService{
 
   private _userstatesignal : WritableSignal<IUser | null> = signal<IUser | null>(null);
   private _jwtsignal : WritableSignal<string | null> = signal<string | null>('');
-  private _candidateprofiles : WritableSignal<IUser[] | null> = signal<IUser[] | null> (null);
+  private _linxstatesignal : WritableSignal<IAccount | null> = signal<IAccount | null>(null);
 
   constructor() { }
+
+  StoreLinxData(newstate: IAccount | null): void {
+    if(newstate !== null){
+      this._linxstatesignal.update((currentstate) => ({...currentstate , ...newstate}))
+    }else{
+      this._linxstatesignal.set(null);
+    }
+  }
+  RetrieveLinxData(): WritableSignal<IAccount | null> {
+    return this._linxstatesignal;
+  }
 
   StoreUserData(newstate: IUser | null): void {
     if(newstate !== null){

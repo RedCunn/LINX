@@ -73,4 +73,16 @@ export class RestnodeService {
     return lastValueFrom(res);
   }
   //#endregion
+
+  //#region ----------------------------- MY CHAIN --------------------------------
+
+  public getMyChain (userid : string, jwt : string) : Promise<IRestMessage>{
+    const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Account/${userid}/myChain`,
+    {
+     headers : new HttpHeaders({'Authorization': `Bearer ${jwt}`}) 
+    }
+    );
+    return lastValueFrom(res);
+  }
+  //#endregion
 }

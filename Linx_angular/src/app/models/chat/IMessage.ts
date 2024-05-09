@@ -1,7 +1,7 @@
-import { IUser } from "../userprofile/IUser";
+import { IAccount } from "../useraccount/IAccount";
 
 export interface IMessage {
     text : String;
     timestamp : String;
-    sender : IUser;
+    sender : IAccount;
 }
