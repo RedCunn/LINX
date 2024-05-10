@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { IRestMessage } from '../../../models/IRestMessage';
 import { RestnodeService } from '../../../services/restnode.service';
 import { SignalStorageService } from '../../../services/signal-storage.service';
+import { WebsocketService } from '../../../services/websocket.service';
 
 @Component({
   selector: 'app-signin',
@@ -14,6 +15,7 @@ import { SignalStorageService } from '../../../services/signal-storage.service';
 })
 export class SigninComponent {
 
+  private socketSvc = inject(WebsocketService);
   private signalstoresvc : SignalStorageService = inject(SignalStorageService);
   @ViewChild('emailorlinxname') emailorlinxname!: ElementRef;
   @ViewChild('password') password!: ElementRef;
@@ -48,6 +50,7 @@ export class SigninComponent {
     if(_response.code === 0){
       this.signalstoresvc.StoreUserData(_response.userdata);
       this.signalstoresvc.StoreJWT(_response.token!);
+      this.socketSvc.userLogin();
       this.router.navigateByUrl('/Linx/Inicio');
     }else{
       this.loginerrors.update(v=> true);

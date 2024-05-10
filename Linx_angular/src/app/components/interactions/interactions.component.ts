@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input, signal } from '@angular/core';
 
 @Component({
   selector: 'app-interactions',
@@ -9,4 +9,9 @@ import { Component } from '@angular/core';
 })
 export class InteractionsComponent {
 
+  @Input() isOpen = signal(false)
+
+  closeModal(){
+    this.isOpen.set(false);
+  }
 }

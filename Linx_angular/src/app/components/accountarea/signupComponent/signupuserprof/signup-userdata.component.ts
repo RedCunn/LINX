@@ -44,7 +44,7 @@ export class SignupUserdataComponent {
   public isValidGenders: boolean = false;
 
   private UserAccount: IAccount = {
-    accountid: '',
+    _id: '',
     userid: '',
     createdAt: '',
     linxname: '',

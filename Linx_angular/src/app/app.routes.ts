@@ -46,6 +46,11 @@ export const routes: Routes = [
                 canActivate: [AuthGuard]
             },
             {
+                path:'Profile/:linxname',
+                loadComponent : () => import('./components/home/userhome/userhome.component').then(m=>m.UserhomeComponent),
+                canActivate: [AuthGuard]
+            },
+            {
                 path: 'Events',
                 loadComponent : () => import('./components/home/eventscomponents/eventspanel/eventspanel.component').then(m=> m.EventspanelComponent)
             },

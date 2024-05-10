@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { RestnodeService } from '../../services/restnode.service';
 import { SignalStorageService } from '../../services/signal-storage.service';
 import { IUser } from '../../models/userprofile/IUser';
@@ -14,6 +14,12 @@ import { Router } from '@angular/router';
 })
 export class MyChainComponent implements OnInit{
 
+  @Input() isOpen = signal(false);
+
+  closeModal() {
+    this.isOpen.set(false);
+  }
+
   private restSvc = inject(RestnodeService);
   private signalStorageSvc = inject(SignalStorageService);
   private router = inject(Router);
@@ -22,8 +28,9 @@ export class MyChainComponent implements OnInit{
   public myChain! : IAccount[];
 
   goToLinxProfile(linx : IAccount){
+    this.isOpen.set(false);
     this.signalStorageSvc.StoreLinxData(linx);
-    this.router.navigateByUrl(`/Linx/Profile/${linx.accountid}`);
+    this.router.navigateByUrl(`/Linx/Profile/${linx.linxname}`);
   }
   
   async getMyChain(){
@@ -31,7 +38,6 @@ export class MyChainComponent implements OnInit{
       const res = await this.restSvc.getMyChain(this._user?.userid!, this._jwt!);
 
       if(res.code === 0){
-        console.log('ACCOUNTS on chain : ', res.others)
         this.myChain = res.others;
       }else{
         console.log('mychain never found...')

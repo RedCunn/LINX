@@ -1,42 +1,53 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Socket, io } from 'socket.io-client';
+import { SignalStorageService } from './signal-storage.service';
+import { IUser } from '../models/userprofile/IUser';
+import { IMessage } from '../models/chat/IMessage';
+import { IAccount } from '../models/useraccount/IAccount';
 
-const socket: Socket = io("http://localhost:3000", { autoConnect: false, port: 3000, timeout: 10000, withCredentials : true })
+const socket: Socket = io("http://localhost:3000")
 
 @Injectable({
   providedIn: 'root'
 })
-export class WebsocketService {
+export class WebsocketService{
+
+  private signalStorageSvc = inject(SignalStorageService);
+  private userConnected! : object | null;
 
   constructor() { }
 
-  connect() {
-    socket.connect()
-
-    socket.emit("test","inicio",(res : any)=> { console.log('RES OK : ', res.status)})
-
-    socket.io.on('ping', ()=> { console.log('PONG')})
-
-    socket.on("connect_error", (err)=> {
-      console.log('ERROR DE CONEEXIOM ', err)
-    })
-  }
-
   disconnect(){
     socket.disconnect();
+    socket.removeAllListeners();
   }
 
-  sendMessage(){
-      socket.emit("message","chat",(res : any)=> { 
+  connect() {
+    socket.connect()
+    socket.on('connect', ()=> { console.log('CONNECTED TO SOCKET ........................')});
+  }
+
+  userLogin(){
+    const _usersignal = this.signalStorageSvc.RetrieveUserData();
+    const _user = _usersignal();
+    this.userConnected = {accountid : _user?.account!._id, linxname : _user?.account!.linxname}; 
+    socket.emit('userConnected', {user : this.userConnected})
+  }
+
+  sendMessage(message : IMessage){
+      socket.emit("chat_message",{message},(res : any)=> { 
         console.log('RES OK : ', res.status)
       }
     )
   }
-  receiveMessage(){
-    socket.on('inbox', ()=> {
-      console.log('')
-    })
+  receiveMessage(): Promise<IMessage> {
+    return new Promise((resolve, reject) => {
+      socket.on('chat_message', (res: any) => {
+        resolve(res.message); 
+      });
+    });
   }
+  
   linxmatch(){
     socket.on('match', ()=> {
       

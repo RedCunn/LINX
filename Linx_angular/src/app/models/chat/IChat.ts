@@ -2,6 +2,7 @@ import { IAccount } from "../useraccount/IAccount";
 import { IMessage } from "./IMessage";
 
 export interface IChat {
-    participants : Array<IAccount>;
+    chatid : string;
+    participants : {userid : string; linxaccountid : string;};
     messages : Array<IMessage>;
 }

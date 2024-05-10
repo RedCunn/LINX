@@ -10,7 +10,7 @@ import { IGame } from "../media/game";
 import { IEvent } from "./IEvent";
 
 export interface IAccount {
-    accountid : string;
+    _id? : string;
     userid : string;
     createdAt : string;
     linxname : string;

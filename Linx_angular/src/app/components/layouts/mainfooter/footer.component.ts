@@ -1,26 +1,43 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, ViewChild, signal } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { ConversationsComponent } from '../../chat/conversations/conversations.component';
 import { InteractionsComponent } from '../../interactions/interactions.component';
 import { MyChainComponent } from '../../mychain/mychain.component';
+import { ModaldraftComponent } from '../../pruebamodal/modaldraft.component';
 
 @Component({
   selector: 'app-footer',
   standalone: true,
-  imports: [MatIcon, ConversationsComponent, InteractionsComponent, MyChainComponent],
+  imports: [MatIcon, ConversationsComponent, InteractionsComponent, MyChainComponent, ModaldraftComponent],
   templateUrl: './footer.component.html',
   styleUrl: './footer.component.css'
 })
-export class FooterComponent {
+export class FooterComponent{
 
-  
+  public isMyChainOpen = signal(false);
+  public isChatsOpen = signal(false);
+  public isInteractionsOpen = signal(false);
+  public isDraftOpen = signal(false);
+
+  toggleDraftModal() {
+    this.isDraftOpen.update(v => !v)  
+  }
+
   toggleChatsModal() {
-    
+    this.isChatsOpen.update(v => !v)  
+    this.isInteractionsOpen.set(false);
+    this.isMyChainOpen.set(false);
   }
-  openInteractions() {
+  toggleInteractionsModal() {
+    this.isInteractionsOpen.update(v => !v)
+    this.isChatsOpen.set(false);
+    this.isMyChainOpen.set(false);
+  }
+  
+  toggleMyChainModal() {
+    this.isMyChainOpen.update(v => !v);
+    this.isInteractionsOpen.set(false);
+    this.isChatsOpen.set(false);
+  }
 
-  }
-  openCircle() {
-
-  }
 }

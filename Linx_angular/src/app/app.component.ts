@@ -27,22 +27,21 @@ export class AppComponent implements OnInit, OnDestroy{
     this.router.events.subscribe((event: Event) => {
       if (event instanceof NavigationStart ) {
         if(event.url.match(this.routePattern)){
-          this.showStickyFooter.update(show => false)
+          this.showStickyFooter.set( false)
         }else{
-          this.showStickyFooter.update(show => true)
+          this.showStickyFooter.set(true)
         }
       }
     })
   }
   ngOnInit(): void {
-    // this.websocketsvc.connect()
+    //this.websocketsvc.connect()
     if (isPlatformBrowser(this.platformId)) {
       initFlowbite();
     }
   }
   ngOnDestroy(): void {
     //this.websocketsvc.disconnect()
-    console.log('adioh')
   }
 
 

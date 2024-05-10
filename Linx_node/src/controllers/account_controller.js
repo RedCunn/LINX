@@ -10,24 +10,25 @@ const places = require('./utils/googleplaces');
 const { default: mongoose } = require('mongoose');
 const Account = require('../schemas/Account');
 const User = require('../schemas/User');
+const Chat = require('../schemas/Chat');
 
-function generateToken(userdata){
-    
+function generateToken(userdata) {
+
     const payload = {
-            userid : userdata.userid,
-            email : userdata.email,
-            exp: moment().add(2, 'hours').unix()
+        userid: userdata.userid,
+        email: userdata.email,
+        exp: moment().add(2, 'hours').unix()
     }
     const token = jwt.sign(payload, process.env.JWT_SECRETKEY)
     return token;
 }
 
 module.exports = {
-    
-    trackLocationGeocode : async (req, res, next) => {
+
+    trackLocationGeocode: async (req, res, next) => {
         try {
-            
-            let {lat, long} = req.query;
+
+            let { lat, long } = req.query;
 
             const userlocation = await places.geocode(lat, long);
 
@@ -38,7 +39,7 @@ module.exports = {
                 token: null,
                 userData: null,
                 others: userlocation
-           })
+            })
 
         } catch (error) {
             res.status(400).send({
@@ -51,71 +52,71 @@ module.exports = {
             })
         }
     },
-    signup : async (req, res, next)=>{
-        
-        let {account, location} = req.body; 
+    signup: async (req, res, next) => {
+
+        let { account, location } = req.body;
         const session = await mongoose.startSession();
         session.startTransaction();
 
-        try {            
+        try {
 
             const _user_id = uuidv4();
 
-            const actToken = generateToken({userid : _user_id, email : account.email}); 
+            const actToken = generateToken({ userid: _user_id, email: account.email });
             let now = moment();
-            let expires = now.add(2,'hours');
+            let expires = now.add(2, 'hours');
 
             let _account = {
-                        userid : _user_id,
-                        createdAt : account.createdAt,
-                        linxname : account.linxname,
-                        email : account.email,
-                        password : bcrypt.hashSync(account.password,10),
-                        active : false,
-                        activeToken : actToken,
-                        activeExpires : expires,
-                        myChain : [],
-                        exchanger : [],
-                        agenda : []
-                    }
+                userid: _user_id,
+                createdAt: account.createdAt,
+                linxname: account.linxname,
+                email: account.email,
+                password: bcrypt.hashSync(account.password, 10),
+                active: false,
+                activeToken: actToken,
+                activeExpires: expires,
+                myChain: [],
+                exchanger: [],
+                agenda: []
+            }
 
             let _accountInsertResult = await Account.create([_account], session);
-                    
+
             const _findAccountID = Account.findOne({ userid: _user_id });
 
             let _user = {
-                    userid : _user_id,
-                    accountid : _findAccountID.id,
-                    name : req.body.name,
-                    lastname : req.body.lastname,
-                    preferences : {
-                        ageRange : {
-                            fromAge : parseInt(req.body.preferences.ageRange.fromAge),
-                            toAge : parseInt(req.body.preferences.ageRange.toAge)
-                        },
-                        genders : req.body.preferences.genders,
-                        proxyRange: req.body.preferences.proxyRange,
-                        sharePolitics : req.body.preferences.sharePolitics,
-                        shareDiet : req.body.preferences.shareDiet,
-                        languages : req.body.preferences.languages,
-                        shareIndustry : req.body.preferences.shareIndustry
+                userid: _user_id,
+                accountid: _findAccountID.id,
+                name: req.body.name,
+                lastname: req.body.lastname,
+                preferences: {
+                    ageRange: {
+                        fromAge: parseInt(req.body.preferences.ageRange.fromAge),
+                        toAge: parseInt(req.body.preferences.ageRange.toAge)
                     },
-                    birthday : req.body.birthday,
-                    gender : req.body.gender,
-                    geolocation : {
-                        country_id : location.country_id,
-                        city_id : location.city_id,
-                        area1_id : location.area1_id,
-                        area2_id : location.area2_id,
-                        global_code : location.global_code
-                    },
-                    politics : req.body.politics,
-                    diet : req.body.diet,
-                    languages : req.body.languages,
-                    work : {
-                        industry : req.body.work.industry,
-                        other : req.body.work.other
-                    }
+                    genders: req.body.preferences.genders,
+                    proxyRange: req.body.preferences.proxyRange,
+                    sharePolitics: req.body.preferences.sharePolitics,
+                    shareDiet: req.body.preferences.shareDiet,
+                    languages: req.body.preferences.languages,
+                    shareIndustry: req.body.preferences.shareIndustry
+                },
+                birthday: req.body.birthday,
+                gender: req.body.gender,
+                geolocation: {
+                    country_id: location.country_id,
+                    city_id: location.city_id,
+                    area1_id: location.area1_id,
+                    area2_id: location.area2_id,
+                    global_code: location.global_code
+                },
+                politics: req.body.politics,
+                diet: req.body.diet,
+                languages: req.body.languages,
+                work: {
+                    industry: req.body.work.industry,
+                    other: req.body.work.other
+                }
             }
             let _userInsertResult = await User.create([_user], session);
 
@@ -147,15 +148,15 @@ module.exports = {
             })
         }
     },
-    activateAccount : async (req, res, next)=>{
+    activateAccount: async (req, res, next) => {
         try {
             const token = req.query.token;
-            const decoded = jwt.verify(token,process.env.JWT_SECRETKEY)
+            const decoded = jwt.verify(token, process.env.JWT_SECRETKEY)
 
-            if(moment().unix() > decoded.exp){
+            if (moment().unix() > decoded.exp) {
                 throw Error('Expired TOken')
             }
-            await Account.updateOne({userid:decoded.userid},{active:true});
+            await Account.updateOne({ userid: decoded.userid }, { active: true });
             res.redirect('http://localhost:4200/Linx/Activa')
         } catch (error) {
             res.status(400).send({
@@ -180,9 +181,9 @@ module.exports = {
 
                 if (!_account.active) throw new Error('ESTA CUENTA NO ESTA ACTIVADA...................');
 
-                let _userProfQuery = await User.findOne({ userid: _account.userid });                
+                let _userProfQuery = await User.findOne({ userid: _account.userid });
                 let _userProf = _userProfQuery.toObject();
-                let userData = { ..._userProf, accountid : _account._id, account: _account };
+                let userData = { ..._userProf, accountid: _account._id, account: _account };
 
                 let _jwt = jwt.sign(
                     {
@@ -220,35 +221,35 @@ module.exports = {
             })
         }
     },
-    resetPassword : async (req, res, next)=>{
+    resetPassword: async (req, res, next) => {
         try {
 
         } catch (error) {
-            
+
         }
     },
-    modifyAccountData : async (req, res, next)=>{
+    modifyAccountData: async (req, res, next) => {
         try {
 
         } catch (error) {
-            
+
         }
     },
-    deleteAccount : async (req, res, next)=>{
+    deleteAccount: async (req, res, next) => {
         try {
 
         } catch (error) {
-            
+
         }
     },
-    getMyChain : async (req, res, next) => {
+    getMyChain: async (req, res, next) => {
         try {
             const _userid = req.params.userid;
 
-            let _userAccount = await Account.findOne({userid : _userid});
-            
-            const _myChainPromises = _userAccount.myChain.map(async(id, i ) => {
-                const account = await Account.find({userid : id});
+            let _userAccount = await Account.findOne({ userid: _userid });
+
+            const _myChainPromises = _userAccount.myChain.map(async (id, i) => {
+                const account = await Account.find({ userid: id });
                 return account;
             })
             const accounts = await Promise.all(_myChainPromises);
@@ -266,6 +267,30 @@ module.exports = {
                 code: 1,
                 error: error.message,
                 message: 'Error al recuperar cadena...',
+                token: null,
+                userdata: null,
+                others: null
+            })
+        }
+    },
+    getChats: async (req, res, next) => {
+        try {
+            const _userid = req.params.userid;
+            let _chats = await Chat.find({"participants.userid" : _userid});
+
+            res.status(200).send({
+                code: 0,
+                error: null,
+                message: 'CHATS RECUPERADOS',
+                token: null,
+                userdata: null,
+                others: _chats
+            })
+        } catch (error) {
+            res.status(400).send({
+                code: 1,
+                error: error.message,
+                message: 'ERROR AL RECUPERAR CHATS',
                 token: null,
                 userdata: null,
                 others: null
