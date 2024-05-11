@@ -89,7 +89,7 @@ export class RestnodeService {
 
   //#region -------------------------------- CHAT ---------------------------------
   public getMyChats(userid: string, jwt: string): Promise<IRestMessage> {
-    const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Account/${userid}/chats`,
+    const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Account/${userid}/chat`,
       {
         headers: new HttpHeaders({ 'Authorization': `Bearer ${jwt}` })
       }
@@ -97,8 +97,8 @@ export class RestnodeService {
     return lastValueFrom(res);
   }
 
-  public senMessage(jwt: string, userid : string, chatid : string, message: IMessage) {
-    this._httpClient.post(`http://localhost:3000/api/Account/${userid}/chat/${chatid}/message`, 
+  public storeMessage(jwt: string, userid : string, chatid : string, message: IMessage) {
+    this._httpClient.post(`http://localhost:3000/api/Account/${userid}/chat/${chatid}`, 
     message,
     {
       headers: new HttpHeaders({ 'Authorization': `Bearer ${jwt}`, 'Content-Type': 'application/json' })

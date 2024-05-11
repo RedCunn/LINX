@@ -17,9 +17,14 @@ const ioFn = (httpServer) => {
             io.emit('userConnected', data);
         })
 
-        socket.on('chat_message', (data) => {
-            console.log(data)
-            io.emit('chat_message',data)
+        socket.on('init_chat',(accountid_A , accountid_B) => {
+            const room = 'chat_'+accountid_A+"_"+accountid_B;
+            socket.join(room);
+        })
+
+        socket.on('chat_message', (message, accountid_A , accountid_B) => {
+            const room = 'chat_'+accountid_A+"_"+accountid_B;
+            io.emit('chat_message',message)
         })
     })
     

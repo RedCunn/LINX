@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild, inject, signal } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { WebsocketService } from '../../services/websocket.service';
 import { IChat } from '../../models/chat/IChat';
 import { IMessage } from '../../models/chat/IMessage';
@@ -15,57 +15,77 @@ import { RestnodeService } from '../../services/restnode.service';
   styleUrl: './chat.component.css'
 })
 
-export class ChatComponent implements OnInit{
-  
+export class ChatComponent implements OnInit, OnDestroy {
+
   @Input() isOpen = signal(false);
-  @Input() linxChat! : IChat;
-  @Input() linx! : IAccount;
+  @Input() linxChat!: IChat;
+  @Input() linx!: IAccount;
   @ViewChild('messageContainer') messageContainer!: ElementRef;
+  @ViewChild('messageTextarea') messageTextarea!: ElementRef;
 
   private signalStorageSvc = inject(SignalStorageService);
   private restSvc = inject(RestnodeService);
   private socketSvc = inject(WebsocketService);
-  public chat : IChat = {chatid : '', participants : {userid : '', linxaccountid : ''}, messages : []};
-  public message : IMessage = {text : '', timestamp : '', sender : {accountid : '', linxname : ''}};
-  public user! : IUser;
-  private jwt! : string;
-  public messages : IMessage[] = [];
+  public chat: IChat = { chatid: '', participants: { userid: '', linxaccountid: '' }, messages: [] };
+  public message: IMessage = { text: '', timestamp: '', sender: { accountid: '', linxname: '' } };
+  public user!: IUser;
+  private jwt!: string;
+  public messages: IMessage[] = [];
 
-  closeModal(){
+  closeModal() {
     this.isOpen.set(false);
   }
 
-  setMessage(event : any){
+  setMessage(event: any) {
     this.message.text = event.target.value;
     this.message.timestamp = new Date().toISOString();
   }
 
-  async sendMessage(){
-    if(this.message.text.trim() !== ''){
-      this.socketSvc.sendMessage(this.message);
-      //this.restSvc.senMessage(this.jwt,this.user.userid,this.linxChat.chatid,this.message);
-      try {
-        const newMessage = await this.socketSvc.receiveMessage();
-        console.log('Mensaje recibido:', newMessage);
-        this.messages.push(newMessage);
-        setTimeout(() => {
-          this.messageContainer.nativeElement.scrollTop = this.messageContainer.nativeElement.scrollHeight;
-        });
-      } catch (error) {
-        console.log(error)
-      }
+  sendMessage() {
+    if (this.message.text.trim() !== '') {
+      this.socketSvc.sendMessage(this.message, this.user.accountid, this.linx._id!);
+      this.messageTextarea.nativeElement.value = '';
+      //await this.storeMessage(this.message);
     }
-  }  
+  }
 
- ngOnInit(): void{
-    const _usersignal =  this.signalStorageSvc.RetrieveUserData();
+  async storeMessage(message: IMessage) {
+    try {
+      this.restSvc.storeMessage(this.jwt, this.user.userid, this.linxChat.chatid, message);
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
+
+  ngOnInit(): void {
+    const _usersignal = this.signalStorageSvc.RetrieveUserData();
     const _user = _usersignal();
     this.user = _user!;
-    this.message.sender = {accountid  : this.user.accountid, linxname : this.user.account.linxname}
+    this.message.sender = { accountid: this.user.accountid, linxname: this.user.account.linxname }
 
     const _jwtsignal = this.signalStorageSvc.RetrieveJWT();
     const _jwt = _jwtsignal();
     this.jwt = _jwt!;
+
+    //this.socketSvc.initChat(this.user.accountid, this.linx._id!);
+
+    try {
+      this.socketSvc.getMessages().subscribe((message: IMessage) => {
+        console.log('M : ', message)
+        this.messages.push(message);
+      })
+      setTimeout(() => {
+        this.messageContainer.nativeElement.scrollTop = this.messageContainer.nativeElement.scrollHeight;
+      });
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  ngOnDestroy(): void {
+
   }
 
 }

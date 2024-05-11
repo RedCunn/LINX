@@ -276,7 +276,7 @@ module.exports = {
     getChats: async (req, res, next) => {
         try {
             const _userid = req.params.userid;
-            let _chats = await Chat.find({"participants.userid" : _userid});
+            let _chats = await Chat.find({ "participants.userid": _userid });
 
             res.status(200).send({
                 code: 0,
@@ -291,6 +291,30 @@ module.exports = {
                 code: 1,
                 error: error.message,
                 message: 'ERROR AL RECUPERAR CHATS',
+                token: null,
+                userdata: null,
+                others: null
+            })
+        }
+    },
+    storeChatMessage: async (req, res, next) => {
+        try {
+
+            
+
+            res.status(200).send({
+                code: 0,
+                error: null,
+                message: 'MESSAGE WAS STORED',
+                token: null,
+                userdata: null,
+                others: null
+            })
+        } catch (error) {
+            res.status(400).send({
+                code: 1,
+                error: error.message,
+                message: 'MESSAGE COULDNT BE STORE',
                 token: null,
                 userdata: null,
                 others: null

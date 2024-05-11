@@ -1,6 +1,7 @@
 import { Signal, WritableSignal, signal } from "@angular/core";
 import { IUser } from "./userprofile/IUser";
 import { IAccount } from "./useraccount/IAccount";
+import { IMessage } from "./chat/IMessage";
 
 export interface IStorageService {
     //#region ---------------------------- [ SYNC ] --------------------
@@ -13,6 +14,9 @@ export interface IStorageService {
 
     StoreLinxData (newstate : IAccount | null) : void ;
     RetrieveLinxData () : WritableSignal<IAccount | null> ;
+
+    StoreChatMessage (newmessage : IMessage | null) : void;
+    RetrieveChatMessage () : WritableSignal<IMessage | null>;
     //#endregion
 
     //#region ---------------------------- [ ASYNC ] --------------------

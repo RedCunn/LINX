@@ -5,9 +5,9 @@
     <div class="modal-container bg-white rounded-lg shadow overflow-x-hidden">
         <!-- Modal header -->
         <div class="flex justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 w-full">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+            <h2 class="text-lg font-semibold text-purple-800">
                 {{linx.linxname}}
-            </h3>
+            </h2>
             <button type="button"
                 class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                 (click)="closeModal()">
@@ -92,7 +92,7 @@
                     </svg>
                     <span class="sr-only">Upload image</span>
                 </button>
-                <textarea id="chat" rows="1" (input)="setMessage($event)"
+                <textarea #messageTextarea id="chat" rows="1" (input)="setMessage($event)"
                     class="resize-none block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Escribe tu mensaje..."></textarea>
                 <button type="button" (click)="sendMessage()"
