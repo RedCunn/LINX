@@ -10,21 +10,21 @@ const ioFn = (httpServer) => {
     })
 
     io.on('connection', (socket) => {
-        console.log("se ha conectado une linx");
 
         socket.on('userConnected',(data) => {
             console.log('CONNECTED : ', data)
             io.emit('userConnected', data);
         })
-
-        socket.on('init_chat',(accountid_A , accountid_B) => {
-            const room = 'chat_'+accountid_A+"_"+accountid_B;
+        socket.on('init_chat',(socketid) => {
+            const room = 'chat_'+socket.id+"_"+socketid;
+            console.log('linxsocketid ---> ', socketid)
             socket.join(room);
         })
-
-        socket.on('chat_message', (message, accountid_A , accountid_B) => {
-            const room = 'chat_'+accountid_A+"_"+accountid_B;
-            io.emit('chat_message',message)
+        socket.on('chat_message', (data) => {
+            const room = 'chat_'+socket.id+"_"+data.socketid;
+            console.log('chat_message - linxsocketid ---> ', data.socketid)
+            console.log('MESSAGE : ', data.message)
+            io.to(room).emit('chat_message',data.message)
         })
     })
     

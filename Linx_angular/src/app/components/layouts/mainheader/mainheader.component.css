@@ -1,0 +1,51 @@
+.lettering{
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+}
+.gridhead {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    position : fixed;
+    top : 0; 
+    left : 0;
+    right : 0;
+}
+.headspan {
+    grid-column: span 10 / span 10;
+}
+
+.headsignins{
+    grid-column: span 2 / span 2;
+    display: flex;
+    flex-direction: row;
+    padding-top: 5%;
+}
+
+@media screen and (max-width: 767px) {
+    
+    .lettering {
+        font-size: 1.125rem; 
+        line-height: 1.75rem;
+    }
+    .gridhead {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        position : fixed;
+        top : 0; 
+        left : 0;
+        right : 0;
+    }
+    .headspan {
+        grid-column: span 2 / span 2;
+    }
+    
+    .headsignins{
+        grid-column: span 2 / span 2;
+        display: flex;
+        flex-direction: row;
+        padding-top: 5%;
+        justify-self: end;
+        margin: 2%;
+        padding-right: 3%;
+    }
+}

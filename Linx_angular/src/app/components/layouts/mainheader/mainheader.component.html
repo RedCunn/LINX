@@ -1,5 +1,5 @@
-<header class="fixed top-0 left-0 right-0 grid grid-cols-12">
-    <div class="mt-6 ms-5 col-span-10">
+<header class="gridhead">
+    <div class="headspan">
         <!-- @if(this.rotatelogo()){
             <a (click)="this.goInit()"><img src="../../../../../assets/imgs/logos/eslabon6.png" class="rotate-90"
                 style="width: 250px; height: 110px;"></a>
@@ -9,19 +9,19 @@
         }
          -->
     </div>
-    <div class="col-span-2 flex flex-row px-15 pt-5 me-5">
+    <div class="headsignins">
         @if(!isLogged()){
         <div class="text-violet-500 me-4">
-            <button (click)="this.goToSignin()" class="text-lg me-2 hover:text-violet-800">Inicio sesión </button>
+            <button (click)="this.goToSignin()" class="lettering hover:text-violet-800">Inicio sesión </button>
         </div>
         <div class="text-green-500">
-            <button (click)="this.goToSignup()" class="text-lg me-2 hover:text-green-800">Registro</button>
+            <button (click)="this.goToSignup()" class="lettering hover:text-green-800">Registro</button>
         </div>
         }@else {   
         <div class="text-violet-300">
-            <a (click)="this.goHome()" class="me-2 text-5xl">
+            <button (click)="this.goHome()" class="me-2 text-5xl">
                 <img src="../../../../assets/imgs/account/myaccounticon.jpg" style="width: 80px;" class="rounded-lg opacity-30 hover:opacity-70">
-            </a>
+            </button>
         </div>
         }
     </div>

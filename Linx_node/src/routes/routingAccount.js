@@ -8,14 +8,11 @@ async function checkJWT(req, res, next) {
     try {
         //extraigo de la peticion, la cabecera "Authorization: Bearer ....jwt..."
         let _jwt = req.headers.authorization.split(' ')[1];
-        console.log('JWT en cabecera mandado por cliente...', _jwt);
-
         const _payload = await jwt.verify(_jwt, process.env.JWT_SECRETKEY);
         req.payload = _payload;
         next();
 
     } catch (error) {
-        console.log('error al comprobar JWT enviado desde el cliente...', error);
         res.status(401)
             .send(
                 {

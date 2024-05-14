@@ -46,33 +46,38 @@ export const routes: Routes = [
                 canActivate: [AuthGuard]
             },
             {
-                path:'Home/Profile',
-                loadComponent : () => import('./components/home/userprofile/userprofile.component').then(m=>m.UserprofileComponent),
-                canActivate: [AuthGuard]
-            },
-            {
-                path: 'Home/Exchange',
-                loadComponent : ()=> import('./components/home/exchangecomponents/exchangepanel/exchangepanel.component').then(m => m.ExchangepanelComponent)
-            },
-            {
-                path : 'Home/Exchange/search',
-                loadComponent : ()=> import('./components/home/exchangecomponents/searchexchange/searchexchange.component').then(m=> m.SearchexchangeComponent)
-            },
-            {
-                path : 'Home/Exchange/create',
-                loadComponent : ()=> import('./components/home/exchangecomponents/createexitem/createexitem.component').then(m=> m.CreateexitemComponent)
-            },
-            {
-                path: 'Home/Events',
-                loadComponent : () => import('./components/home/eventscomponents/eventspanel/eventspanel.component').then(m=> m.EventspanelComponent)
-            },
-            {
-                path: 'Home/Events/search',
-                loadComponent : () => import('./components/home/eventscomponents/searchevents/searchevents.component').then(m=> m.SearcheventsComponent)
-            },
-            {
-                path: 'Home/Events/create',
-                loadComponent : () => import('./components/home/eventscomponents/createevent/createevent.component').then(m=> m.CreateeventComponent)
+                path: 'Home',
+                children : [
+                    {
+                        path:'Profile',
+                        loadComponent : () => import('./components/home/userprofile/userprofile.component').then(m=>m.UserprofileComponent)
+                    },
+                    {
+                        path: 'Exchange',
+                        loadComponent : ()=> import('./components/home/exchangecomponents/exchangepanel/exchangepanel.component').then(m => m.ExchangepanelComponent)
+                    },
+                    {
+                        path : 'Exchange/search',
+                        loadComponent : ()=> import('./components/home/exchangecomponents/searchexchange/searchexchange.component').then(m=> m.SearchexchangeComponent)
+                    },
+                    {
+                        path : 'Exchange/create',
+                        loadComponent : ()=> import('./components/home/exchangecomponents/createexitem/createexitem.component').then(m=> m.CreateexitemComponent)
+                    },
+                    {
+                        path: 'Events',
+                        loadComponent : () => import('./components/home/eventscomponents/eventspanel/eventspanel.component').then(m=> m.EventspanelComponent)
+                    },
+                    {
+                        path: 'Events/search',
+                        loadComponent : () => import('./components/home/eventscomponents/searchevents/searchevents.component').then(m=> m.SearcheventsComponent)
+                    },
+                    {
+                        path: 'Events/create',
+                        loadComponent : () => import('./components/home/eventscomponents/createevent/createevent.component').then(m=> m.CreateeventComponent)
+                    }
+                ],
+                canActivateChild : [AuthGuard]
             },
             {
                 path: 'Podcastslib',

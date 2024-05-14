@@ -15,6 +15,7 @@ export class WebsocketService {
 
   private signalStorageSvc = inject(SignalStorageService);
   private userConnected!: object | null;
+  private socketid : string | undefined ;
 
   constructor() { }
 
@@ -25,7 +26,11 @@ export class WebsocketService {
 
   connect() {
     socket.connect()
-    socket.on('connect', () => { console.log('CONNECTED TO SOCKET ........................') });
+    socket.on('connect', () => { 
+      console.log('CONNECTED TO SOCKET ........................') 
+      this.socketid = socket.id;
+      console.log('SOCKET ID : ',this.socketid)
+    });
   }
 
   userLogin() {
@@ -35,15 +40,15 @@ export class WebsocketService {
     socket.emit('userConnected', { user: this.userConnected })
   }
 
-  initChat (accountid_A : string, accountid_B : string){
-    socket.emit("initChat", { accountid_A, accountid_B }, (res: any) => {
+  initChat (){
+    socket.emit("initChat", this.socketid , (res: any) => {
       console.log('RES OK : ', res.status)
     }
     )
   }
 
-  sendMessage(message : IMessage, accountid_A : string, accountid_B : string) {
-    socket.emit("chat_message", { message, accountid_A, accountid_B }, (res: any) => {
+  sendMessage(message : IMessage) {
+    socket.emit("chat_message", { message, socketid : this.socketid }, (res: any) => {
       console.log('RES OK : ', res.status)
     }
     )

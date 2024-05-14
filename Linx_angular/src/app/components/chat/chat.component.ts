@@ -42,8 +42,9 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   sendMessage() {
+    this.socketSvc.initChat();
     if (this.message.text.trim() !== '') {
-      this.socketSvc.sendMessage(this.message, this.user.accountid, this.linx._id!);
+      this.socketSvc.sendMessage(this.message);
       this.messageTextarea.nativeElement.value = '';
       //await this.storeMessage(this.message);
     }
@@ -67,8 +68,6 @@ export class ChatComponent implements OnInit, OnDestroy {
     const _jwtsignal = this.signalStorageSvc.RetrieveJWT();
     const _jwt = _jwtsignal();
     this.jwt = _jwt!;
-
-    //this.socketSvc.initChat(this.user.accountid, this.linx._id!);
 
     try {
       this.socketSvc.getMessages().subscribe((message: IMessage) => {
