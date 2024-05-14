@@ -1,12 +1,12 @@
-<aside class="me-10">
-    <a (click)="goToExchangePanel()" class=" hover:text-lime-400 flex flex-row justify-end items-center">
+<aside class="me-10 flex flex-col justify-end">
+    <button (click)="goToExchangePanel()" class=" hover:text-lime-400 flex flex-row justify-end items-center">
         <h2 class="pe-3 pt-3">Intercambiador</h2>
         <mat-icon>handshake</mat-icon>
-    </a>
-    <a (click)="goToEventsPanel()" class=" hover:text-fuchsia-700 flex flex-row justify-end items-center">
+    </button>
+    <button (click)="goToEventsPanel()" class=" hover:text-fuchsia-700 flex flex-row justify-end items-center">
         <h2 class="pe-3 pt-3">Eventos</h2>
         <mat-icon>local_activity</mat-icon>
-    </a>
+    </button>
     <div class="text-end pt-1">
         <button id="dropdownInformationButton" data-dropdown-toggle="dropdownInformation" class=" hover:text-pink-500 text-end" type="button">
             <div class="flex flex-row">

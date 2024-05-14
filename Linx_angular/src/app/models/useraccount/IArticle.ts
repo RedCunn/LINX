@@ -1,5 +1,5 @@
 export interface IArticle{
-    artid: string;
+    artid: string | null;
     postedOn : string;
     title : string;
     bodycontent: string;

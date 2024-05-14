@@ -12,11 +12,12 @@ import { Event, NavigationEnd, NavigationStart, Router, RouterModule } from '@an
 import { IAccount } from '../../../models/useraccount/IAccount';
 import { ChatComponent } from '../../chat/chat.component';
 import { IChat } from '../../../models/chat/IChat';
+import { ArticlemodalformComponent } from './artmodal/articlemodalform.component';
 
 @Component({
   selector: 'app-userhome',
   standalone: true,
-  imports: [UserhomeasideComponent, MatIcon, FormsModule, RouterModule, ChatComponent],
+  imports: [UserhomeasideComponent, MatIcon, FormsModule, RouterModule, ChatComponent, ArticlemodalformComponent],
   templateUrl: './userhome.component.html',
   styleUrl: './userhome.component.css'
 })
@@ -29,11 +30,11 @@ export class UserhomeComponent implements OnInit, AfterViewInit{
   public linxdata! : IAccount | null;
   public chat! : IChat;
   public isChatOpen = signal(false);
+  public isArtFormOpen = signal(false);
   public isUser = signal(false);
   public routePattern: RegExp = new RegExp("/Linx/Profile/[^/]+","g");
-  public article : IArticle = {artid : '', title : '', bodycontent : '', img : '', postedOn : '', useAsUserPic : false}
-  private _imgbase64 : string = "";
-  
+  public article : IArticle = {artid : null, title : '', bodycontent : '', img : '', postedOn : '', useAsUserPic : false}
+
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object, private router : Router){
     let _userdata = this.signalStoreSvc.RetrieveUserData();
@@ -67,6 +68,10 @@ export class UserhomeComponent implements OnInit, AfterViewInit{
     }
   }
 
+  toggleArtFormModal(){
+    this.isArtFormOpen.update(v => !v);
+  }
+
   async loadChat(){
 
   }
@@ -75,45 +80,7 @@ export class UserhomeComponent implements OnInit, AfterViewInit{
 
   }
 
-  onFileSelected(event: any) {
-    const file = event.target.files[0];
-    
 
-    if (file) {
-        const reader = new FileReader();
-
-        reader.onload = (event) => {
-          const base64String = event.target!.result as string;
-          this._imgbase64 = base64String; 
-      };
-
-        reader.readAsDataURL(file);
-    }
-}
-
-
-  async createArticle(artForm : NgForm){
-
-    
-    console.log("ARTICULOCULOCULO : ", artForm.form.value)
-    let newArt : IArticle = artForm.form.value;
-    newArt.img = this._imgbase64;
-    console.log("ARTI : ", newArt)
-    //CREAR
-    if(artForm.control.get('artid')?.value ===  ''){
-
-      const response = await this.restSvc.uploadArticle({userid : this.userdata!.userid, article : newArt});
-
-      if(response.code === 0){
-
-      }else{
-        
-      }
-      
-    }else{
-      //EDITAR
-    }
-  }
 
   logout(){
     this.signalStoreSvc.StoreUserData(null);

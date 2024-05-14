@@ -8,7 +8,8 @@ export const AuthGuard: CanActivateFn = (route, state) =>{
   const router = inject(Router);
   
   if(!authSvc.isLoggedIn()){
-    return router.parseUrl('/Linx/Login');
+    //return router.parseUrl('/Linx/Login');
+    return true;
   }else{
     return true;
   }
