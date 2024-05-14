@@ -9,7 +9,7 @@ let match = require('./utils/matching');
 module.exports = {
     shuffleProfiles : async (req, res, next) => {
         try {
-            let {userid} = req.body
+            const userid = req.params.userid;
             let _user = await User.findOne({'userid' : userid}) 
             let matchingProfiles = await match.retrieveProfilesBasedOnCompatibility(_user);
 

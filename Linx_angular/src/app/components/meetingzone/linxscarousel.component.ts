@@ -34,7 +34,7 @@ export class LinxscarouselComponent implements OnInit{
 
   async setCandidateProfiles (){
     try{
-      const response : IRestMessage = await this.restsvc.shuffleCandidateProfiles({userid : this.userdata?.userid!});
+      const response : IRestMessage = await this.restsvc.shuffleCandidateProfiles( this.userdata?.userid!);
       if(response.code === 0){
         this.candidateProfiles = response.others as IAccount[];
         this.loading.set(false);

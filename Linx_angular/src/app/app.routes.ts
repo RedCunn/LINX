@@ -18,7 +18,6 @@ export const routes: Routes = [
             {
                 path: 'Registro',
                 loadComponent : ()=> import('./components/accountarea/signupComponent/signupuserprof/signup-userdata.component').then(c => c.SignupUserdataComponent)
-                
             },
             {
                 path:'SignedUp',
@@ -37,6 +36,11 @@ export const routes: Routes = [
                 loadComponent : () => import('./components/accountarea/signinComponent/signin.component').then(m=> m.SigninComponent)
             },
             {
+                path:'Profile/:linxname',
+                loadComponent : () => import('./components/home/userhome/userhome.component').then(m=>m.UserhomeComponent),
+                canActivate: [AuthGuard]
+            },
+            {
                 path: 'Home',
                 loadComponent : () => import('./components/home/userhome/userhome.component').then(m=>m.UserhomeComponent),
                 canActivate: [AuthGuard]
@@ -47,33 +51,28 @@ export const routes: Routes = [
                 canActivate: [AuthGuard]
             },
             {
-                path:'Profile/:linxname',
-                loadComponent : () => import('./components/home/userhome/userhome.component').then(m=>m.UserhomeComponent),
-                canActivate: [AuthGuard]
-            },
-            {
-                path: 'Events',
-                loadComponent : () => import('./components/home/eventscomponents/eventspanel/eventspanel.component').then(m=> m.EventspanelComponent)
-            },
-            {
-                path: 'BuscarEvento',
-                loadComponent : () => import('./components/home/eventscomponents/searchevents/searchevents.component').then(m=> m.SearcheventsComponent)
-            },
-            {
-                path: 'CrearEvento',
-                loadComponent : () => import('./components/home/eventscomponents/createevent/createevent.component').then(m=> m.CreateeventComponent)
-            },
-            {
-                path: 'Exchange',
+                path: 'Home/Exchange',
                 loadComponent : ()=> import('./components/home/exchangecomponents/exchangepanel/exchangepanel.component').then(m => m.ExchangepanelComponent)
             },
             {
-                path : 'BuscarIntercambio',
+                path : 'Home/Exchange/search',
                 loadComponent : ()=> import('./components/home/exchangecomponents/searchexchange/searchexchange.component').then(m=> m.SearchexchangeComponent)
             },
             {
-                path : 'CrearItem',
+                path : 'Home/Exchange/create',
                 loadComponent : ()=> import('./components/home/exchangecomponents/createexitem/createexitem.component').then(m=> m.CreateexitemComponent)
+            },
+            {
+                path: 'Home/Events',
+                loadComponent : () => import('./components/home/eventscomponents/eventspanel/eventspanel.component').then(m=> m.EventspanelComponent)
+            },
+            {
+                path: 'Home/Events/search',
+                loadComponent : () => import('./components/home/eventscomponents/searchevents/searchevents.component').then(m=> m.SearcheventsComponent)
+            },
+            {
+                path: 'Home/Events/create',
+                loadComponent : () => import('./components/home/eventscomponents/createevent/createevent.component').then(m=> m.CreateeventComponent)
             },
             {
                 path: 'Podcastslib',

@@ -11,6 +11,7 @@ const { default: mongoose } = require('mongoose');
 const Account = require('../schemas/Account');
 const User = require('../schemas/User');
 const Chat = require('../schemas/Chat');
+const Article = require('../schemas/Article');
 
 function generateToken(userdata) {
 
@@ -315,6 +316,72 @@ module.exports = {
                 code: 1,
                 error: error.message,
                 message: 'MESSAGE COULDNT BE STORE',
+                token: null,
+                userdata: null,
+                others: null
+            })
+        }
+    },
+    newArticle : async (req, res, next) => {
+        try {
+
+            const _userid = req.params.userid;
+            const {article} = req.body;
+
+            let _insertArt = await Article.create(article);
+            let _userAccount = await Account.findOne({ userid: _userid });
+            _userAccount.articles.push(_insertArt._id);
+            
+            const _insertResult = await _userAccount.save();
+            console.log('RESULT INS NEW ART : ',_insertResult)
+            
+            res.status(200).send({
+                code: 0,
+                error: null,
+                message: 'saved new article!!!',
+                token: null,
+                userdata: null,
+                others: null
+            })
+        } catch (error) {
+            res.status(400).send({
+                code: 1,
+                error: error.message,
+                message: 'couldnt save new article...',
+                token: null,
+                userdata: null,
+                others: null
+            })
+        }
+    },
+    editArticle : async (req, res, next) => {
+        try {
+
+            const _userid = req.params.userid;
+            const _artid = req.params.artid;
+            const {article} = req.body;
+
+            let _updatedArt = await Article.findByIdAndUpdate(_artid, article,{new : true});
+            let _userAccount = await Account.findOne({ userid: _userid });
+            const index = _userAccount.articles.findIndex(articleId => articleId.equals(_updatedArt._id))
+            _userAccount.articles[index] = _updatedArt._id;
+
+            const _updateResult = await _userAccount.save();
+            console.log('RESULT UP ART : ',_updateResult)
+            
+            res.status(200).send({
+                code: 0,
+                error: null,
+                message: 'saved article changes!!!',
+                token: null,
+                userdata: null,
+                others: null
+            })
+        } catch (error) {
+            res.status(400).send({
+                code: 1,
+                error: error.message,
+                message: 'couldnt save article changes...',
                 token: null,
                 userdata: null,
                 others: null

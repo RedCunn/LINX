@@ -22,11 +22,11 @@ export class UserhomeasideComponent implements OnInit{
   }
 
   goToEventsPanel(){
-    this.router.navigateByUrl("/Linx/Events");
+    this.router.navigateByUrl("/Linx/Home/Events");
   }
 
   goToExchangePanel(){
-    this.router.navigateByUrl("/Linx/Exchange");
+    this.router.navigateByUrl("/Linx/Home/Exchange");
   }
 
   goToTracksLib(){

@@ -30,26 +30,38 @@ export class ArticlemodalformComponent {
   private _imgbase64: string = "";
 
 
-  async createArticle(artForm: NgForm) {
+  async uploadArticle(artForm: NgForm) {
 
 
     console.log("ARTICULOCULOCULO : ", artForm.form.value)
     let newArt: IArticle = artForm.form.value;
     newArt.img = this._imgbase64;
     console.log("ARTI : ", newArt)
-    //CREAR
+    
     if (this.article.artid !== null) {
 
-      const response = await this.restSvc.uploadArticle({ userid: this.userdata!.userid, article: newArt });
-
-      if (response.code === 0) {
-
-      } else {
-
+      try {
+        const response = await this.restSvc.editArticle(this.userdata!.userid, newArt);
+        if (response.code === 0) {
+  
+        } else {
+  
+        } 
+      } catch (error) {
+        console.log('Error en AWAIT editArticle : ',error)
       }
 
     } else {
-      //EDITAR
+      try {
+        const response = await this.restSvc.newArticle(this.userdata!.userid, newArt);
+        if (response.code === 0) {
+  
+        } else {
+  
+        }  
+      } catch (error) {
+        console.log('Error en AWAIT newArticle : ',error)
+      }
     }
   }
 

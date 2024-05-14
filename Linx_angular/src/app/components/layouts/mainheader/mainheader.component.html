@@ -1,5 +1,5 @@
-<header class="fixed top-0 left-0 right-0 flex items-end justify-end">
-    <div class="mt-6 ms-5">
+<header class="fixed top-0 left-0 right-0 grid grid-cols-12">
+    <div class="mt-6 ms-5 col-span-10">
         <!-- @if(this.rotatelogo()){
             <a (click)="this.goInit()"><img src="../../../../../assets/imgs/logos/eslabon6.png" class="rotate-90"
                 style="width: 250px; height: 110px;"></a>
@@ -9,15 +9,13 @@
         }
          -->
     </div>
-    <div class="flex flex-row px-15 pt-5 me-5">
+    <div class="col-span-2 flex flex-row px-15 pt-5 me-5">
         @if(!isLogged()){
         <div class="text-violet-500 me-4">
-            <a (click)="this.goToSignin()" class="text-lg me-2 hover:text-violet-800">Inicio sesión </a>
-            <!-- <span class="material-symbols-outlined"> diversity_2</span> -->
+            <button (click)="this.goToSignin()" class="text-lg me-2 hover:text-violet-800">Inicio sesión </button>
         </div>
         <div class="text-green-500">
-            <a (click)="this.goToSignup()" class="text-lg me-2 hover:text-green-800">Registro</a>
-            <!-- <mat-icon>diversity_1</mat-icon> -->
+            <button (click)="this.goToSignup()" class="text-lg me-2 hover:text-green-800">Registro</button>
         </div>
         }@else {   
         <div class="text-violet-300">

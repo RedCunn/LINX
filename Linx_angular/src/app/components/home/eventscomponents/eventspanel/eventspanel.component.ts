@@ -14,11 +14,11 @@ export class EventspanelComponent {
   constructor(private router : Router){}
 
   goToSearchEvents(){
-    this.router.navigateByUrl('/Linx/BuscarEvento');
+    this.router.navigateByUrl('/Linx/Home/Events/search');
   }
 
   goToNewEventForm(){
-    this.router.navigateByUrl('/Linx/CrearEvento');
+    this.router.navigateByUrl('/Linx/Home/Events/create');
   }
 
 }

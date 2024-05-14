@@ -14,9 +14,9 @@ export class ExchangepanelComponent {
   
 
   goToSearchExchange(){
-    this.router.navigateByUrl('/Linx/BuscarIntercambio');
+    this.router.navigateByUrl('/Linx/Home/Exchange/search');
   }
   goToNewExitemForm(){
-    this.router.navigateByUrl('/Linx/CrearItem');
+    this.router.navigateByUrl('/Linx/Home/Exchange/create');
   }
 }

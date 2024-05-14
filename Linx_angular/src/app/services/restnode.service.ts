@@ -50,23 +50,28 @@ export class RestnodeService {
 
   //#region ---------------------- UPDATE PROFILE -------------------------------
 
-  public uploadArticle(content: { userid: string, article: IArticle }): Promise<IRestMessage> {
-    const res = this._httpClient.post<IRestMessage>("http://localhost:3000/api/Profile/uploadArticle",
-      content,
+  public newArticle(userid: string, article: IArticle ): Promise<IRestMessage> {
+    const res = this._httpClient.post<IRestMessage>(`http://localhost:3000/api/Account/${userid}/article`,
+      article,
       {
         headers: new HttpHeaders({ 'Content-Type': 'application/json' })
       });
-
     return lastValueFrom(res);
   }
-
+  public editArticle(userid: string, article: IArticle ): Promise<IRestMessage> {
+    const res = this._httpClient.put<IRestMessage>(`http://localhost:3000/api/Account/${userid}/article/${article.artid}`,
+      article,
+      {
+        headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+      });
+    return lastValueFrom(res);
+  }
   //#endregion
 
   //#region -------------------------- SHUFFLE MATCH CANDIDATE PROFILES ----------
 
-  public shuffleCandidateProfiles(id: { userid: string }): Promise<IRestMessage> {
-    const res = this._httpClient.post<IRestMessage>("http://localhost:3000/api/Match/shuffle",
-      id,
+  public shuffleCandidateProfiles(userid: string): Promise<IRestMessage> {
+    const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Match/${userid}/shuffle`,
       {
         headers: new HttpHeaders({ 'Content-Type': 'application/json' })
       })

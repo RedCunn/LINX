@@ -40,5 +40,7 @@ router.get('/activate_account', AccountController.activateAccount);
 router.get('/:userid/myChain', checkJWT, AccountController.getMyChain);
 router.get('/:userid/chat', checkJWT, AccountController.getChats);
 router.post('/:userid/chat/:chatid', checkJWT, AccountController.storeChatMessage);
+router.post('/:userid/article', AccountController.newArticle);
+router.put('/:userid/article/:artid', AccountController.editArticle)
 
 module.exports = router;

@@ -1,71 +1,70 @@
-<div class="grid place-content-center h-[80vh]">
-  <div class="mt-5 ms-10">
-    <h1>{{ isUser() ? (userdata?.account?.linxname ? userdata!.account.linxname : '') : (linxdata?.linxname ?
-      linxdata!.linxname : '') }}</h1>
-  </div>
-  <div class="grid grid-cols-4">
+<div class="mt-5 ms-10">
+  <h1>{{ isUser() ? (userdata?.account?.linxname ? userdata!.account.linxname : '') : (linxdata?.linxname ?
+    linxdata!.linxname : '') }}</h1>
+</div>
+<div class="grid grid-cols-4">
 
-    @if(isUser()){
-    <div class="col-auto ms-12">
-      <a routerLink="/Linx/Home/Profile" routerLinkActive="active"
-        class="flex flex-row text-cyan-400 hover:text-blue-700">
-        <span class="material-symbols-outlined">
-          assignment_ind
-        </span>
-        <p class="ps-2 pt-1">Perfil</p>
-      </a>
-      <a routerLink="/Linx/Home/Avisos" routerLinkActive="active"
-        class="flex flex-row text-yellow-300 hover:text-amber-700">
-        <span class="material-symbols-outlined">crisis_alert</span>
-        <p class="ps-2">Avisos</p>
-      </a>
-      <a routerLink="/Linx/Home/Reportes" routerLinkActive="active"
-        class="flex flex-row text-yellow-300 hover:text-yellow-500">
-        <span class="material-symbols-outlined">flag</span>
-        <p class="ps-2">Reportes</p>
-      </a>
-    </div>
-    }@else {
-    <div class="col-auto ms-12">
-      <button (click)="toggleChatModal()"
-        class="flex flex-row text-purple-400 hover:text-blue-700">
-        <span class="material-symbols-outlined">
-          chat_bubble
-        </span>
-        <p class="ps-2 pt-1">Chat</p>
-      </button>
-    </div>
-    }
-    <div class="col-span-2 grid grid-cols-2 gap-5 mt-5">
-      <article class="border border-solid rounded-md p-3">
-        <h1>Sobre plantas de interior</h1>
-        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ipsa voluptas perferendis, tenetur nostrum corrupti
-          facere eius at, repellat magnam, aut consequuntur. Rerum id ab quos repudiandae maiores dolores, autem in.</p>
-        <div class="flex justify-end">
-          @if(isUser()){
-            <button type="button" (click)="toggleArtFormModal()"
-            class=" hover:text-orange-600 flex flex-row p-3 rounded-lg">
-            <span class="material-symbols-outlined">
-              edit
-            </span>
-          </button>}
-        </div>
-      </article>
-      <div class="col-span-2 flex justify-end mb-20">
+  @if(isUser()){
+  <div class="col-auto ms-12">
+    <a routerLink="/Linx/Home/Profile" routerLinkActive="active"
+      class="flex flex-row text-cyan-400 hover:text-blue-700">
+      <span class="material-symbols-outlined">
+        assignment_ind
+      </span>
+      <p class="ps-2 pt-1">Perfil</p>
+    </a>
+    <a routerLink="/Linx/Home/Avisos" routerLinkActive="active"
+      class="flex flex-row text-yellow-300 hover:text-amber-700">
+      <span class="material-symbols-outlined">crisis_alert</span>
+      <p class="ps-2">Avisos</p>
+    </a>
+    <a routerLink="/Linx/Home/Reportes" routerLinkActive="active"
+      class="flex flex-row text-yellow-300 hover:text-yellow-500">
+      <span class="material-symbols-outlined">flag</span>
+      <p class="ps-2">Reportes</p>
+    </a>
+  </div>
+  }@else {
+  <div class="col-auto ms-12">
+    <button (click)="toggleChatModal()" class="flex flex-row text-purple-400 hover:text-blue-700">
+      <span class="material-symbols-outlined">
+        chat_bubble
+      </span>
+      <p class="ps-2 pt-1">Chat</p>
+    </button>
+  </div>
+  }
+  <div class="col-span-2 grid grid-cols-2 gap-5 mt-5">
+    <article class="border border-solid rounded-md p-3">
+      <h1>Sobre plantas de interior</h1>
+      <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ipsa voluptas perferendis, tenetur nostrum corrupti
+        facere eius at, repellat magnam, aut consequuntur. Rerum id ab quos repudiandae maiores dolores, autem in.</p>
+      <div class="flex justify-end">
         @if(isUser()){
-          <button (click)="toggleArtFormModal()" type="button" class="bg-orange-500 hover:bg-orange-400 flex flex-row p-3 rounded-lg">
+        <button type="button" (click)="toggleArtFormModal()"
+          class=" hover:text-orange-600 flex flex-row p-3 rounded-lg">
           <span class="material-symbols-outlined">
-            note_add
+            edit
           </span>
         </button>}
       </div>
-    </div>
-    <div class="col-auto">
-      <app-userhomeaside></app-userhomeaside>
+    </article>
+    <div class="col-span-2 flex justify-end mb-20">
+      @if(isUser()){
+      <button (click)="toggleArtFormModal()" type="button"
+        class="bg-orange-500 hover:bg-orange-400 flex flex-row p-3 rounded-lg">
+        <span class="material-symbols-outlined">
+          note_add
+        </span>
+      </button>}
     </div>
   </div>
-  <app-articlemodalform [isOpen]="isArtFormOpen" [article]="article" [userdata]="userdata"></app-articlemodalform>
+  <div class="col-auto">
+    <app-userhomeaside></app-userhomeaside>
+  </div>
 </div>
+<app-articlemodalform [isOpen]="isArtFormOpen" [article]="article" [userdata]="userdata"></app-articlemodalform>
+
 
 <div class="text-violet-300 ps-5 flex justify-between">
   @if(isUser()){
