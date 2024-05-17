@@ -64,6 +64,19 @@ export class LinxscarouselComponent implements OnInit{
     }
   }
 
+  async matchRequest(linxuserid : string){
+    try {
+      const res = await this.restsvc.requestMatch(this.userdata?.userid! , linxuserid);
+      if(res.code === 0){
+
+      }else{
+        
+      }
+    } catch (error) {
+      
+    }
+  }
+
  async ngOnInit(): Promise<void> {
     initCarousels();
     await this.setCandidateProfiles();

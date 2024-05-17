@@ -2,10 +2,11 @@
   <h1>{{ isUser() ? (userdata?.account?.linxname ? userdata!.account.linxname : '') : (linxdata?.linxname ?
     linxdata!.linxname : '') }}</h1>
 </div>
-<div class="grid grid-cols-4">
+<div class="homecontainer">
 
+  <!--PERFIL | AVISOS | REPORTES || CHAT | LINX'S CHAIN-->
   @if(isUser()){
-  <div class="col-auto ms-12">
+  <div class="leftSideLinks">
     <a routerLink="/Linx/Home/Profile" routerLinkActive="active"
       class="flex flex-row text-cyan-400 hover:text-blue-700">
       <span class="material-symbols-outlined">
@@ -25,16 +26,27 @@
     </a>
   </div>
   }@else {
-  <div class="col-auto ms-12">
+  <div class="leftSideLinks">
     <button (click)="toggleChatModal()" class="flex flex-row text-purple-400 hover:text-blue-700">
       <span class="material-symbols-outlined">
         chat_bubble
       </span>
       <p class="ps-2 pt-1">Chat</p>
     </button>
+    <button (click)="toggleChatModal()" class="flex flex-row text-purple-400 hover:text-blue-700">
+      <span class="material-symbols-outlined">
+        trip_origin
+      </span>
+      <p class="ps-2 pt-1">Cadena</p>
+    </button>
   </div>
   }
-  <div class="col-span-2 grid grid-cols-2 gap-5 mt-5">
+  <!--ASIDE mobile-->
+  <div class="asidemobile">
+    <app-userhomeaside></app-userhomeaside>
+  </div>
+  <!--ARTICULOS-->
+  <div class="artsContainer">
     <article class="border border-solid rounded-md p-3">
       <h1>Sobre plantas de interior</h1>
       <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ipsa voluptas perferendis, tenetur nostrum corrupti
@@ -49,7 +61,7 @@
         </button>}
       </div>
     </article>
-    <div class="col-span-2 flex justify-end mb-20">
+    <div class="editart">
       @if(isUser()){
       <button (click)="toggleArtFormModal()" type="button"
         class="bg-orange-500 hover:bg-orange-400 flex flex-row p-3 rounded-lg">
@@ -59,13 +71,16 @@
       </button>}
     </div>
   </div>
-  <div class="col-auto">
+
+  <!--ASIDE mobile-->
+  <div class="aside">
     <app-userhomeaside></app-userhomeaside>
   </div>
 </div>
+
 <app-articlemodalform [isOpen]="isArtFormOpen" [article]="article" [userdata]="userdata"></app-articlemodalform>
 
-
+<!--CERRAR SESION | ROMPER CADENA-->
 <div class="text-violet-300 ps-5 flex justify-between">
   @if(isUser()){
   <button (click)="logout()" class="ms-10 flex flex-row items-inline">
@@ -85,7 +100,7 @@
       Romper cadena
     </div>
   </div>
-  <div class="pe-10 flex items-center align-text-bottom mt-5 me-10">
+  <div class="reportLink">
     <a routerLink="/Linx/Home/Reportes" routerLinkActive="active"
       class="flex flex-row text-yellow-100 hover:text-yellow-200">
       <span class="material-symbols-outlined">flag</span>
@@ -94,4 +109,6 @@
   </div>
   }
 </div>
+
+
 <app-chat [isOpen]="isChatOpen" [linxChat]="chat" [linx]="linxdata!"></app-chat>

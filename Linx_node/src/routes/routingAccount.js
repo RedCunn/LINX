@@ -34,7 +34,6 @@ router.post('/deleteAccount',checkJWT, AccountController.deleteAccount);
 router.post('/modifyAccount', checkJWT, AccountController.modifyAccountData);
 router.post('/resetPwd', checkJWT, AccountController.resetPassword);
 router.get('/activate_account', AccountController.activateAccount);
-router.get('/:userid/myChain', checkJWT, AccountController.getMyChain);
 router.get('/:userid/chat', checkJWT, AccountController.getChats);
 router.post('/:userid/chat/:chatid', checkJWT, AccountController.storeChatMessage);
 router.post('/:userid/article', AccountController.newArticle);

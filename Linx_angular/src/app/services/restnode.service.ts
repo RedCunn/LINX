@@ -50,7 +50,7 @@ export class RestnodeService {
 
   //#region ---------------------- UPDATE PROFILE -------------------------------
 
-  public newArticle(userid: string, article: IArticle ): Promise<IRestMessage> {
+  public newArticle(userid: string, article: IArticle): Promise<IRestMessage> {
     const res = this._httpClient.post<IRestMessage>(`http://localhost:3000/api/Account/${userid}/article`,
       article,
       {
@@ -58,7 +58,7 @@ export class RestnodeService {
       });
     return lastValueFrom(res);
   }
-  public editArticle(userid: string, article: IArticle ): Promise<IRestMessage> {
+  public editArticle(userid: string, article: IArticle): Promise<IRestMessage> {
     const res = this._httpClient.put<IRestMessage>(`http://localhost:3000/api/Account/${userid}/article/${article.artid}`,
       article,
       {
@@ -68,10 +68,19 @@ export class RestnodeService {
   }
   //#endregion
 
-  //#region -------------------------- SHUFFLE MATCH CANDIDATE PROFILES ----------
+  //#region -------------------------- MATCHING ----------------------------------------
 
   public shuffleCandidateProfiles(userid: string): Promise<IRestMessage> {
-    const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Match/${userid}/shuffle`,
+    const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Match/${userid}/shuffledProfiles`,
+      {
+        headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+      })
+
+    return lastValueFrom(res);
+  }
+
+  public requestMatch(userid: string, linxuserid: string): Promise<IRestMessage> {
+    const res = this._httpClient.post<IRestMessage>(`http://localhost:3000/api/Match/${userid}/${linxuserid}`,
       {
         headers: new HttpHeaders({ 'Content-Type': 'application/json' })
       })
@@ -82,14 +91,21 @@ export class RestnodeService {
 
   //#region ----------------------------- MY CHAIN --------------------------------
 
-  public getMyChain(userid: string, jwt: string): Promise<IRestMessage> {
-    const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Account/${userid}/myChain`,
+  public getMyChain(userid: string): Promise<IRestMessage> {
+    const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Chain/${userid}`);
+    return lastValueFrom(res);
+  }
+
+  public chainLinxs(userid: string, linxuserid: string): Promise<IRestMessage> {
+    const res = this._httpClient.post<IRestMessage>(`http://localhost:3000/api/Chain/${userid}/${linxuserid}`,
       {
-        headers: new HttpHeaders({ 'Authorization': `Bearer ${jwt}` })
+        headers: new HttpHeaders({ 'Content-Type': 'application/json' })
       }
     );
     return lastValueFrom(res);
   }
+
+
   //#endregion
 
   //#region -------------------------------- CHAT ---------------------------------
@@ -102,12 +118,12 @@ export class RestnodeService {
     return lastValueFrom(res);
   }
 
-  public storeMessage(jwt: string, userid : string, chatid : string, message: IMessage) {
-    this._httpClient.post(`http://localhost:3000/api/Account/${userid}/chat/${chatid}`, 
-    message,
-    {
-      headers: new HttpHeaders({ 'Authorization': `Bearer ${jwt}`, 'Content-Type': 'application/json' })
-    })
+  public storeMessage(jwt: string, userid: string, chatid: string, message: IMessage) {
+    this._httpClient.post(`http://localhost:3000/api/Account/${userid}/chat/${chatid}`,
+      message,
+      {
+        headers: new HttpHeaders({ 'Authorization': `Bearer ${jwt}`, 'Content-Type': 'application/json' })
+      })
   }
   //#endregion
 }

@@ -103,7 +103,7 @@
             <option value="Xhosa">Xhosa</option>
             <option value="Yidis">Yidis</option>
         </select>
-        <div class="flex flex-row">
+        <div class="flex flex-wrap">
             @for(lang of this.userLangList() ; track $index){
             <button (click)="this.removeUserLang(lang)" class="bg-green-300 text-green-600 w-fit flex flex-row px-2">
                 <p>{{lang}}</p>
@@ -214,7 +214,7 @@
             <option value="Xhosa">Xhosa</option>
             <option value="Yidis">Yidis</option>
         </select>
-        <div class="flex flex-row">
+        <div class="flex flex-wrap">
             @for(lang of this.userLangPrefsList() ; track $index){
                 <button (click)="this.removeUserLangPref(lang)" class="bg-violet-300 text-violet-600 w-fit flex flex-row px-2">
                     <p>{{lang}}</p>
