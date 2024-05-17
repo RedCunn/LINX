@@ -24,7 +24,6 @@ export class MyChainComponent implements OnInit{
   private signalStorageSvc = inject(SignalStorageService);
   private router = inject(Router);
   private _user! : IUser | null; 
-  private _jwt! : string | null;
   public myChain! : IAccount[];
 
   goToLinxProfile(linx : IAccount){
@@ -35,7 +34,7 @@ export class MyChainComponent implements OnInit{
   
   async getMyChain(){
     try {
-      const res = await this.restSvc.getMyChain(this._user?.userid!, this._jwt!);
+      const res = await this.restSvc.getMyChain(this._user?.userid!);
 
       if(res.code === 0){
         this.myChain = res.others;
@@ -51,8 +50,6 @@ export class MyChainComponent implements OnInit{
   async ngOnInit(): Promise<void> {
     const signaluser= this.signalStorageSvc.RetrieveUserData() ;
     this._user = signaluser();
-    const signaljwt = this.signalStorageSvc.RetrieveJWT();
-    this._jwt = signaljwt();
 
     await this.getMyChain();
   }

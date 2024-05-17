@@ -1,9 +1,9 @@
 <div id="card">
     <div class="max-w-3xl p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
         <h1 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Espectros políticos 👻</h1>
-        <div class="grid grid-cols-2">
-            <div class="flex flex-col">
-                <label>Tu tendencia política</label>
+        <div class="policontainer">
+            <div class="policol">
+                <label><h3>Tu tendencia política</h3></label>
                 <fieldset class="flex flex-col mt-5">
                     <div>
                         <input type="radio" [checked]="this.userProfile.politics === 'autho-left'" name="politics" value="autho-left" (change)="this.setUserPolitics($event)">
@@ -40,8 +40,8 @@
                 </fieldset>
             </div>
             <img src="../../../../../../assets/imgs/signup/Political_Spectrum.png" class="w-full row-span-2">
-            <div class="flex flex-col">
-                <label>¿Buscas gente que comparta tu tendencia política?</label>
+            <div class="policol">
+                <label><h3>¿Buscas gente que comparta tu tendencia política?</h3></label>
                 <fieldset class="mt-5">
                     <div>
                         <input type="radio" name="sharepolitics" value="true" [checked]="this.userProfile.preferences.sharePolitics === 'true'" (change)="this.setUserPoliPref($event)">

@@ -243,37 +243,6 @@ module.exports = {
 
         }
     },
-    getMyChain: async (req, res, next) => {
-        try {
-            const _userid = req.params.userid;
-
-            let _userAccount = await Account.findOne({ userid: _userid });
-
-            const _myChainPromises = _userAccount.myChain.map(async (id, i) => {
-                const account = await Account.find({ userid: id });
-                return account;
-            })
-            const accounts = await Promise.all(_myChainPromises);
-
-            res.status(200).send({
-                code: 0,
-                error: null,
-                message: 'Cadena recuperada',
-                token: null,
-                userdata: null,
-                others: accounts.flat()
-            })
-        } catch (error) {
-            res.status(200).send({
-                code: 1,
-                error: error.message,
-                message: 'Error al recuperar cadena...',
-                token: null,
-                userdata: null,
-                others: null
-            })
-        }
-    },
     getChats: async (req, res, next) => {
         try {
             const _userid = req.params.userid;
