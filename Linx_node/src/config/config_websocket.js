@@ -4,7 +4,7 @@ const ioFn = (httpServer) => {
 
     const io = new socketio.Server(httpServer, {
         cors: {
-            origin : '*',
+            origin : 'http://localhost:4200',
             methods: ['GET', 'POST'],
         }
     })
@@ -12,19 +12,18 @@ const ioFn = (httpServer) => {
     io.on('connection', (socket) => {
 
         socket.on('userConnected',(data) => {
-            console.log('CONNECTED : ', data)
-            io.emit('userConnected', data);
+            socket.broadcast.emit('linx_connected', data.user.linxname);
         })
         socket.on('init_chat',(socketid) => {
-            const room = 'chat_'+socket.id+"_"+socketid;
+            const room = 'chat_';
             console.log('linxsocketid ---> ', socketid)
             socket.join(room);
         })
         socket.on('chat_message', (data) => {
-            const room = 'chat_'+socket.id+"_"+data.socketid;
-            console.log('chat_message - linxsocketid ---> ', data.socketid)
+            const room = 'chat_';
+            console.log('ROOM : ---> ', room)
             console.log('MESSAGE : ', data.message)
-            io.to(room).emit('chat_message',data.message)
+            io.to(room).emit('get_message',data.message)
         })
     })
     

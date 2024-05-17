@@ -1,9 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Socket, io } from 'socket.io-client';
 import { SignalStorageService } from './signal-storage.service';
-import { IUser } from '../models/userprofile/IUser';
 import { IMessage } from '../models/chat/IMessage';
-import { IAccount } from '../models/useraccount/IAccount';
 import { Observable } from 'rxjs';
 
 const socket: Socket = io("http://localhost:3000")
@@ -40,6 +38,12 @@ export class WebsocketService {
     socket.emit('userConnected', { user: this.userConnected })
   }
 
+  linxConnected () {
+    socket.on('linx_connected', (data) => {
+      console.log('LINX INNN ', data)
+    });
+  }
+
   initChat (){
     socket.emit("initChat", this.socketid , (res: any) => {
       console.log('RES OK : ', res.status)
@@ -55,7 +59,7 @@ export class WebsocketService {
   }
   getMessages() {
     let obs = new Observable<IMessage>(observer => {
-      socket.on('chat_message', (data) => {
+      socket.on('get_message', (data) => {
         observer.next(data.message);
       });
 

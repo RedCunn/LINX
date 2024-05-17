@@ -42,7 +42,6 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   sendMessage() {
-    this.socketSvc.initChat();
     if (this.message.text.trim() !== '') {
       this.socketSvc.sendMessage(this.message);
       this.messageTextarea.nativeElement.value = '';
