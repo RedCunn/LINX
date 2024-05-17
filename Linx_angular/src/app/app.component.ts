@@ -43,39 +43,12 @@ export class AppComponent implements OnInit, OnDestroy {
     })
   }
 
-  async createRooms() {
-    const _jwtsignal = this.signalSvc.RetrieveJWT();
-    try {
-      const res = await this.restSvc.getMyChain(this._user?.userid!, _jwtsignal()!);
-
-      if(res.code === 0){
-        this._chain = res.others;
-        this._chain.map((account , i ) => {
-          let roomkey = crypto.lib.WordArray.random(10).toString(crypto.enc.Hex);
-          
-          this.websocketsvc.initChat();   
-        })
-        
-
-      }  
-    } catch (error) {
-      
-    }
-    
-  }
-
   ngOnInit(): void {
     this.websocketsvc.connect()
     if (isPlatformBrowser(this.platformId)) {
       initFlowbite();
     }
     this.websocketsvc.linxConnected();
-    const _usersignal = this.signalSvc.RetrieveUserData();
-    this._user = _usersignal();
-
-    if (_usersignal() !== null ) {
-      this.createRooms();
-    }
   }
   ngOnDestroy(): void {
     this.websocketsvc.disconnect()

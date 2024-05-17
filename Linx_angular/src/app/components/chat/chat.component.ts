@@ -31,6 +31,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   public user!: IUser;
   private jwt!: string;
   public messages: IMessage[] = [];
+  private roomkey! : string ; 
 
   closeModal() {
     this.isOpen.set(false);
@@ -43,7 +44,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   sendMessage() {
     if (this.message.text.trim() !== '') {
-      this.socketSvc.sendMessage(this.message);
+      this.socketSvc.sendMessage(this.message, this.roomkey);
       this.messageTextarea.nativeElement.value = '';
       //await this.storeMessage(this.message);
     }
@@ -58,6 +59,20 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   }
 
+  private scrollToBottom(): void {
+      setTimeout(() => {
+        this.messageContainer.nativeElement.scrollTop = this.messageContainer.nativeElement.scrollHeight;
+      }, 100); 
+  }
+
+  private joinRoom() : void {
+    this.roomkey = this.linx.myChain
+                          ?.find((linx) => linx.userid !== this.linx.userid)
+                          ?.roomkey!;
+      
+    this.socketSvc.initChat(this.roomkey);
+
+  }
   ngOnInit(): void {
     const _usersignal = this.signalStorageSvc.RetrieveUserData();
     const _user = _usersignal();
@@ -68,14 +83,12 @@ export class ChatComponent implements OnInit, OnDestroy {
     const _jwt = _jwtsignal();
     this.jwt = _jwt!;
 
+    this.joinRoom();
+
     try {
       this.socketSvc.getMessages().subscribe((message: IMessage) => {
-        console.log('M : ', message)
         this.messages.push(message);
       })
-      setTimeout(() => {
-        this.messageContainer.nativeElement.scrollTop = this.messageContainer.nativeElement.scrollHeight;
-      });
 
     } catch (error) {
       console.log(error)
@@ -83,7 +96,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-
+    
   }
 
 }

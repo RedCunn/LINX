@@ -13,7 +13,6 @@ export class WebsocketService {
 
   private signalStorageSvc = inject(SignalStorageService);
   private userConnected!: object | null;
-  private socketid : string | undefined ;
 
   constructor() { }
 
@@ -26,8 +25,6 @@ export class WebsocketService {
     socket.connect()
     socket.on('connect', () => { 
       console.log('CONNECTED TO SOCKET ........................') 
-      this.socketid = socket.id;
-      console.log('SOCKET ID : ',this.socketid)
     });
   }
 
@@ -44,15 +41,15 @@ export class WebsocketService {
     });
   }
 
-  initChat (){
-    socket.emit("initChat", this.socketid , (res: any) => {
+  initChat (key : string){
+    socket.emit("init_chat", {roomkey : key}, (res: any) => {
       console.log('RES OK : ', res.status)
     }
     )
   }
 
-  sendMessage(message : IMessage) {
-    socket.emit("chat_message", { message, socketid : this.socketid }, (res: any) => {
+  sendMessage(message : IMessage, roomkey : string) {
+    socket.emit("chat_message", { message, roomkey : roomkey }, (res: any) => {
       console.log('RES OK : ', res.status)
     }
     )
@@ -60,7 +57,7 @@ export class WebsocketService {
   getMessages() {
     let obs = new Observable<IMessage>(observer => {
       socket.on('get_message', (data) => {
-        observer.next(data.message);
+        observer.next(data);
       });
 
       return () => {socket.disconnect()}

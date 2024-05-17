@@ -1,16 +1,18 @@
+const Account = require('../schemas/Account');
+
 module.exports = {
     getMyChain: async (req, res, next) => {
         try {
             const _userid = req.params.userid;
 
-            let _userAccount = await Account.findOne({ userid: _userid });
-
-            const _myChainPromises = _userAccount.myChain.map(async (id, i) => {
-                const account = await Account.find({ userid: id });
+            let _userAccount = await Account.findOne({ userid:_userid });
+              
+            const _myChainPromises = _userAccount.myChain.map(async (linx, i) => {
+                const account = await Account.find({ userid: linx.userid });
                 return account;
             })
             const accounts = await Promise.all(_myChainPromises);
-
+            
             res.status(200).send({
                 code: 0,
                 error: null,
