@@ -6,6 +6,7 @@ import { IAccount } from '../../models/useraccount/IAccount';
 import { SignalStorageService } from '../../services/signal-storage.service';
 import { IUser } from '../../models/userprofile/IUser';
 import { RestnodeService } from '../../services/restnode.service';
+import { Observable} from 'rxjs';
 
 @Component({
   selector: 'app-chat',
@@ -30,8 +31,12 @@ export class ChatComponent implements OnInit, OnDestroy {
   public message: IMessage = { text: '', timestamp: '', sender: { accountid: '', linxname: '' } };
   public user!: IUser;
   private jwt!: string;
-  public messages: IMessage[] = [];
+  public message$: Observable<IMessage[]> = new Observable<IMessage[]>;
   private roomkey! : string ; 
+
+  constructor(){
+    this.message$ = this.socketSvc.receiveMessages();
+  }
 
   closeModal() {
     this.isOpen.set(false);
@@ -84,15 +89,6 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.jwt = _jwt!;
 
     this.joinRoom();
-
-    try {
-      this.socketSvc.getMessages().subscribe((message: IMessage) => {
-        this.messages.push(message);
-      })
-
-    } catch (error) {
-      console.log(error)
-    }
   }
 
   ngOnDestroy(): void {

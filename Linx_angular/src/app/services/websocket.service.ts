@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Socket, io } from 'socket.io-client';
 import { SignalStorageService } from './signal-storage.service';
 import { IMessage } from '../models/chat/IMessage';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 const socket: Socket = io("http://localhost:3000")
 
@@ -13,7 +13,7 @@ export class WebsocketService {
 
   private signalStorageSvc = inject(SignalStorageService);
   private userConnected!: object | null;
-
+  private _messagesSubject$ : BehaviorSubject<IMessage[]> = new BehaviorSubject<IMessage[]>([]);
   constructor() { }
 
   disconnect() {
@@ -54,16 +54,15 @@ export class WebsocketService {
     }
     )
   }
-  getMessages() {
-    let obs = new Observable<IMessage>(observer => {
+
+  getMessages(){
       socket.on('get_message', (data) => {
-        observer.next(data);
+        this._messagesSubject$.next(data);
       });
+  }
 
-      return () => {socket.disconnect()}
-    })
-
-    return obs;
+  receiveMessages() : Observable<IMessage[]>{
+    return this._messagesSubject$.asObservable();
   };
 
 
