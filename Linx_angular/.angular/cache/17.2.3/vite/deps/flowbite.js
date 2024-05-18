@@ -1,4 +1,4 @@
-import "./chunk-GLLL6ZVE.js";
+import "./chunk-B2KS57BG.js";
 
 // node_modules/flowbite/lib/esm/dom/events.js
 var Events = (

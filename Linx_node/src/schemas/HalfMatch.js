@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
 let HalfMatchSchema = new mongoose.Schema ({
-    matchingAccountid: { type: mongoose.Schema.Types.ObjectId, ref: 'Account' },
-    matchedAccountid: { type: mongoose.Schema.Types.ObjectId, ref: 'Account' }
+    matchingUserid: { type : String},
+    matchedUserid: {type : String}
 })
 
 module.exports = mongoose.model('HalfMatch', HalfMatchSchema, 'HalfMatches');

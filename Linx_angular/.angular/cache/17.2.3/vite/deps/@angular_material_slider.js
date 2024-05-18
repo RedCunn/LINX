@@ -1,4 +1,7 @@
 import {
+  NG_VALUE_ACCESSOR
+} from "./chunk-V2AIDIC2.js";
+import {
   Directionality,
   MAT_RIPPLE_GLOBAL_OPTIONS,
   MatCommonModule,
@@ -6,11 +9,8 @@ import {
   MatRippleModule,
   Platform,
   RippleState
-} from "./chunk-LNQJHL6Z.js";
-import {
-  NG_VALUE_ACCESSOR
-} from "./chunk-SKFAEELN.js";
-import "./chunk-D2VLYAOH.js";
+} from "./chunk-JSSDSZ6T.js";
+import "./chunk-WE6KJSEY.js";
 import {
   ANIMATION_MODULE_TYPE,
   ChangeDetectionStrategy,
@@ -70,11 +70,11 @@ import {
   ɵɵtext,
   ɵɵtextInterpolate,
   ɵɵviewQuery
-} from "./chunk-UXQ5KPK2.js";
+} from "./chunk-WWEKWGFK.js";
 import {
   Subject
 } from "./chunk-WSA2QMXP.js";
-import "./chunk-GLLL6ZVE.js";
+import "./chunk-B2KS57BG.js";
 
 // node_modules/@angular/material/fesm2022/slider.mjs
 var _c0 = ["knob"];

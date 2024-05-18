@@ -1,18 +1,14 @@
-const bcrypt = require('bcrypt');
-const axios = require('axios');
-const jwt = require('jsonwebtoken');
 
+const { v4: uuidv4 } = require('uuid');
 let User = require('../schemas/User');
-let Account = require('../schemas/Account');
 let match = require('./utils/matching');
+const matching = require('./utils/matching');
 
 module.exports = {
     shuffleProfiles : async (req, res, next) => {
         try {
             const userid = req.params.userid;
             let _user = await User.findOne({'userid' : userid}) 
-
-            // buscar en HalfMatches y en Matches
 
             let matchingProfiles = await match.retrieveProfilesBasedOnCompatibility(_user);
 
@@ -39,17 +35,31 @@ module.exports = {
         }   
     },
     matchLinxs : async (req, res, next) => {
-        //buscar en halfMatches if ifHalfMatched ---> do Match (sacar de HalfMatches) else do HaldMatch
         try {
             const userid = req.params.userid;
             const linxuserid = req.params.linxuserid;
 
-            let matchGrade = 'half';
+            let matchRank = 'HALF';
+
+            let _areHalfMatches = await matching.areHalfMatches(userid, linxuserid);
+            
+            if(_areHalfMatches.length > 0){
+                const currentDate = new Date().toISOString();
+                const _roomkey = uuidv4();
+                let _doMatch = await matching.doMatch(userid,linxuserid, currentDate,_roomkey);
+                console.log('RESULT DOING MATCH -> ', _doMatch);
+                let _removeHalfMatch = await matching.removeFromHalfMatches(userid, linxuserid);
+                console.log('RESULT REMOVING FROM HALFMATCH -> ', _removeHalfMatch);
+                matchRank = 'FULL';
+            }else{
+                let _doHalfMatch = await matching.doHalfMatch(userid, linxuserid);
+                console.log('RESULT DOING HALF MATCH ->', _doHalfMatch)
+            }
 
             res.status(200).send({
                 code: 0,
                 error: null,
-                message: `Linxs ${matchGrade} MATCH...`,
+                message: `Linxs ${matchRank} MATCH...`,
                 token: null,
                 userData: null,
                 others: null

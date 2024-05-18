@@ -1,3 +1,5 @@
+const HalfMatch = require('../../schemas/HalfMatch');
+const Match = require('../../schemas/Match');
 const usersFilterRepo = require('./usersFilterRepository');
 
 const getMatchingLocation = async (user, searchgroup) => {
@@ -124,6 +126,7 @@ const comparePolitics = (userAxis, axisToCompare, preference) => {
 };
 
 const getPoliticsCompatibility = (user, linx) => {
+    //-----------POLITICS (2/4 = 0,5)
     try {
         let percentage = 0;
         const userAxis = getAxisFromPolitics(user.politics);
@@ -187,7 +190,7 @@ const compareWorkPreferences = (preference, workA, workB) => {
         case 'avoid':
             return workA !== workB;
         default:
-            return false; 
+            return false;
     }
 }
 
@@ -200,7 +203,7 @@ const getWorkCompatibility = (user, linx) => {
         const userWork = user.work.industry ? user.work.industry : user.work.other;
         const linxWork = linx.work.industry ? linx.work.industry : linx.work.other;
 
-        if(userWork === '' && linxWork === ''){
+        if (userWork === '' && linxWork === '') {
             return 0.25;
         }
 
@@ -241,15 +244,109 @@ const getCompatibilityPercentage = async (user, searchgroup) => {
         throw error;
     }
 }
+const retrieveHalfMatches = async (user) => {
+    try {
+        let _halfMatches = await HalfMatch.find({ matchedUserid: user.userid });
+        console.log('result retrieveHalfMatches: ', _halfMatches)
+        return _halfMatches;
+    } catch (error) {
+        console.log('error retrieving HalfMatches...', error)
+    }
+}
+const retrieveMatches = async (user) => {
+    try {
+        let _matches = await Match.find({
+            $or: [
+                { userid_a: user.userid },
+                { userid_b: user.userid }
+            ]
+        });
+        console.log('result retrieving Matches...', _matches)
+        return _matches;
+    } catch (error) {
+        console.log('error retrieving Matches...', error)
+    }
+}
 
 module.exports = {
+    doMatch: async (userid, linxuserid, matchedAt, roomkey) => {
+        try {
+            let insertResult = await Match.create({ matchedAt: matchedAt, userid_a: userid, userid_b: linxuserid, roomkey: roomkey })
+            return insertResult;
+        } catch (error) {
+            console.log('error doing match...', error)
+        }
+    },
+    doHalfMatch: async (userid, linxuserid) => {
+        try {
+            let insertResult = await HalfMatch.create({ matchingUserid: userid, matchedUserid: linxuserid });
+            return insertResult;
+        } catch (error) {
+            console.log('error doing halfmatch...', error)
+        }
+    },
+    removeFromHalfMatches: async (userid, linxuserid) => {
+        try {
+            let removeResult = await HalfMatch.deleteOne(
+                {
+                    $or: [
+                        { $and: [{ matchingUserid: userid }, { matchedUserid: linxuserid }] },
+                        { $and: [{ matchingUserid: linxuserid }, { matchedUserid: userid }] }
+                    ]
+                }
+            )
+            return removeResult;
+        } catch (error) {
+            console.log('error removing from halfmatches...', error)
+        }
+    },
+    removeFromMatches: async (userid, linxuserid) => {
+        try {
+            let removeResult = await Match.deleteOne({
+                $or: [
+                    { $and: [{ userid_a: userid }, { userid_b: linxuserid }] },
+                    { $and: [{ userid_a: linxuserid }, { userid_b: userid }] }
+                ]  
+            })
+            return removeResult;
+        } catch (error) {
+            console.log('error removing from matches...', error)
+        }
+    },
+    areHalfMatches: async (userid, linxuserid) => {
+        try {
+            let _halfMatches = await HalfMatch.find({
+                $or: [
+                    { $and: [{ matchingUserid: userid }, { matchedUserid: linxuserid }] },
+                    { $and: [{ matchingUserid: linxuserid }, { matchedUserid: userid }] }
+                ]
+            });
+            console.log('result areHalfMatches: ', _halfMatches)
+            return _halfMatches;
+        } catch (error) {
+            console.log('error in areHalfMatches...', error)
+        }
+    },
     retrieveProfilesBasedOnCompatibility: async (user) => {
         try {
 
             //----------- active accounts 
             let _activeAccounts = await usersFilterRepo.retrieveUsersWithActiveAccounts(user);
+            //----------- exclude already matching
+            let _matches = await retrieveMatches(user);
+            let _excludeMatches = _activeAccounts;
+
+            if (_matches.length > 0) {
+                let matchedUserIds = new Set();
+                _matches.forEach(match => {
+                    matchedUserIds.add(match.userid_a);
+                    matchedUserIds.add(match.userid_b);
+                });
+                _excludeMatches = _activeAccounts.filter(acc => !matchedUserIds.has(acc.userid));
+            }
+
             //-----------LOCATION
-            let _filteredByLocation = await getMatchingLocation(user, _activeAccounts);
+            let _filteredByLocation = await getMatchingLocation(user, _excludeMatches);
             //--------------GENDER 
             let _filteredByGender = await getMatchingGenders(user, _filteredByLocation);
             //----------------AGE 
@@ -258,6 +355,20 @@ module.exports = {
             let _filteredByLang = await getMatchingLanguages(user, _filteredByAge);
 
             const finalGroup = await getCompatibilityPercentage(user, _filteredByLang);
+
+            const halfMatches = await retrieveHalfMatches(user);
+
+            if (halfMatches.length > 0) {
+                let finalGroupUserIds = new Set(finalGroup.map(profile => profile.userid));
+
+                halfMatches.forEach(halfMatch => {
+                    if (!finalGroupUserIds.has(halfMatch.userid)) {
+                        finalGroup.push(halfMatch);
+                        finalGroupUserIds.add(halfMatch.userid);
+                    }
+                });
+
+            }
 
             const accounts = await usersFilterRepo.retrieveAccountsFromUsers(finalGroup);
 
