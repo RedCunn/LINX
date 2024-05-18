@@ -1,0 +1,90 @@
+const { v4: uuidv4 } = require('uuid');
+const ChainReq = require('../../schemas/ChainRequest');
+const Account = require('../../schemas/Account');
+const Match = require('../../schemas/Match');
+
+module.exports = {
+    isJoinChainRequested: async (userid, linxid) => {
+        try {
+            let isRequested = await ChainReq.find({
+                $or:
+                    [
+                        { $and: [{ requestingUserid: userid }, { requestedUserid: linxid }] },
+                        { $and: [{ requestingUserid: linxid }, { requestedUserid: userid }] }
+                    ]
+            })
+            console.log('select isRequested...', isRequested);
+            return isRequested;
+        } catch (error) {
+            console.log('error selecting isRequested...', error)
+        }
+    },
+    doChainRequest: async (userid, linxid) => {
+        try {
+            let insertResult = await ChainReq.create({ requestingUserid: userid, requestedUserid: linxid })
+            console.log('result of insertion on ChainRequests: ', insertResult)
+            return insertResult;
+        } catch (error) {
+            console.log('result ERROR of insertion on ChainRequests: ', error)
+        }
+    },
+    joinChains: async (userid, linxid) => {
+        const session = await Account.startSession();
+        session.startTransaction();
+        try {
+
+            let linxAccount = await Account.findOne({ userid: linxid })
+            let userAccount = await Account.findOne({ userid: userid })
+
+            let match = await Match.findOne({
+                $or: [
+                    { $and: [{ userid_a: userid }, { userid_b: linxid }] },
+                    { $and: [{ userid_a: linxid }, { userid_b: userid }] }
+                ]
+            })
+
+            linxAccount.myChain.forEach(l => {
+                const _roomkey = uuidv4();
+                userAccount.extendedChain.push({mylinxuserid : linxid, userid : l.userid, roomkey : _roomkey})
+            })
+
+            userAccount.myChain.forEach(l => {
+                const _roomkey = uuidv4();
+                userAccount.extendedChain.push({mylinxuserid : userid, userid : l.userid, roomkey : _roomkey})
+            })
+
+            let insertOnUserChain = await Account.updateOne({ userid: userid },
+                { $push: { myChain: { userid: linxid, roomkey: match.roomkey } }}).session(session)
+
+            let insertOnLinxChain = await Account.updateOne({ userid: linxid },
+                { $push: { myChain: { userid: userid, roomkey: match.roomkey } } }).session(session)
+
+            let removeChainReq = await ChainReq.deleteOne({
+                $or:
+                    [
+                        { $and: [{ requestingUserid: userid }, { requestedUserid: linxid }] },
+                        { $and: [{ requestingUserid: linxid }, { requestedUserid: userid }] }
+                    ]
+            }).session(session)
+
+            let removeMatch = await Match.deleteOne({
+                $or: [
+                    { $and: [{ userid_a: userid }, { userid_b: linxid }] },
+                    { $and: [{ userid_a: linxid }, { userid_b: userid }] }
+                ]
+            }).session(session)
+
+            await userAccount.save({ session: session });
+            await linxAccount.save({ session: session });
+
+            await session.commitTransaction();
+            session.endSession();
+
+            console.log('LINXS JOINED TO CHAIN SUCCESFULLY')
+        } catch (error) {
+            await session.abortTransaction();
+            session.endSession();
+            console.error('Error durante la transacción JOINING CHAINS:', error);
+        }
+    }
+}

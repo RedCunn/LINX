@@ -247,7 +247,6 @@ const getCompatibilityPercentage = async (user, searchgroup) => {
 const retrieveHalfMatches = async (user) => {
     try {
         let _halfMatches = await HalfMatch.find({ matchedUserid: user.userid });
-        console.log('result retrieveHalfMatches: ', _halfMatches)
         return _halfMatches;
     } catch (error) {
         console.log('error retrieving HalfMatches...', error)
@@ -261,7 +260,6 @@ const retrieveMatches = async (user) => {
                 { userid_b: user.userid }
             ]
         });
-        console.log('result retrieving Matches...', _matches)
         return _matches;
     } catch (error) {
         console.log('error retrieving Matches...', error)
@@ -321,7 +319,6 @@ module.exports = {
                     { $and: [{ matchingUserid: linxuserid }, { matchedUserid: userid }] }
                 ]
             });
-            console.log('result areHalfMatches: ', _halfMatches)
             return _halfMatches;
         } catch (error) {
             console.log('error in areHalfMatches...', error)

@@ -96,7 +96,7 @@ export class RestnodeService {
     return lastValueFrom(res);
   }
 
-  public chainLinxs(userid: string, linxuserid: string): Promise<IRestMessage> {
+  public requestJoinChain(userid: string, linxuserid: string): Promise<IRestMessage> {
     const res = this._httpClient.post<IRestMessage>(`http://localhost:3000/api/Chain/${userid}/${linxuserid}`,
       {
         headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -105,7 +105,18 @@ export class RestnodeService {
     return lastValueFrom(res);
   }
 
+  public getJoinChainRequests(userid: string, linxuserid : string){
+    const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Chain/${userid}/chainreq/${linxuserid}`);
+    return lastValueFrom(res);
+  }
+  //#endregion
 
+  //#region ----------------------------- MY INTERACTIONS ------------------------
+
+  public getMyMatches (userid : string) : Promise<IRestMessage>{
+    const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Match/${userid}/matches`);
+    return lastValueFrom(res);
+  }
   //#endregion
 
   //#region -------------------------------- CHAT ---------------------------------

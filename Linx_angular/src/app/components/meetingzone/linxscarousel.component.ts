@@ -66,8 +66,6 @@ export class LinxscarouselComponent implements OnInit{
 
   async matchRequest(linxuserid : string){
     try {
-      console.log('a enviar l...',linxuserid);
-      console.log('a enviar u...',this.userdata?.userid!);
       const res = await this.restsvc.requestMatch(this.userdata?.userid! , linxuserid);
       if(res.code === 0){
         console.log('RESPONSE MATCH REQ : ', res)

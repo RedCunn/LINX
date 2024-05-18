@@ -91,6 +91,7 @@
   </button>
   }@else {
   <div>
+    @if(isChained()){
     <button (click)="breakChain()" data-tooltip-target="tooltip-animation" data-tooltip-placement="right"
       data-tooltip-style="light" class="flex flex-row hover:bg-slate-100 p-3 rounded-md">
       <img src="../../../../assets/imgs/logos/favicon.ico">
@@ -99,6 +100,16 @@
       class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-extralight text-white transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip ">
       Romper cadena
     </div>
+    }@else {
+    <button [disabled]="isChainRequested()" (click)="requestJoinChain()" data-tooltip-target="tooltip-animation" data-tooltip-placement="right"
+      data-tooltip-style="light" class="flex flex-row hover:bg-slate-100 p-3 rounded-md">
+      <img src="../../../../assets/imgs/logos/joinchain3.ico">
+    </button>
+    <div id="tooltip-animation" role="tooltip"
+      class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-extralight text-white transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip ">
+      {{ isChainRequested() ? "" : "Unir a tu cadena"}}
+    </div>
+    }
   </div>
   <div class="reportLink">
     <a routerLink="/Linx/Home/Reportes" routerLinkActive="active"
