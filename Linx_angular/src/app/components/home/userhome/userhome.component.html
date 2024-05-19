@@ -97,7 +97,7 @@
       <img src="../../../../assets/imgs/logos/favicon.ico">
     </button>
     <div id="tooltip-animation" role="tooltip"
-      class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-extralight text-white transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip ">
+      class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-extralight text-black transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip ">
       Romper cadena
     </div>
     }@else {
@@ -106,7 +106,7 @@
       <img src="../../../../assets/imgs/logos/joinchain3.ico">
     </button>
     <div id="tooltip-animation" role="tooltip"
-      class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-extralight text-white transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip ">
+      class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-extralight text-fuchsia-600 transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip ">
       {{ isChainRequested() ? "" : "Unir a tu cadena"}}
     </div>
     }
@@ -122,4 +122,4 @@
 </div>
 
 
-<app-chat [isOpen]="isChatOpen" [linxChat]="chat" [linx]="linxdata!"></app-chat>
+<app-chat [isOpen]="isChatOpen" [linxChat]="chat"></app-chat>

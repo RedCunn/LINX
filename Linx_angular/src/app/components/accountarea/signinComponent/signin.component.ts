@@ -5,6 +5,7 @@ import { IRestMessage } from '../../../models/IRestMessage';
 import { RestnodeService } from '../../../services/restnode.service';
 import { SignalStorageService } from '../../../services/signal-storage.service';
 import { WebsocketService } from '../../../services/websocket.service';
+import { IUser } from '../../../models/userprofile/IUser';
 
 @Component({
   selector: 'app-signin',
@@ -29,6 +30,20 @@ export class SigninComponent{
     this.router.navigateByUrl('/Linx/Registro');
   }
 
+  async getMyChain(userdata : IUser){
+    try {
+      const res = await this.restSvc.getMyChain(userdata.userid);
+      if(res.code === 0){
+        console.log('STORING CHAIN --> ', res.others)
+        this.signalstoresvc.StoreMyChain(res.others);
+      }else{
+        console.log('mychain never found...')  
+      }
+    } catch (error) {
+      console.log('mychain never found...', error)
+    }
+  }
+
   async Signin( loginForm : NgForm){
     
     // if (loginForm.control.get('emailorlinxname')?.status !== 'VALID') {
@@ -50,6 +65,7 @@ export class SigninComponent{
     if(_response.code === 0){
       this.signalstoresvc.StoreUserData(_response.userdata);
       this.signalstoresvc.StoreJWT(_response.token!);
+      await this.getMyChain(_response.userdata)
       this.socketSvc.userLogin();
       this.router.navigateByUrl('/Linx/Inicio');
     }else{

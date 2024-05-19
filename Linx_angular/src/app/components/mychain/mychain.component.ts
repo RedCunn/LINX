@@ -31,27 +31,12 @@ export class MyChainComponent implements OnInit{
     this.signalStorageSvc.StoreLinxData(linx);
     this.router.navigateByUrl(`/Linx/Profile/${linx.linxname}`);
   }
-  
-  async getMyChain(){
-    try {
-      const res = await this.restSvc.getMyChain(this._user?.userid!);
 
-      if(res.code === 0){
-        this.myChain = res.others;
-      }else{
-        console.log('mychain never found...')
-      }
-
-    } catch (error) {
-      console.log('mychain never found...', error)
-    }
-  }
-
-  async ngOnInit(): Promise<void> {
-    const signaluser= this.signalStorageSvc.RetrieveUserData() ;
+  ngOnInit(): void {
+    const signaluser= this.signalStorageSvc.RetrieveUserData();
     this._user = signaluser();
-
-    await this.getMyChain();
+    const signalchain = this.signalStorageSvc.RetrieveMyChain();
+    this.myChain = signalchain()!;
   }
 
 }

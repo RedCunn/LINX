@@ -40,10 +40,10 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object, private router: Router) {
     let _userdata = this.signalStoreSvc.RetrieveUserData();
-    if (_userdata() !== null) {
-      this.userdata = _userdata();
-    }
+    this.userdata = _userdata();
     let _linxdata = this.signalStoreSvc.RetrieveLinxData();
+    this.linxdata = _linxdata();
+
     console.log('USER ', _userdata())
     console.log('LINX ', _linxdata())
 
@@ -51,10 +51,7 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
       if (event instanceof NavigationStart || event instanceof NavigationEnd) {
         if (event.url.match(this.routePattern)) {
           this.isUser.set(false);
-          if (_linxdata() !== null) {
-            this.linxdata = _linxdata();
-            this.isChained.set(this.isLinx());
-          }
+          this.isChained.set(this.isLinx());
         } else {
           this.isUser.set(true);
         }
@@ -62,8 +59,6 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
     })
 
   }
-
-
 
   isLinx(): boolean {
     let onChain = this.userdata?.account.myChain?.find(l => l.userid === this.linxdata?.userid)
@@ -90,12 +85,30 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
 
   }
 
+
+  async getMyChain(userdata: IUser) {
+    try {
+      const res = await this.restSvc.getMyChain(userdata.userid);
+      if (res.code === 0) {
+        this.signalStoreSvc.StoreMyChain(res.others);
+      } else {
+        console.log('mychain never found...')
+      }
+    } catch (error) {
+      console.log('mychain never found...', error)
+    }
+  }
+
   async requestJoinChain() {
     try {
       const res = await this.restSvc.requestJoinChain(this.userdata!.userid!, this.linxdata!.userid!)
       if (res.code === 0) {
-        this.isChainRequested.set(true);
-        console.log(`${this.userdata?.account.linxname} and ${this.linxdata?.linxname} ARE NOW CHAINED !!!`)
+        if(res.message === 'REQUESTED'){
+          this.isChainRequested.set(true);
+        }else{
+          this.isChained.set(true);
+          await this.getMyChain(this.userdata!)
+        }
       } else {
         console.log(`${this.userdata?.account.linxname} and ${this.linxdata?.linxname} couldnt chain...`)
       }
@@ -116,16 +129,16 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
     }
     try {
       const res = await this.restSvc.getJoinChainRequests(this.userdata!.userid, this.linxdata!.userid);
-      if(res.code === 0){
+      if (res.code === 0) {
         const joinRequest = res.others
         console.log('JOUIN REQ ', res.others)
-        if(joinRequest === null || joinRequest.requesting !== this.userdata?.userid){
+        if (joinRequest === null || joinRequest.requesting !== this.userdata?.userid) {
           this.isChainRequested.set(false);
-        }else{
+        } else {
           this.isChainRequested.set(true);
         }
-      }else{
-        console.log('error getting join chain reqs ...', res.error)  
+      } else {
+        console.log('error getting join chain reqs ...', res.error)
       }
     } catch (error) {
       console.log('error getting join chain reqs ...', error)

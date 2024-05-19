@@ -12,9 +12,20 @@ export class SignalStorageService implements IStorageService{
   private _userstatesignal : WritableSignal<IUser | null> = signal<IUser | null>(null);
   private _jwtsignal : WritableSignal<string | null> = signal<string | null>('');
   private _linxstatesignal : WritableSignal<IAccount | null> = signal<IAccount | null>(null);
-  private _chatMessageSignal : WritableSignal<IMessage|null> = signal<IMessage|null>(null);
+  private _mychainsignal : WritableSignal<IAccount[]|null> = signal<IAccount[]|null>(null);
 
   constructor() { }
+  
+  StoreMyChain(mychain: IAccount[] | null): void {
+    if(mychain !== null){
+      this._mychainsignal.update((currentstate) => ([...mychain]))
+    }else{
+      this._mychainsignal.set([]);
+    }
+  }
+  RetrieveMyChain(): WritableSignal<IAccount[] | null> {
+    return this._mychainsignal;
+  }
 
   StoreLinxData(newstate: IAccount | null): void {
     if(newstate !== null){
@@ -51,14 +62,6 @@ export class SignalStorageService implements IStorageService{
     return this._jwtsignal;
   }
 
-  StoreChatMessage(newmessage: IMessage | null): void {
-    if(newmessage !== null){
-      this._chatMessageSignal.update((currentstate) => ({...currentstate , ...newmessage}))
-    }else{
-      this._chatMessageSignal.set(null);
-    }
-  }
-  RetrieveChatMessage(): WritableSignal<IMessage | null> {
-    return this._chatMessageSignal;
-  }
+  
+  
 }

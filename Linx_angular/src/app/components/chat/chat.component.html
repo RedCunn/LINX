@@ -6,7 +6,7 @@
         <!-- Modal header -->
         <div class="flex justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 w-full">
             <h2 class="text-lg font-semibold text-purple-800">
-                {{linx.linxname}}
+                {{receiverAccount.linxname}}
             </h2>
             <button type="button"
                 class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
@@ -25,7 +25,7 @@
                 <div class="flex items-start gap-3 mb-1">
                     
                         <div class="flex flex-col w-full max-w-[320px] leading-1.5 p-4 rounded-e-xl rounded-es-xl"
-                        [class.bg-linxmess]="item.sender.accountid === linx._id"
+                        [class.bg-linxmess]="item.sender.accountid === receiverAccount._id"
                         [class.bg-usermess]="item.sender.accountid === user.accountid">
                             <div class="flex items-center space-x-2 rtl:space-x-reverse">
                                 <span
@@ -74,7 +74,7 @@
                     </div>
                 </div>
                 }@empty {
-                <p class="font-extralight">Escribe tu primer mensaje a {{linx.linxname}}...</p>
+                <p class="font-extralight">Escribe tu primer mensaje a {{receiverAccount.linxname}}...</p>
                 }
             </div>
             <form class="flex items-center px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700"

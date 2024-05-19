@@ -15,8 +15,8 @@ export interface IStorageService {
     StoreLinxData (newstate : IAccount | null) : void ;
     RetrieveLinxData () : WritableSignal<IAccount | null> ;
 
-    StoreChatMessage (newmessage : IMessage | null) : void;
-    RetrieveChatMessage () : WritableSignal<IMessage | null>;
+    StoreMyChain (mychain : IAccount[] | null) : void;
+    RetrieveMyChain () : WritableSignal<IAccount[] | null>;
     //#endregion
 
     //#region ---------------------------- [ ASYNC ] --------------------

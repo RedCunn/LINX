@@ -1,3 +1,4 @@
+const Account = require('../../schemas/Account');
 const HalfMatch = require('../../schemas/HalfMatch');
 const Match = require('../../schemas/Match');
 const usersFilterRepo = require('./usersFilterRepository');
@@ -329,21 +330,30 @@ module.exports = {
 
             //----------- active accounts 
             let _activeAccounts = await usersFilterRepo.retrieveUsersWithActiveAccounts(user);
+            //----------- exclude already on chain
+            let _userAccount = await Account.findOne({userid : user.userid});
+            let excludedUserIds = new Set();
+
+            if(_userAccount.myChain.length > 0){
+                _userAccount.myChain.forEach(linx => {
+                    excludedUserIds.add(linx.userid)
+                })
+            }
             //----------- exclude already matching
             let _matches = await retrieveMatches(user);
-            let _excludeMatches = _activeAccounts;
 
             if (_matches.length > 0) {
-                let matchedUserIds = new Set();
                 _matches.forEach(match => {
-                    matchedUserIds.add(match.userid_a);
-                    matchedUserIds.add(match.userid_b);
+                    excludedUserIds.add(match.userid_a);
+                    excludedUserIds.add(match.userid_b);
                 });
-                _excludeMatches = _activeAccounts.filter(acc => !matchedUserIds.has(acc.userid));
             }
-
+            let _excludedAccounts = _activeAccounts;
+            if(excludedUserIds.size > 0 ){
+                _excludedAccounts = _activeAccounts.filter(acc => !excludedUserIds.has(acc.userid));
+            }
             //-----------LOCATION
-            let _filteredByLocation = await getMatchingLocation(user, _excludeMatches);
+            let _filteredByLocation = await getMatchingLocation(user, _excludedAccounts);
             //--------------GENDER 
             let _filteredByGender = await getMatchingGenders(user, _filteredByLocation);
             //----------------AGE 

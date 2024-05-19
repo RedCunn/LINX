@@ -39,18 +39,19 @@ export class InteractionsComponent {
       if(res.code === 0){
         this.myMatches = res.others;
       }else{
-        console.log('mychain never found...')
+        console.log('interactions never found...')
       }
 
     } catch (error) {
-      console.log('mychain never found...', error)
+      console.log('interactions never found...', error)
     }
   }
 
   async ngOnInit(): Promise<void> {
     const signaluser= this.signalStorageSvc.RetrieveUserData() ;
     this._user = signaluser();
-
-    await this.getMyInteractions();
+    if(signaluser() !== null){
+      await this.getMyInteractions();
+    }
   }
 }

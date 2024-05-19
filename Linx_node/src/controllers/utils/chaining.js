@@ -55,7 +55,6 @@ module.exports = {
 
             let insertOnUserChain = await Account.updateOne({ userid: userid },
                 { $push: { myChain: { userid: linxid, roomkey: match.roomkey } }}).session(session)
-
             let insertOnLinxChain = await Account.updateOne({ userid: linxid },
                 { $push: { myChain: { userid: userid, roomkey: match.roomkey } } }).session(session)
 

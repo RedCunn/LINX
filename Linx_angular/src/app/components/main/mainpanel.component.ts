@@ -11,24 +11,6 @@ import {LinxscarouselComponent} from '../meetingzone/linxscarousel.component';
   templateUrl: './mainpanel.component.html',
   styleUrl: './mainpanel.component.css'
 })
-export class MainpanelComponent implements OnInit{
-
-  private signalstoresvc : SignalStorageService = inject(SignalStorageService);
-  public searchParams : {q : String, type : String} = {q : '', type : ''};
+export class MainpanelComponent{
   public showMeetingZone = signal(false);
-
-  async search(searchForm : NgForm){
-    this.searchParams = {
-      q: searchForm.value.q,
-      type: searchForm.value.type
-    };
-  }
-
-  
-
-  ngOnInit(): void {  
-    let user = this.signalstoresvc.RetrieveUserData();
-    console.log('USER RECUPERADO EN INICIO PANEL : ', user())
-
-  }
 }

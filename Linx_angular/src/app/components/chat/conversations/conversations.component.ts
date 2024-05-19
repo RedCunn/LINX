@@ -38,7 +38,7 @@ export class ConversationsComponent implements OnInit{
     const jwtsignal = this.signalStorageSvc.RetrieveJWT();
     const jwt = jwtsignal();
 
-    const res = this.restSvc.getMyChats(user?.userid!, jwt!);
+    const res = await this.restSvc.getMyChats(user?.userid!, jwt!);
    } catch (error) {
     
    } 

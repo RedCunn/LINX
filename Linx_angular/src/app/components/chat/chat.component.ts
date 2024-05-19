@@ -20,31 +20,38 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   @Input() isOpen = signal(false);
   @Input() linxChat!: IChat;
-  @Input() linx!: IAccount;
   @ViewChild('messageContainer') messageContainer!: ElementRef;
   @ViewChild('messageTextarea') messageTextarea!: ElementRef;
-
 
   private signalStorageSvc = inject(SignalStorageService);
   private restSvc = inject(RestnodeService);
   private socketSvc = inject(WebsocketService);
-  public chat: IChat = { chatid: '', participants: { userid: '', linxaccountid: '' }, messages: [] };
+  public chat: IChat = { chatid: '', participants: { userid_a: '', userid_b: '' }, messages: [], roomkey : '' };
   public message: IMessage = {messageid : '', text: '', timestamp: '', sender: { accountid: '', linxname: '' } };
   public user!: IUser;
+  public receiverAccount! : IAccount;
   private jwt!: string;
   public messages = signal<IMessage[]>([]);
   private roomkey! : string ; 
 
-  constructor(){
-    try {
-      this.socketSvc.getMessages().subscribe((message: IMessage) => {
-        console.log('M : ', message)
-        this.messages.update((mss)=>[...mss, message]);
-      })
+  constructor(private ref : ChangeDetectorRef){
+    const _usersignal = this.signalStorageSvc.RetrieveUserData();
+    this.user = _usersignal()!;
+    const _linxsignal = this.signalStorageSvc.RetrieveLinxData();
+    this.receiverAccount = _linxsignal()!; 
+    console.log('USER ON CHAT : ', this.user)
+    console.log('LINX ON CHAT : ', this.receiverAccount)
+    this.message.sender = { accountid: this.user.accountid, linxname: this.user.account.linxname }
 
-    } catch (error) {
-      console.log(error)
+    if(this.user.account.myChain!.length > 0){
+      this.joinRoom(this.user.account.myChain!);
     }
+    
+    this.socketSvc.getMessages().subscribe((message: IMessage) => {
+      this.messages.update((mss)=>[...mss, message]);
+      this.ref.detectChanges();
+      this.scrollToBottom();
+    })
   }
 
   closeModal() {
@@ -92,25 +99,17 @@ export class ChatComponent implements OnInit, OnDestroy {
       }, 100); 
   }
 
-  private joinRoom() : void {
-    this.roomkey = this.linx.myChain
-                          ?.find((linx) => linx.userid !== this.linx.userid)
-                          ?.roomkey!;
-      
+  private joinRoom(chain : {userid : string , roomkey : string}[]) : void {
+    this.roomkey = chain.find((linx) => linx.userid === this.receiverAccount.userid)?.roomkey!;
+    this.chat = {chatid:'',participants : {userid_a : this.user.userid, userid_b : this.receiverAccount.userid}, messages : [], roomkey : this.roomkey}
+    console.log('joined room : ', this.roomkey) 
     this.socketSvc.initChat(this.roomkey);
-
   }
-  ngOnInit(): void {
-    const _usersignal = this.signalStorageSvc.RetrieveUserData();
-    const _user = _usersignal();
-    this.user = _user!;
-    this.message.sender = { accountid: this.user.accountid, linxname: this.user.account.linxname }
 
+  ngOnInit(): void {
     const _jwtsignal = this.signalStorageSvc.RetrieveJWT();
     const _jwt = _jwtsignal();
     this.jwt = _jwt!;
-
-    this.joinRoom();
   }
 
   ngOnDestroy(): void {

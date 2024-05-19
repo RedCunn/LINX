@@ -47,7 +47,7 @@ module.exports = {
 
             if (isChainRequested.length > 0) {
                 await chaining.joinChains(userid, linxuserid);
-                joinReqState = 'LINXS ON CHAIN';
+                joinReqState = 'ONCHAIN';
             } else {
                 await chaining.doChainRequest(userid, linxuserid);
             }

@@ -3,6 +3,7 @@ import { IMessage } from "./IMessage";
 
 export interface IChat {
     chatid : string;
-    participants : {userid : string; linxaccountid : string;};
+    participants : {userid_a: string; userid_b : string;};
     messages : Array<IMessage>;
+    roomkey : string;
 }
