@@ -3,6 +3,7 @@ import { IStorageService } from '../models/IStorageService';
 import { IUser } from '../models/userprofile/IUser';
 import { IAccount } from '../models/useraccount/IAccount';
 import { IMessage } from '../models/chat/IMessage';
+import { IMatch } from '../models/userprofile/IMatch';
 
 @Injectable({
   providedIn: 'root'
@@ -12,18 +13,40 @@ export class SignalStorageService implements IStorageService{
   private _userstatesignal : WritableSignal<IUser | null> = signal<IUser | null>(null);
   private _jwtsignal : WritableSignal<string | null> = signal<string | null>('');
   private _linxstatesignal : WritableSignal<IAccount | null> = signal<IAccount | null>(null);
-  private _mychainsignal : WritableSignal<IAccount[]|null> = signal<IAccount[]|null>(null);
+  private _mychainsignal : WritableSignal<IAccount[]> = signal<IAccount[]>([]);
+  private _matchesaccountsignal : WritableSignal<IAccount[]> = signal<IAccount[]>([]);
+  private _matchessignal : WritableSignal<IMatch[]> = signal<IMatch[]>([]);
 
   constructor() { }
+  StoreMatches(matches: IMatch[]): void {
+    if(matches !== null){
+      this._matchessignal.update((currentstate) => ([...matches]))
+    }else{
+      this._matchessignal.set([]);
+    }
+  }
+  RetrieveMatches(): WritableSignal<IMatch[]> {
+    return this._matchessignal;
+  }
+  StoreMatchesAccounts(matches: IAccount[]): void {
+    if(matches !== null){
+      this._matchesaccountsignal.update((currentstate) => ([...matches]))
+    }else{
+      this._matchesaccountsignal.set([]);
+    }
+  }
+  RetrieveMatchesAccounts(): WritableSignal<IAccount[]> {
+    return this._matchesaccountsignal;
+  }
   
-  StoreMyChain(mychain: IAccount[] | null): void {
+  StoreMyChain(mychain: IAccount[]): void {
     if(mychain !== null){
       this._mychainsignal.update((currentstate) => ([...mychain]))
     }else{
       this._mychainsignal.set([]);
     }
   }
-  RetrieveMyChain(): WritableSignal<IAccount[] | null> {
+  RetrieveMyChain(): WritableSignal<IAccount[]> {
     return this._mychainsignal;
   }
 

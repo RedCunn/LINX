@@ -117,24 +117,28 @@ export class RestnodeService {
     const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Match/${userid}/matches`);
     return lastValueFrom(res);
   }
-  //#endregion
 
-  //#region -------------------------------- CHAT ---------------------------------
-  public getMyChats(userid: string, jwt: string): Promise<IRestMessage> {
-    const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Account/${userid}/chat`,
-      {
-        headers: new HttpHeaders({ 'Authorization': `Bearer ${jwt}` })
-      }
-    );
+  public getMatchRoomKey (userid_a : string , userid_b : string) : Promise<IRestMessage>{
+    const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Match/${userid_a}/${userid_b}/roomkey`);
     return lastValueFrom(res);
   }
 
-  public storeMessage(jwt: string, userid: string, chatid: string, message: IMessage) {
-    this._httpClient.post(`http://localhost:3000/api/Account/${userid}/chat/${chatid}`,
-      message,
+  //#endregion
+
+  //#region -------------------------------- CHAT ---------------------------------
+  public getMyChats(roomkey: string, userid : string): Promise<IRestMessage> {
+    const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Account/${userid}/chat/${roomkey}`);
+    return lastValueFrom(res);
+  }
+
+  public storeMessage(chat: {participants : {userid_a: string,userid_b: string}, message: IMessage}, roomkey : string) : Promise<IRestMessage>{
+    const res = this._httpClient.put<IRestMessage>(`http://localhost:3000/api/Account/chat/${roomkey}`,
+      chat,
       {
-        headers: new HttpHeaders({ 'Authorization': `Bearer ${jwt}`, 'Content-Type': 'application/json' })
+        headers: new HttpHeaders({'Content-Type': 'application/json' })
       })
+
+      return lastValueFrom(res);
   }
   //#endregion
 }

@@ -34,9 +34,8 @@ router.post('/deleteAccount',checkJWT, AccountController.deleteAccount);
 router.post('/modifyAccount', checkJWT, AccountController.modifyAccountData);
 router.post('/resetPwd', checkJWT, AccountController.resetPassword);
 router.get('/activate_account', AccountController.activateAccount);
-router.get('/:userid/chat', checkJWT, AccountController.getChats);
-router.post('/:userid/chat/:chatid', checkJWT, AccountController.storeChatMessage);
+router.put('/chat/:roomkey', AccountController.storeChatMessage);
 router.post('/:userid/article', AccountController.newArticle);
 router.put('/:userid/article/:artid', AccountController.editArticle)
-
+router.get('/:userid/chat/:roomkey', AccountController.getChats)
 module.exports = router;

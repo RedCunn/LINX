@@ -20,7 +20,6 @@ export class MyChainComponent implements OnInit{
     this.isOpen.set(false);
   }
 
-  private restSvc = inject(RestnodeService);
   private signalStorageSvc = inject(SignalStorageService);
   private router = inject(Router);
   private _user! : IUser | null; 

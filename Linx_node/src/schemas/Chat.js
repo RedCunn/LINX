@@ -3,10 +3,10 @@ const mongoose = require('mongoose');
 const chatSchema = new mongoose.Schema({
     
     participants: {
-        userid: {type : String},
-        linxaccountid: { type: mongoose.Schema.Types.ObjectId, ref: 'Account' }
-    }
-    ,
+        userid_a: {type : String},
+        userid_b: { type : String}
+    },
+    roomkey : {type : String, unique : true},
     messages: [
         {
             text: { type: String, maxLength: 300, minLength: 1 },

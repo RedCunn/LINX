@@ -109,7 +109,7 @@ module.exports = {
                 error: null,
                 message: 'MATCH ACCOUNTS WERE RETRIEVED : ',
                 token: null,
-                userdata: null,
+                userdata: _matches,
                 others: accounts
             })
         } catch (error) {

@@ -48,8 +48,8 @@ export class WebsocketService {
     )
   }
 
-  sendMessage(message : IMessage, roomkey : string) {
-    socket.emit("chat_message", { message, roomkey : roomkey }, (res: any) => {
+  sendMessage(userid_a : string, userid_b : string, message : IMessage, roomkey : string) {
+    socket.emit("chat_message", {userid_a, userid_b, message, roomkey : roomkey }, (res: any) => {
       console.log('RES OK : ', res.status)
     }
     )

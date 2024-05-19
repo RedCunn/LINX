@@ -25,8 +25,8 @@
                 <div class="flex items-start gap-3 mb-1">
                     
                         <div class="flex flex-col w-full max-w-[320px] leading-1.5 p-4 rounded-e-xl rounded-es-xl"
-                        [class.bg-linxmess]="item.sender.accountid === receiverAccount._id"
-                        [class.bg-usermess]="item.sender.accountid === user.accountid">
+                        [class.bg-linxmess]="item.sender.accountid === this.receiverAccount._id"
+                        [class.bg-usermess]="item.sender.accountid === this.user.account._id ">
                             <div class="flex items-center space-x-2 rtl:space-x-reverse">
                                 <span
                                     class="text-sm font-semibold text-gray-900 dark:text-white">{{item.sender.linxname}}</span>

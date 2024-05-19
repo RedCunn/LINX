@@ -35,11 +35,12 @@ export class InteractionsComponent {
   async getMyInteractions(){
     try {
       const res = await this.restSvc.getMyMatches(this._user?.userid!);
-
       if(res.code === 0){
         this.myMatches = res.others;
+        //this.signalStorageSvc.StoreMatchesAccounts(res.others);
+        this.signalStorageSvc.StoreMatches(res.userdata);
       }else{
-        console.log('interactions never found...')
+        console.log('interactions never found...', res.message)
       }
 
     } catch (error) {
@@ -48,10 +49,7 @@ export class InteractionsComponent {
   }
 
   async ngOnInit(): Promise<void> {
-    const signaluser= this.signalStorageSvc.RetrieveUserData() ;
-    this._user = signaluser();
-    if(signaluser() !== null){
-      await this.getMyInteractions();
-    }
+    this._user = this.signalStorageSvc.RetrieveUserData()();
+    await this.getMyInteractions();
   }
 }

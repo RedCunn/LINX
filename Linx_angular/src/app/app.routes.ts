@@ -38,7 +38,7 @@ export const routes: Routes = [
             {
                 path:'Profile/:linxname',
                 loadComponent : () => import('./components/home/userhome/userhome.component').then(m=>m.UserhomeComponent),
-                //canActivate: [AuthGuard]
+                canActivate: [AuthGuard]
             },
             {
                 path: 'Home',

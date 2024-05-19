@@ -12,6 +12,7 @@ const Account = require('../schemas/Account');
 const User = require('../schemas/User');
 const Chat = require('../schemas/Chat');
 const Article = require('../schemas/Article');
+const chating = require('./utils/chating');
 
 function generateToken(userdata) {
 
@@ -246,7 +247,19 @@ module.exports = {
     getChats: async (req, res, next) => {
         try {
             const _userid = req.params.userid;
-            let _chats = await Chat.find({ "participants.userid": _userid });
+            const _roomkey = req.params.roomkey;
+            console.log('ROOMKEY : ', _roomkey)
+            let _chats;
+            if(_roomkey.trim() !== ''){
+                _chats = await Chat.findOne({ roomkey:_roomkey });
+            }else{
+                _chats = await Chat.find({
+                    $or : [
+                        {userid_a : _userid},
+                        {userid_b : _userid}
+                    ]
+                 });
+            }
 
             res.status(200).send({
                 code: 0,
@@ -260,7 +273,7 @@ module.exports = {
             res.status(400).send({
                 code: 1,
                 error: error.message,
-                message: 'ERROR AL RECUPERAR CHATS',
+                message: 'ERROR AL RECUPERAR CHAT',
                 token: null,
                 userdata: null,
                 others: null
@@ -269,9 +282,11 @@ module.exports = {
     },
     storeChatMessage: async (req, res, next) => {
         try {
-
+            const roomkey = req.params.roomkey;
+            const {message, participants} = req.body;
+            console.log('BODY STORE MESSAGE : ', req.body)
+            let insertResult = await chating.storeMessage(message, roomkey, participants.userid_a, participants.userid_b)
             
-
             res.status(200).send({
                 code: 0,
                 error: null,

@@ -1,15 +1,10 @@
-import { Component, Inject, OnDestroy, OnInit, PLATFORM_ID, inject, signal } from '@angular/core';
-import { Event, NavigationStart, Router, RouterEvent, RouterModule } from '@angular/router';
+import { Component, Inject, OnDestroy, OnInit, PLATFORM_ID, ViewContainerRef, inject, signal } from '@angular/core';
+import { Event, NavigationEnd, NavigationStart, Router, RouterEvent, RouterModule } from '@angular/router';
 import { MainheaderComponent } from './components/layouts/mainheader/mainheader.component';
 import { FooterComponent } from './components/layouts/mainfooter/footer.component';
-import { SignalStorageService } from './services/signal-storage.service';
 import { WebsocketService } from './services/websocket.service';
 import { initFlowbite } from 'flowbite';
 import { isPlatformBrowser } from '@angular/common';
-import { RestnodeService } from './services/restnode.service';
-import { IUser } from './models/userprofile/IUser';
-import * as crypto from 'crypto-js';
-import { IAccount } from './models/useraccount/IAccount';
 
 @Component({
   selector: 'app-root',
@@ -22,25 +17,27 @@ export class AppComponent implements OnInit, OnDestroy {
   title = 'Linx_angular';
 
   private websocketsvc: WebsocketService = inject(WebsocketService);
-  private restSvc: RestnodeService = inject(RestnodeService);
-  private signalSvc: SignalStorageService = inject(SignalStorageService);
-  public routePattern: RegExp = new RegExp("/Linx/(Login|Registro|error)", "g");
+  public routePattern: RegExp = new RegExp("(/Linx/(Login|Registro|error)|^/?$)", "g");
   public showStickyFooter = signal(true);
 
-  private _user!: IUser | null;
-  private _chain : IAccount[] = [];
-  
+  private vcr = inject(ViewContainerRef);
+  public footercompo : any;
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object, private router: Router) {
     this.router.events.subscribe((event: Event) => {
       if (event instanceof NavigationStart) {
-        if (event.url.match(this.routePattern)) {
-          this.showStickyFooter.set(false)
-        } else {
-          this.showStickyFooter.set(true)
-        }
+        if (!event.url.match(this.routePattern)) {
+          this.loadFooter();
+        }else{
+          this.vcr.clear();
+        } 
       }
     })
+  }
+
+  async loadFooter (){
+    this.vcr.clear();
+    this.footercompo = this.vcr.createComponent(FooterComponent);
   }
 
   ngOnInit(): void {
