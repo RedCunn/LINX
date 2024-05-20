@@ -14,6 +14,7 @@ import { ChatComponent } from '../../chat/chat.component';
 import { IChat } from '../../../models/chat/IChat';
 import { ArticlemodalformComponent } from './artmodal/articlemodalform.component';
 import { IMessage } from '../../../models/chat/IMessage';
+import { BehaviorSubject, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-userhome',
@@ -44,18 +45,32 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object, private router: Router) {
     this.userdata  = this.signalStoreSvc.RetrieveUserData()();
+    const routePatternMatch$ = new BehaviorSubject<string | null>(null);
+
     this.router.events.subscribe((event: Event) => {
+    
       if (event instanceof NavigationStart || event instanceof NavigationEnd) {
         this.linxdata = this.signalStoreSvc.RetrieveLinxData()();
+
         if (event.url.match(this.routePattern)) {
-          this.isUser.set(false);
-          this.isChained.set(this.isLinx());
-          this.loadChatComponent();
+          routePatternMatch$.next(event.url);
         } else {
-          this.isUser.set(true);
+          routePatternMatch$.next(null);
         }
       }
     })
+
+    routePatternMatch$
+    .pipe(distinctUntilChanged())
+    .subscribe((url) => {
+      if (url) {
+        this.isUser.set(false);
+        this.isChained.set(this.isLinx());
+        this.loadChatComponent();
+      } else {
+        this.isUser.set(true);
+      }
+    });
 
   }
 
@@ -75,9 +90,12 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
     try {
       const res = await this.restSvc.getMyChats(this.roomkey, this.userdata?.userid!);
       if(res.code === 0){
-        const _resMess : IMessage[] = res.others.messages;
-        _resMess.forEach( m => {this.chat.messages.push(m)});
-        console.log('chat messages : ', this.chat.messages)
+        console.log('chat messages : ', res.others)
+        const _resMess : IMessage[] = res.others !== null ? res.others.messages : [];
+        this.chat.messages = [];
+        if(_resMess.length > 0){
+          _resMess.forEach( m => {this.chat.messages.push(m)});
+        }
       }else{
         console.log('error recuperando chat...', res.message)
       }

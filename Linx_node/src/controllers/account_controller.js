@@ -285,6 +285,7 @@ module.exports = {
             const roomkey = req.params.roomkey;
             const {message, participants} = req.body;
             console.log('BODY STORE MESSAGE : ', req.body)
+            console.log('PARAMS ROOMKEY : ', roomkey)
             let insertResult = await chating.storeMessage(message, roomkey, participants.userid_a, participants.userid_b)
             
             res.status(200).send({

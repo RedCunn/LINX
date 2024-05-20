@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 const chatSchema = new mongoose.Schema({
     
     participants: {
-        userid_a: {type : String},
-        userid_b: { type : String}
+        userid_a: {type : String, unique : false},
+        userid_b: { type : String, unique : false}
     },
     roomkey : {type : String, unique : true},
     messages: [
@@ -12,7 +12,7 @@ const chatSchema = new mongoose.Schema({
             text: { type: String, maxLength: 300, minLength: 1 },
             timestamp: { type: Date },
             sender: { 
-                accountid : {type: mongoose.Schema.Types.ObjectId, ref: 'Account'},
+                accountid : {type: String, unique : false},
                 linxname : {type : String} 
             }
         }

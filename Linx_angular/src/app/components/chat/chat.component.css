@@ -11,10 +11,28 @@
     transform: translate(-50%, -50%);
 }
 
-.bg-linxmess{
+.linxmess {
     background-color: slateblue;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 320px;
+    line-height: 1.5;
+    padding: 1rem;
+    border-top-left-radius: 1rem;
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
 }
 
-.bg-usermess{
+.usermess {
     background-color: rgb(215, 248, 165);
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 320px;
+    line-height: 1.5;
+    padding: 1rem;
+    border-top-right-radius: 1rem;
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
 }

@@ -34,7 +34,6 @@ export class SigninComponent{
     try {
       const res = await this.restSvc.getMyChain(userdata.userid);
       if(res.code === 0){
-        console.log('STORING CHAIN --> ', res.others)
         this.signalstoresvc.StoreMyChain(res.others);
       }else{
         console.log('mychain never found...')  

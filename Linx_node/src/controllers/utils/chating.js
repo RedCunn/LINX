@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Chat = require('../../schemas/Chat');
 
 module.exports = {
@@ -5,7 +6,8 @@ module.exports = {
         try {
             let chatExists = await Chat.find({roomkey : roomkey})
             if (chatExists.length > 0) {
-                let updateResult = await Chat.updateOne({roomkey : roomkey},{ $push: { messages: { message } } })
+                console.log('mess que entra : ', message);
+                let updateResult = await Chat.updateOne({roomkey : roomkey},{ $push: { messages: message  } })
                 return updateResult;
             } else {
                 let insertResult = await Chat.create({
