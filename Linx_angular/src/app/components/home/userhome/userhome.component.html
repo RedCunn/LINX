@@ -81,7 +81,7 @@
 <app-articlemodalform [isOpen]="isArtFormOpen" [article]="article" [userdata]="userdata"></app-articlemodalform>
 
 <!--CERRAR SESION | ROMPER CADENA-->
-<div class="text-violet-300 ps-5 flex justify-between">
+<div class="homefooter text-violet-300">
   @if(isUser()){
   <button (click)="logout()" class="ms-10 flex flex-row items-inline">
     <span class="material-symbols-outlined">
@@ -90,9 +90,9 @@
     <p class="pt-1 ps-1">Cerrar sesión</p>
   </button>
   }@else {
-  <div>
+  <div class="chainbutt">
     @if(isChained()){
-    <button (click)="breakChain()" data-tooltip-target="tooltip-animation" data-tooltip-placement="right"
+    <button (click)="showAlert()" data-tooltip-target="tooltip-animation" data-tooltip-placement="right"
       data-tooltip-style="light" class="flex flex-row hover:bg-slate-100 p-3 rounded-md">
       <img src="../../../../assets/imgs/logos/favicon.ico">
     </button>
@@ -102,7 +102,7 @@
     </div>
     }@else {
     <button [disabled]="isChainRequested()" (click)="requestJoinChain()" data-tooltip-target="tooltip-animation" data-tooltip-placement="right"
-      data-tooltip-style="light" class="flex flex-row hover:bg-slate-100 p-3 rounded-md">
+      data-tooltip-style="light" class="hover:bg-slate-100 p-3 rounded-md">
       <img src="../../../../assets/imgs/logos/joinchain3.ico">
     </button>
     <div id="tooltip-animation" role="tooltip"
@@ -111,9 +111,20 @@
     </div>
     }
   </div>
+  @if(showBreakChainAlert()){
+  <div class="breakalert">
+    <h4>Al romper cadena perderás a Calle y a todxs lxs linxs de su cadena , ¿estás segurx de querer continuar?</h4>
+    <div class="alertbuttcontainer">
+      <button type="button" (click)="closeAlert()" class="alertbutt text-violet-400 bg-white border border-violet-300 hover:bg-violet-100 font-normal rounded-lg text-sm px-2 me-2 mb-2">Cancelar</button>
+      <button type="button" (click)="breakChain()" class="alertbutt text-red-800 bg-red-400 hover:bg-red-500 font-normal rounded-lg text-sm px-2 me-2 mb-2 ">Romper cadena</button>
+    </div>
+  </div>
+  }@else {
+    <div class="nobreakalert"></div>  
+  }
   <div class="reportLink">
     <a routerLink="/Linx/Home/Reportes" routerLinkActive="active"
-      class="flex flex-row text-yellow-100 hover:text-yellow-200">
+      class="flex flex-row text-yellow-500 hover:text-yellow-600">
       <span class="material-symbols-outlined">flag</span>
       <p class="ps-1 pt-2">Reportar</p>
     </a>

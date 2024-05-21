@@ -83,8 +83,8 @@ module.exports = {
 
             console.log('CHAIN REQ : ', _chainReqs)
 
-            if(_chainReqs.length > 0){
-                joinRequest ={requested :  _chainReqs.at(0).requestedUserid, requesting : _chainReqs.at(0).requestingUserid};
+            if (_chainReqs.length > 0) {
+                joinRequest = { requested: _chainReqs.at(0).requestedUserid, requesting: _chainReqs.at(0).requestingUserid };
             }
 
             res.status(200).send({
@@ -100,6 +100,27 @@ module.exports = {
                 code: 1,
                 error: error.message,
                 message: 'error retrieving joinchain reqs...',
+                token: null,
+                userdata: null,
+                others: null
+            })
+        }
+    },
+    breakChain: async (req, res, next) => {
+        try {
+            res.status(200).send({
+                code: 0,
+                error: null,
+                message: 'BROKEN CHAIN',
+                token: null,
+                userdata: null,
+                others: null
+            })
+        } catch (error) {
+            res.status(400).send({
+                code: 1,
+                error: error.message,
+                message: 'The chain was too strong...couldnt break',
                 token: null,
                 userdata: null,
                 others: null

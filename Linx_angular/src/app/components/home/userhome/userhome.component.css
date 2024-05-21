@@ -26,20 +26,61 @@
     display: none;
 }
 
-.reportLink {
-    display: flex;
-    align-items: center;
-    vertical-align: text-bottom;
-    margin-top: 1.25rem;
-    margin-right: 2.5rem;
-}
-
 .editart {
     grid-column: span 2 / span 2;
     display: flex;
-    flex-direction: row; 
-    justify-content: end; 
+    flex-direction: row;
+    justify-content: end;
     margin-bottom: 20%;
+}
+
+.homefooter {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    align-items: last baseline;
+    justify-content: center;
+    text-align: center;
+}
+
+.chainbutt {
+    grid-column: span 1 / span 1;
+    width: 100%;
+    align-self: center;
+}
+
+.reportLink {
+    grid-column: span 1 / span 1;
+    align-self: last baseline;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.nobreakalert {
+    grid-column: span 3 / span 3;
+    height: 100%;
+}
+
+.breakalert {
+    grid-column: span 3 / span 3;
+    padding-top: 2%;
+    padding-left: 1%;
+    padding-right: 1%;
+    height: 100%;
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+}
+
+.alertbuttcontainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.alertbutt {
+    width: fit-content;
 }
 
 @media only screen and (max-width: 768px) {
@@ -47,7 +88,7 @@
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-    
+
     .leftSideLinks {
         margin-top: 1rem;
         grid-column: span 1 / span 1;
@@ -79,15 +120,61 @@
     .editart {
         grid-column: span 1 / span 1;
         display: flex;
-        flex-direction: row; 
-        justify-content: end; 
+        flex-direction: row;
+        justify-content: end;
         margin-bottom: 20%;
     }
 
+
+    .homefooter {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        justify-content: center;
+        text-align: center;
+        row-gap: 2rem;
+    }
+
+    .chainbutt {
+        grid-column: 1;
+        grid-row: 1;
+        width: 100%;
+        align-self: center;
+    }
+
     .reportLink {
+        grid-column: 2;
+        grid-row: 1;
+        align-self: last baseline;
         display: flex;
-        align-items: center;
-        vertical-align: text-bottom;
         justify-content: end;
+        width: 100%;
+    }
+
+    .nobreakalert {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    .breakalert {
+        grid-column: span 2;
+        grid-row: 2;
+        padding-top: 5%;
+        padding-left: 1%;
+        padding-right: 1%;
+        height: 100%;
+        width: fit-content;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .alertbuttcontainer {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .alertbutt {
+        width: fit-content;
     }
 }

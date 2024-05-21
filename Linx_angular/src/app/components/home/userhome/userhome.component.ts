@@ -28,21 +28,25 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
   private signalStoreSvc: SignalStorageService = inject(SignalStorageService);
   private restSvc: RestnodeService = inject(RestnodeService);
   private vcr = inject(ViewContainerRef);
+  
   @ViewChild('chatcompoContainer', {read : ViewContainerRef, static : true}) 
   public chatcompoContainer! : ViewContainerRef;
 
-  public userdata!: IUser | null;
-  public linxdata!: IAccount | null;
-  public chat!: IChat;
   public isChatOpen = signal(false);
   public isArtFormOpen = signal(false);
   public isUser = signal(false);
   public isChained = signal(false);
   public isChainRequested = signal(false);
-  public routePattern: RegExp = new RegExp("/Linx/Profile/[^/]+", "g");
+  public showBreakChainAlert = signal(false);
+
+  public userdata!: IUser | null;
+  public linxdata!: IAccount | null;
+  public chat!: IChat;
   public article: IArticle = { artid: null, title: '', bodycontent: '', img: '', postedOn: '', useAsUserPic: false }
   private roomkey! : string;
 
+  public routePattern: RegExp = new RegExp("/Linx/Profile/[^/]+", "g");
+  
   constructor(@Inject(PLATFORM_ID) private platformId: Object, private router: Router) {
     this.userdata  = this.signalStoreSvc.RetrieveUserData()();
     const routePatternMatch$ = new BehaviorSubject<string | null>(null);
@@ -130,7 +134,13 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
     this.isArtFormOpen.update(v => !v);
   }
 
-  breakChain() {
+  showAlert() {
+    this.showBreakChainAlert.set(true);
+  }
+  closeAlert(){
+    this.showBreakChainAlert.set(false);
+  }
+  breakChain(){
 
   }
 
