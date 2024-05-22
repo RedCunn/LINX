@@ -159,7 +159,7 @@ module.exports = {
                 throw Error('Expired TOken')
             }
             await Account.updateOne({ userid: decoded.userid }, { active: true });
-            res.redirect('http://localhost:4200/Linx/Activa')
+            res.redirect('http://localhost:4200/Linx/activa')
         } catch (error) {
             res.status(400).send({
                 code: 1,

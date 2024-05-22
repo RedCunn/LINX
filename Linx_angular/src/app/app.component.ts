@@ -17,7 +17,7 @@ export class AppComponent implements OnInit, OnDestroy {
   title = 'Linx_angular';
 
   private websocketsvc: WebsocketService = inject(WebsocketService);
-  public routePattern: RegExp = new RegExp("(/Linx/(Login|Registro|error)|^/?$)", "g");
+  public routePattern: RegExp = new RegExp("(/Linx/(Login|Registro|error|registrada|activa)|^/?$)", "g");
   public showStickyFooter = signal(true);
 
   private vcr = inject(ViewContainerRef);
@@ -41,14 +41,14 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    //this.websocketsvc.connect()
+    this.websocketsvc.connect()
     if (isPlatformBrowser(this.platformId)) {
       initFlowbite();
     }
-    //this.websocketsvc.linxConnected();
+    this.websocketsvc.linxConnected();
   }
   ngOnDestroy(): void {
-    //this.websocketsvc.disconnect()
+    this.websocketsvc.disconnect()
   }
 
 

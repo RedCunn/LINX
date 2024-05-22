@@ -125,7 +125,7 @@ export class SignupUserdataComponent {
         const _response: IRestMessage = await this.restnodeSvc.signupNewUser(this.UserProfile);
 
         if (_response.code === 0) {
-          this.router.navigateByUrl('/Linx/SignedUp');
+          this.router.navigateByUrl('/Linx/registrada');
         }
 
 

@@ -38,6 +38,7 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
   public isChained = signal(false);
   public isChainRequested = signal(false);
   public showBreakChainAlert = signal(false);
+  public showJoinChainRequested = signal(false);
 
   public userdata!: IUser | null;
   public linxdata!: IAccount | null;
@@ -134,12 +135,31 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
     this.isArtFormOpen.update(v => !v);
   }
 
-  showAlert() {
-    this.showBreakChainAlert.set(true);
+  showAlert(alert : string) {
+    switch (alert) {
+      case "breakchain":
+        this.showBreakChainAlert.set(true);   
+        break;
+      case "requestchain":
+        this.showJoinChainRequested.set(true);
+        break;
+      default:
+        break;
+    }
   }
-  closeAlert(){
-    this.showBreakChainAlert.set(false);
+  closeAlert(alert : string){
+    switch (alert) {
+      case "breakchain":
+        this.showBreakChainAlert.set(false);
+        break;
+      case "requestchain":
+        this.showJoinChainRequested.set(false);
+        break;
+      default:
+        break;
+    }
   }
+
   breakChain(){
 
   }
@@ -162,6 +182,7 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
       const res = await this.restSvc.requestJoinChain(this.userdata!.userid!, this.linxdata!.userid!)
       if (res.code === 0) {
         if(res.message === 'REQUESTED'){
+          this.showJoinChainRequested.set(false);
           this.isChainRequested.set(true);
         }else{
           this.isChained.set(true);

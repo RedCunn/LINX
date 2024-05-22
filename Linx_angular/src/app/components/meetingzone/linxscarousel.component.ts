@@ -68,6 +68,10 @@ export class LinxscarouselComponent implements OnInit{
     try {
       const res = await this.restsvc.requestMatch(this.userdata?.userid! , linxuserid);
       if(res.code === 0){
+        let index = this.candidateProfiles!.findIndex(profile => profile.userid === linxuserid);
+        if (index !== -1) {
+            this.candidateProfiles!.splice(index, 1);
+        }
         console.log('RESPONSE MATCH REQ : ', res)
       }else{
         console.log('RESPONSE ERROR MATCH REQ : ', res)

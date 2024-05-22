@@ -39,9 +39,11 @@
       </span>
       <p class="ps-2 pt-1">Cadena</p>
     </button>
-    <div class="chainbuttmobile">
-      <button [disabled]="isChainRequested()" (click)="requestJoinChain()" data-tooltip-target="tooltip-animation-2"
-        data-tooltip-placement="right" data-tooltip-style="light" class="hover:bg-slate-100 p-3 rounded-md">
+    @if(!isChained()){
+    <div class="joinchainbuttmobile">
+      <button [disabled]="isChainRequested()" (click)="showAlert('requestchain')"
+        data-tooltip-target="tooltip-animation-2" data-tooltip-placement="right" data-tooltip-style="light"
+        class="hover:bg-slate-100 p-3 rounded-md">
         <img src="../../../../assets/imgs/logos/joinchain3.ico">
       </button>
       <div id="tooltip-animation-2" role="tooltip"
@@ -49,6 +51,7 @@
         {{ isChainRequested() ? "" : "Unir a tu cadena"}}
       </div>
     </div>
+    }
   </div>
   }
   <!--ASIDE mobile-->
@@ -57,6 +60,28 @@
   </div>
   <!--ARTICULOS-->
   <div class="artsContainer">
+    @if(showJoinChainRequested()){
+    <div class="joinalertmobile">
+      <button type="button" class="text-end text-gray-300" (click)="closeAlert('requestchain')">
+        <span class="material-symbols-outlined hover:text-gray-500 me-5">close</span>
+      </button>
+      <h3>¿ Quieres solicitar a {{this.linxdata?.linxname}} unir vuestras cadenas ?</h3>
+      <p>Al unir vuestras cadenas {{this.linxdata?.linxname}} tendrá acceso a todxs tus linxs y tú tendrás acceso a
+        todxs lxs linxs de {{this.linxdata?.linxname}}</p>
+      <div class="alertbuttcontainer">
+        <button type="button" (click)="requestJoinChain()"
+          class="alertbutt text-violet-400 bg-white border border-violet-300 hover:bg-violet-100 font-normal rounded-lg text-sm px-2 me-2 mb-2">
+          Unir
+        </button>
+      </div>
+    </div>
+    }
+    @if(isChainRequested()){
+    <div class="joinalertmobile">
+      <h3>Hemos enviado tu solicitud a {{this.linxdata?.linxname}} ... quizás el principio de una alucinante cadena de
+        cadenas.</h3>
+    </div>
+    }
     <article class="border border-solid rounded-md p-3">
       <h1>Sobre plantas de interior</h1>
       <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ipsa voluptas perferendis, tenetur nostrum corrupti
@@ -100,9 +125,10 @@
     <p class="pt-1 ps-1">Cerrar sesión</p>
   </button>
   }@else {
+
+  @if(isChained()){
   <div class="chainbutt">
-    @if(isChained()){
-    <button (click)="showAlert()" data-tooltip-target="tooltip-animation" data-tooltip-placement="right"
+    <button (click)="showAlert('breakchain')" data-tooltip-target="tooltip-animation" data-tooltip-placement="right"
       data-tooltip-style="light" class="flex flex-row hover:bg-slate-100 p-3 rounded-md">
       <img src="../../../../assets/imgs/logos/favicon.ico">
     </button>
@@ -110,8 +136,10 @@
       class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-extralight text-black transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip ">
       Romper cadena
     </div>
-    }@else {
-    <button [disabled]="isChainRequested()" (click)="requestJoinChain()" data-tooltip-target="tooltip-animation"
+  </div>
+  }@else {
+  <div class="joinchainbutt">
+    <button [disabled]="isChainRequested()" (click)="showAlert('requestchain')" data-tooltip-target="tooltip-animation"
       data-tooltip-placement="right" data-tooltip-style="light" class="hover:bg-slate-100 p-3 rounded-md">
       <img src="../../../../assets/imgs/logos/joinchain3.ico">
     </button>
@@ -119,22 +147,57 @@
       class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-extralight text-fuchsia-600 transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip ">
       {{ isChainRequested() ? "" : "Unir a tu cadena"}}
     </div>
-    }
   </div>
-  @if(showBreakChainAlert()){
+  }
+
+  @if (this.showBreakChainAlert()) {
   <div class="breakalert">
     <h4>Al romper cadena perderás a Calle y a todxs lxs linxs de su cadena , ¿estás segurx de querer continuar?</h4>
     <div class="alertbuttcontainer">
-      <button type="button" (click)="closeAlert()"
-        class="alertbutt text-violet-400 bg-white border border-violet-300 hover:bg-violet-100 font-normal rounded-lg text-sm px-2 me-2 mb-2">Cancelar</button>
+      <button type="button" (click)="closeAlert('breakchain')"
+        class="alertbutt text-violet-400 bg-white border border-violet-300 hover:bg-violet-100 font-normal rounded-lg text-sm px-2 me-2 mb-2">
+        Cancelar
+      </button>
       <button type="button" (click)="breakChain()"
-        class="alertbutt text-red-800 bg-red-400 hover:bg-red-500 font-normal rounded-lg text-sm px-2 me-2 mb-2 ">Romper
-        cadena</button>
+        class="alertbutt text-red-700 bg-white border border-red-600 hover:bg-red-100 font-normal rounded-lg text-sm px-2 me-2 mb-2 ">
+        Romper cadena
+      </button>
     </div>
   </div>
-  }@else {
-  <div class="nobreakalert"></div>
   }
+
+  @if(!showBreakChainAlert() && isChained()){
+  <div class="noalert"></div>
+  }
+
+  @if(showJoinChainRequested()){
+  <div class="joinalert">
+    <button type="button" class="text-end text-gray-300" (click)="closeAlert('requestchain')">
+      <span class="material-symbols-outlined hover:text-gray-500 me-5">close</span>
+    </button>
+    <h3>¿ Quieres solicitar a {{this.linxdata?.linxname}} unir vuestras cadenas ?</h3>
+    <p>Al unir vuestras cadenas {{this.linxdata?.linxname}} tendrá acceso a todxs tus linxs y tú tendrás acceso a todxs
+      lxs linxs de {{this.linxdata?.linxname}}</p>
+    <div class="alertbuttcontainer">
+      <button type="button" (click)="requestJoinChain()"
+        class="alertbutt text-violet-400 bg-white border border-violet-300 hover:bg-violet-100 font-normal rounded-lg text-sm px-2 me-2 mb-2">
+        Unir
+      </button>
+    </div>
+  </div>
+  }
+
+  @if(!showJoinChainRequested() && !isChained()){
+  <div class="noalert"></div>
+  }
+
+  @if(isChainRequested()){
+  <div class="joinalert">
+    <h3>Hemos enviado tu solicitud a {{this.linxdata?.linxname}} ... quizás el principio de una alucinante cadena de
+      cadenas.</h3>
+  </div>
+  }
+
   <div class="reportLink">
     <a routerLink="/Linx/Home/Reportes" routerLinkActive="active"
       class="flex flex-row text-yellow-500 hover:text-yellow-600">
@@ -143,5 +206,7 @@
     </a>
   </div>
   }
+
+
 </div>
 <ng-container #chatcompoContainer></ng-container>

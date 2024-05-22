@@ -20,11 +20,11 @@ export const routes: Routes = [
                 loadComponent : ()=> import('./components/accountarea/signupComponent/signupuserprof/signup-userdata.component').then(c => c.SignupUserdataComponent)
             },
             {
-                path:'SignedUp',
+                path:'registrada',
                 loadComponent : () => import('./components/accountarea/signupComponent/signedupOK/signedup-ok.component').then(c => c.SignedupOKComponent)
             },
             {
-                path : 'Activa',
+                path : 'activa',
                 loadComponent : () => import('./components/accountarea/signupComponent/signedupOK/activatedAccountOK/activated-ok.component').then(c => c.ActivatedOkComponent)
             },
             {
