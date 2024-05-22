@@ -41,14 +41,14 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.websocketsvc.connect()
+    //this.websocketsvc.connect()
     if (isPlatformBrowser(this.platformId)) {
       initFlowbite();
     }
-    this.websocketsvc.linxConnected();
+    //this.websocketsvc.linxConnected();
   }
   ngOnDestroy(): void {
-    this.websocketsvc.disconnect()
+    //this.websocketsvc.disconnect()
   }
 
 

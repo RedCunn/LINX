@@ -39,6 +39,16 @@
       </span>
       <p class="ps-2 pt-1">Cadena</p>
     </button>
+    <div class="chainbuttmobile">
+      <button [disabled]="isChainRequested()" (click)="requestJoinChain()" data-tooltip-target="tooltip-animation-2"
+        data-tooltip-placement="right" data-tooltip-style="light" class="hover:bg-slate-100 p-3 rounded-md">
+        <img src="../../../../assets/imgs/logos/joinchain3.ico">
+      </button>
+      <div id="tooltip-animation-2" role="tooltip"
+        class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-extralight text-fuchsia-600 transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip ">
+        {{ isChainRequested() ? "" : "Unir a tu cadena"}}
+      </div>
+    </div>
   </div>
   }
   <!--ASIDE mobile-->
@@ -101,8 +111,8 @@
       Romper cadena
     </div>
     }@else {
-    <button [disabled]="isChainRequested()" (click)="requestJoinChain()" data-tooltip-target="tooltip-animation" data-tooltip-placement="right"
-      data-tooltip-style="light" class="hover:bg-slate-100 p-3 rounded-md">
+    <button [disabled]="isChainRequested()" (click)="requestJoinChain()" data-tooltip-target="tooltip-animation"
+      data-tooltip-placement="right" data-tooltip-style="light" class="hover:bg-slate-100 p-3 rounded-md">
       <img src="../../../../assets/imgs/logos/joinchain3.ico">
     </button>
     <div id="tooltip-animation" role="tooltip"
@@ -115,12 +125,15 @@
   <div class="breakalert">
     <h4>Al romper cadena perderás a Calle y a todxs lxs linxs de su cadena , ¿estás segurx de querer continuar?</h4>
     <div class="alertbuttcontainer">
-      <button type="button" (click)="closeAlert()" class="alertbutt text-violet-400 bg-white border border-violet-300 hover:bg-violet-100 font-normal rounded-lg text-sm px-2 me-2 mb-2">Cancelar</button>
-      <button type="button" (click)="breakChain()" class="alertbutt text-red-800 bg-red-400 hover:bg-red-500 font-normal rounded-lg text-sm px-2 me-2 mb-2 ">Romper cadena</button>
+      <button type="button" (click)="closeAlert()"
+        class="alertbutt text-violet-400 bg-white border border-violet-300 hover:bg-violet-100 font-normal rounded-lg text-sm px-2 me-2 mb-2">Cancelar</button>
+      <button type="button" (click)="breakChain()"
+        class="alertbutt text-red-800 bg-red-400 hover:bg-red-500 font-normal rounded-lg text-sm px-2 me-2 mb-2 ">Romper
+        cadena</button>
     </div>
   </div>
   }@else {
-    <div class="nobreakalert"></div>  
+  <div class="nobreakalert"></div>
   }
   <div class="reportLink">
     <a routerLink="/Linx/Home/Reportes" routerLinkActive="active"

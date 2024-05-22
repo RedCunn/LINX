@@ -1,5 +1,6 @@
-<div class="grid grid-cols-4 gap-5">
-    <div class="col-span-1 ms-10 me-8">
+
+<div class="panelcontainer">
+    <div class="navside">
         <button (click)="goToSearchEvents()"
             class=" bg-pink-200 hover:bg-purple-200 flex flex-row w-full py-3 mb-2 rounded-xl  justify-center">
             <span class="material-symbols-outlined">saved_search</span>
@@ -11,7 +12,7 @@
             <p class="ps-2 pt-1">Crear evento</p>
         </button>
     </div>
-    <div class="col-span-2">
+    <div class="navselection">
         <ul class="grid w-full gap-6 md:grid-cols-2">
             <li>
                 <input type="radio" id="hosting-small" name="hosting" value="hosting-small" class="hidden peer"
@@ -36,11 +37,8 @@
         <div class="mt-12">
         </div>
     </div>
-    <div class="col-span-1">
-
-    </div>
-    <div class="col-start-2 col-span-2 grid grid-cols-3 gap-3">
-        <div class="col-span-1 mb-3 w-full p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+    <div class="eventsbody">
+        <div class="eventcard  p-6 bg-white border border-gray-200 rounded-lg shadow ">
             <h3 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Nombre</h3>
             <p class="text-gray-400">Viernes 21 de mayo a las 21:00</p>
             <p class="text-gray-400">- - - - - - - - - - - - - - - -</p>
@@ -78,3 +76,4 @@
         </div>
 
     </div>
+</div>

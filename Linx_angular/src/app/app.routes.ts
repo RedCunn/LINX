@@ -43,7 +43,7 @@ export const routes: Routes = [
             {
                 path: 'Home',
                 loadComponent : () => import('./components/home/userhome/userhome.component').then(m=>m.UserhomeComponent),
-                canActivate: [AuthGuard]
+                //canActivate: [AuthGuard]
             },
             {
                 path: 'Home',
@@ -77,7 +77,7 @@ export const routes: Routes = [
                         loadComponent : () => import('./components/home/eventscomponents/createevent/createevent.component').then(m=> m.CreateeventComponent)
                     }
                 ],
-                canActivateChild : [AuthGuard]
+                //canActivateChild : [AuthGuard]
             },
             {
                 path: 'Podcastslib',
