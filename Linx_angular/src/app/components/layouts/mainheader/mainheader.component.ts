@@ -1,5 +1,5 @@
 import { Component, OnInit, Renderer2, Signal, computed, inject, signal } from '@angular/core';
-import { Event, NavigationStart, Router } from '@angular/router';
+import { Event, NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
 import { SignalStorageService } from '../../../services/signal-storage.service';
 import { IUser } from '../../../models/userprofile/IUser';
@@ -17,16 +17,28 @@ export class MainheaderComponent{
   public isLogged! : Signal<boolean> ;
 
   public routePattern : RegExp = new RegExp("/Linx/Inicio", "g");
+  public switchHome : RegExp = new RegExp("/Linx/Home", "g");
   public rotatelogo = signal(true); 
+  private urlsegment : string = 'Home';
 
   constructor(private router : Router, private renderer : Renderer2){
     
+    // this.router.events.subscribe((event: Event) => {
+    //   if (event instanceof NavigationStart ) {
+    //     if(event.url.match(this.routePattern)){
+    //       this.rotatelogo.update(rotate => true)
+    //     }else{
+    //       this.rotatelogo.update(rotate => false)
+    //     }
+    //   }
+    // })
+
     this.router.events.subscribe((event: Event) => {
-      if (event instanceof NavigationStart ) {
-        if(event.url.match(this.routePattern)){
-          this.rotatelogo.update(rotate => true)
+      if (event instanceof NavigationStart) {
+        if(event.url.match(this.switchHome)){
+          this.urlsegment = 'Inicio';
         }else{
-          this.rotatelogo.update(rotate => false)
+          this.urlsegment = 'Home';
         }
       }
     })
@@ -41,7 +53,7 @@ export class MainheaderComponent{
   }
 
   goHome(){
-    this.router.navigateByUrl('/Linx/Home');
+    this.router.navigateByUrl(`/Linx/${this.urlsegment}`);
   }
 
   goToSignup(){

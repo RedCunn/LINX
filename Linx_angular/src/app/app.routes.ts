@@ -13,7 +13,7 @@ export const routes: Routes = [
             {
                 path : 'Inicio',
                 loadComponent : () => import('./components/main/mainpanel.component').then(c => c.MainpanelComponent),
-                canActivate: [AuthGuard]
+                //canActivate: [AuthGuard]
             },
             {
                 path: 'Registro',
