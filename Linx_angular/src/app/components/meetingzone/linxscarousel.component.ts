@@ -6,6 +6,7 @@ import { IUser } from '../../models/userprofile/IUser';
 import { IRestMessage } from '../../models/IRestMessage';
 import { Router } from '@angular/router';
 import { IAccount } from '../../models/useraccount/IAccount';
+import { WebsocketService } from '../../services/websocket.service';
 
 @Component({
   selector: 'app-linxscarousel',
@@ -18,6 +19,7 @@ export class LinxscarouselComponent implements OnInit{
 
   private restsvc  : RestnodeService = inject(RestnodeService);
   private signalStoreSvc : SignalStorageService = inject(SignalStorageService);
+  private socketsvc : WebsocketService = inject(WebsocketService);
   
   public userdata! : IUser |null;
   public candidateProfiles! : IAccount[] | null ;
@@ -64,15 +66,18 @@ export class LinxscarouselComponent implements OnInit{
     }
   }
 
-  async matchRequest(linxuserid : string){
+  async matchRequest(linx : IAccount){
     try {
-      const res = await this.restsvc.requestMatch(this.userdata?.userid! , linxuserid);
+      const res = await this.restsvc.requestMatch(this.userdata?.userid! , linx.userid);
       if(res.code === 0){
-        let index = this.candidateProfiles!.findIndex(profile => profile.userid === linxuserid);
+        let index = this.candidateProfiles!.findIndex(profile => profile.userid === linx.userid);
         if (index !== -1) {
             this.candidateProfiles!.splice(index, 1);
         }
         console.log('RESPONSE MATCH REQ : ', res)
+        if(res.message === 'FULL'){
+          this.socketsvc.linxmatch(linx.userid,this.userdata?.userid!, this.userdata?.account!, linx);
+        }
       }else{
         console.log('RESPONSE ERROR MATCH REQ : ', res)
       }

@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, Renderer2, ViewChild, inject, signal } from '@angular/core';
+import { Component, ElementRef, ViewChild, inject, signal } from '@angular/core';
 import { NgForm, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { IRestMessage } from '../../../models/IRestMessage';
@@ -16,15 +16,16 @@ import { IUser } from '../../../models/userprofile/IUser';
 })
 export class SigninComponent{
 
-  private socketSvc = inject(WebsocketService);
+  private socketSvc : WebsocketService = inject(WebsocketService);
   private signalstoresvc : SignalStorageService = inject(SignalStorageService);
+
   @ViewChild('emailorlinxname') emailorlinxname!: ElementRef;
   @ViewChild('password') password!: ElementRef;
+
   public credentials : {emailorlinxname : String, password : String } = {emailorlinxname : '', password : '' } ;
   public loginerrors = signal(false);
-  
 
-  constructor(private router : Router, private restSvc : RestnodeService, private renderer : Renderer2){}
+  constructor(private router : Router, private restSvc : RestnodeService){}
   
   goToSignup(){
     this.router.navigateByUrl('/Linx/Registro');
@@ -62,10 +63,12 @@ export class SigninComponent{
     const _response:IRestMessage = await this.restSvc.signin({emailorlinxname : loginForm.control.get('emailorlinxname')?.value, password :loginForm.control.get('password')?.value});
     
     if(_response.code === 0){
-      this.signalstoresvc.StoreUserData(_response.userdata);
+      const user : IUser = _response.userdata;
+      this.signalstoresvc.StoreUserData(user);
       this.signalstoresvc.StoreJWT(_response.token!);
-      await this.getMyChain(_response.userdata)
-      this.socketSvc.userLogin();
+      this.socketSvc.initUserRoom(user.userid);
+      await this.getMyChain(user)
+      this.socketSvc.userLogin(user.account._id!, user.account.linxname);
       this.router.navigateByUrl('/Linx/Inicio');
     }else{
       this.loginerrors.update(v=> true);

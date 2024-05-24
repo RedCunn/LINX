@@ -1,5 +1,5 @@
 import { Component, Inject, OnDestroy, OnInit, PLATFORM_ID, ViewContainerRef, inject, signal } from '@angular/core';
-import { Event, NavigationEnd, NavigationStart, Router, RouterEvent, RouterModule } from '@angular/router';
+import { Event, NavigationStart, Router, RouterModule } from '@angular/router';
 import { MainheaderComponent } from './components/layouts/mainheader/mainheader.component';
 import { FooterComponent } from './components/layouts/mainfooter/footer.component';
 import { WebsocketService } from './services/websocket.service';
@@ -21,34 +21,35 @@ export class AppComponent implements OnInit, OnDestroy {
   public showStickyFooter = signal(true);
 
   private vcr = inject(ViewContainerRef);
-  public footercompo : any;
+  public footercompo: any;
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object, private router: Router) {
+    
     this.router.events.subscribe((event: Event) => {
       if (event instanceof NavigationStart) {
         if (!event.url.match(this.routePattern)) {
           this.loadFooter();
-        }else{
+        } else {
           this.vcr.clear();
-        } 
+        }
       }
     })
   }
 
-  async loadFooter (){
+  async loadFooter() {
     this.vcr.clear();
     this.footercompo = this.vcr.createComponent(FooterComponent);
   }
 
   ngOnInit(): void {
-    //this.websocketsvc.connect()
+    this.websocketsvc.connect()
     if (isPlatformBrowser(this.platformId)) {
       initFlowbite();
     }
-    //this.websocketsvc.linxConnected();
+    this.websocketsvc.linxConnected();
   }
   ngOnDestroy(): void {
-    //this.websocketsvc.disconnect()
+    this.websocketsvc.disconnect()
   }
 
 

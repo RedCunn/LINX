@@ -11,18 +11,19 @@
     </div>
     <div class="headsignins">
         @if(!isLogged()){
+        <div class="text-violet-500 me-4">
+            <button (click)="this.goToSignin()" class="lettering hover:text-violet-800">Inicio sesión </button>
+        </div>
+        <div class="text-green-500">
+            <button (click)="this.goToSignup()" class="lettering hover:text-green-800">Registro</button>
+        </div>
+        }@else {
         <div class="text-violet-300">
             <button (click)="this.goHome()" class="me-2 text-5xl">
-                <img src="../../../../assets/imgs/account/myaccounticon.jpg" style="width: 80px;" class="rounded-lg opacity-30 hover:opacity-70">
+                <img src="../../../../assets/imgs/account/myaccounticon.jpg" style="width: 80px;"
+                    class="rounded-lg opacity-30 hover:opacity-70">
             </button>
         </div>
-        }@else {   
-            <div class="text-violet-500 me-4">
-                <button (click)="this.goToSignin()" class="lettering hover:text-violet-800">Inicio sesión </button>
-            </div>
-            <div class="text-green-500">
-                <button (click)="this.goToSignup()" class="lettering hover:text-green-800">Registro</button>
-            </div>
         }
     </div>
 </header>

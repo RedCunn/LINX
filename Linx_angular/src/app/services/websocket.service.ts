@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { Socket, io } from 'socket.io-client';
-import { SignalStorageService } from './signal-storage.service';
 import { IMessage } from '../models/chat/IMessage';
 import { Observable } from 'rxjs';
+import { IAccount } from '../models/useraccount/IAccount';
 
 const socket: Socket = io("http://localhost:3000")
 
@@ -11,8 +11,6 @@ const socket: Socket = io("http://localhost:3000")
 })
 export class WebsocketService {
 
-  private signalStorageSvc = inject(SignalStorageService);
-  private userConnected!: object | null;
 
   constructor() { }
 
@@ -28,17 +26,22 @@ export class WebsocketService {
     });
   }
 
-  userLogin() {
-    const _usersignal = this.signalStorageSvc.RetrieveUserData();
-    const _user = _usersignal();
-    this.userConnected = { accountid: _user?.account!._id, linxname: _user?.account!.linxname };
-    socket.emit('userConnected', { user: this.userConnected })
+  userLogin(accountid : string , linxname : string) {
+    socket.emit('userConnected', { accountid , linxname })
   }
 
   linxConnected () {
     socket.on('linx_connected', (data) => {
       console.log('LINX INNN ', data)
     });
+  }
+
+  initUserRoom (userid_key : string) {
+    console.log('initializing user room......', userid_key)
+    socket.emit("init_user_room", {roomkey : userid_key }, (res: any) => {
+      console.log('USER ROOM : ', res.status)
+    }
+    )
   }
 
   initChat (key : string){
@@ -66,10 +69,32 @@ export class WebsocketService {
     return obs;
   };
 
+  getInteractions(){
+    //Full Match , New Event , On Chain 
+    let obs = new Observable<{type : string , interaction : Object}>(observer => {
+      socket.on('get_interaction', (data) => {
+        observer.next(data);
+      });
 
-  linxmatch() {
-    socket.on('match', () => {
+      return () => {socket.disconnect()}
+    })
 
+    return obs;
+  }
+
+  linxmatch(to_userid : string,from_userid : string , from_user : IAccount, to_user : IAccount) {
+    socket.emit('full_match', {to_userid, from_userid, to_user, from_user}, (res : any) => {
+      console.log('RES OK : ', res.status)
+    })
+  }
+  linxchain(to_userid : string,from_userid : string , from_user : IAccount, to_user : IAccount) {
+    socket.emit('on_chain', {to_userid, from_userid, to_user, from_user}, (res : any) => {
+      console.log('RES OK : ', res.status)
+    })
+  }
+  linxreqchain(to_userid : string,from_userid : string , from_user : IAccount, to_user : IAccount) {
+    socket.emit('on_req_chain', {to_userid, from_userid, to_user, from_user}, (res : any) => {
+      console.log('RES OK : ', res.status)
     })
   }
   newEventOnChain() {

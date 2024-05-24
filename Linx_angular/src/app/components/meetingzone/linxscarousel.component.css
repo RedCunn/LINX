@@ -11,3 +11,30 @@
   #thumb:hover{
       filter: brightness(150%);
   }
+
+  .nolinxfound {
+    position: relative;
+    display: inline-block;
+    text-align: center;
+    font-size: large;
+    margin-bottom: 20%;
+}
+
+.nolinxfound img {
+    width: 100%;
+    height: auto;
+    opacity: 0.5; /* Ajusta la opacidad de la imagen */
+}
+
+.nolinxfound p {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: large;
+    padding-top: 10%;
+    padding-bottom: 5%;
+    letter-spacing: 10px;
+    color: black;
+    font-weight: 600;
+}

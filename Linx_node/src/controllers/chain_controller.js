@@ -75,17 +75,14 @@ module.exports = {
     getJoinChainRequests: async (req, res, next) => {
         try {
             const userid = req.params.userid;
-            const linxuserid = req.params.linxuserid;
+            let _chainReqs = await ChainRequest.find({ requestedUserid: userid})
 
-            let joinRequest = null;
+            let _requestingIDs = [];
+            _chainReqs.forEach(r => {
+                _requestingIDs.push(r.requestingUserid)
+            })
 
-            let _chainReqs = await chaining.isJoinChainRequested(userid, linxuserid);
-
-            console.log('CHAIN REQ : ', _chainReqs)
-
-            if (_chainReqs.length > 0) {
-                joinRequest = { requested: _chainReqs.at(0).requestedUserid, requesting: _chainReqs.at(0).requestingUserid };
-            }
+            let _accounts = await Account.find({ userid: { $in: _requestingIDs } });
 
             res.status(200).send({
                 code: 0,
@@ -93,7 +90,7 @@ module.exports = {
                 message: 'retrieved joinchain reqs...',
                 token: null,
                 userdata: null,
-                others: joinRequest
+                others: _accounts
             })
         } catch (error) {
             res.status(400).send({

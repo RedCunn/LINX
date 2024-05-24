@@ -26,13 +26,31 @@
             <!-- Modal body -->
             <div class="p-4 md:p-5">
                 <ul class="my-4 space-y-3">
-                    @for(item of myMatches ; track item.userid){
-                        <li>
-                            <div class="flex items-center w-full p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 dark:bg-gray-600 dark:text-white">
-                               <p>Has hecho un nuevo match con <button (click)="this.goToProfile(item)" style="color: purple;">{{item.linxname}}</button></p>
-                            </div>
-                        </li>
-                    }@empty {
+                    @if(this.interactions.chainedAccount!.length > 0 || this.interactions.matchingAccount!.length > 0 || this.interactions.newEvent!.length > 0 || this.interactions.requestedChain!.length > 0){
+                        @for(item of interactions.requestedChain ; track item.userid){
+                            <li>
+                                <div class="flex flex-row justify-between w-full p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 dark:bg-gray-600 dark:text-white">
+                                    <p><button (click)="this.goToProfile(item)" style="color: rgb(160, 252, 160);">{{item.linxname}}</button> quiere unir vuestras cadenas ⛓️</p>
+                                    <button (click)="this.removeInteraction()"><span class="material-symbols-outlined">close</span></button>
+                                </div>
+                            </li>
+                        }
+                        @for(item of interactions.matchingAccount ; track item.userid){
+                            <li>
+                                <div class="flex items-center w-full p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 dark:bg-gray-600 dark:text-white">
+                                <p>✨ Has hecho un nuevo match con <button (click)="this.goToProfile(item)" style="color: purple;">{{item.linxname}}</button></p>
+                                </div>
+                            </li>
+                        }
+                        @for(item of interactions.chainedAccount ; track item.userid){
+                            <li>
+                                <div class="flex flex-row justify-between w-full p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 dark:bg-gray-600 dark:text-white">
+                                    <p>⛓️ Te has unido a la cadena de <button (click)="this.goToProfile(item)" style="color: rgb(48, 247, 48);">{{item.linxname}}</button></p>
+                                    <button (click)="this.removeInteraction()"><span class="material-symbols-outlined">close</span></button>
+                                </div>
+                            </li>
+                        }
+                    }@else {
                         <li>
                             <div class="flex items-center w-full p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 dark:bg-gray-600 dark:text-white">
                                <p>No hay nuevas interacciones...</p>

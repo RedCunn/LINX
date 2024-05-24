@@ -17,40 +17,40 @@
 
     }@else {
 
-        @if(this.candidateProfiles!.length > 0){ <button (click)="nextProfile()">
-            <span class="material-symbols-outlined" id="next" style="color: greenyellow;">
-                join_left
-            </span>
+    @if(this.candidateProfiles!.length > 0){ <button (click)="nextProfile()">
+        <span class="material-symbols-outlined" id="next" style="color: greenyellow;">
+            join_left
+        </span>
 
-        </button>
-        <div
-            class="max-w-md mb-10 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 h-96 flex flex-col">
-            <div class="overflow-hidden">
-                <img class="h-full w-full object-cover" src="../../../../assets/imgs/profpics/IMG20240122132938.jpg"
-                    alt="" />
-            </div>
-            <div class="p-5 text-center flex-grow">
-                <h3 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                    {{this.candidateProfiles![currentIndex()].linxname}}</h3>
-                <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Me encanta España ❤️‍🔥❤️‍🔥❤️‍🔥</p>
-                <button (click)="matchRequest(this.candidateProfiles![currentIndex()].userid)" style="border: none;">
-                    <span class="material-symbols-outlined" id="thumb" style="color: purple;">
-                        lightning_stand
-                    </span>
-                </button>
-            </div>
+    </button>
+    <div
+        class="max-w-md mb-10 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 h-96 flex flex-col">
+        <div class="overflow-hidden">
+            <img class="h-full w-full object-cover" src="../../../../assets/imgs/profpics/IMG20240122132938.jpg"
+                alt="" />
         </div>
-        <button (click)="previousProfile()">
-            <span class="material-symbols-outlined" id="next" style="color: violet;">
-                join_right
-            </span>
-        </button>
-        }@else(){
-            <div>
-                <img class="h-full w-full object-cover" src="../../../../assets/imgs/backgrounds/no_linx_found"
-                    alt="" />
-            </div>
-        }
+        <div class="p-5 text-center flex-grow">
+            <h3 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                {{this.candidateProfiles![currentIndex()].linxname}}</h3>
+            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Me encanta España ❤️‍🔥❤️‍🔥❤️‍🔥</p>
+            <button (click)="matchRequest(this.candidateProfiles![currentIndex()])" style="border: none;">
+                <span class="material-symbols-outlined" id="thumb" style="color: purple;">
+                    lightning_stand
+                </span>
+            </button>
+        </div>
+    </div>
+    <button (click)="previousProfile()">
+        <span class="material-symbols-outlined" id="next" style="color: violet;">
+            join_right
+        </span>
+    </button>
+    }@else(){
+    <div class="nolinxfound">
+        <p>Linx está creciendo y seguimos buscando . . .</p>
+        <img style="height: 250px; width: 250px;" src="../../../assets/imgs/backgrounds/bacterias.png" alt="" />
+    </div>
+    }
     }
 
 </div>

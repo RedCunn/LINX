@@ -61,7 +61,7 @@ module.exports = {
             res.status(200).send({
                 code: 0,
                 error: null,
-                message: `Linxs ${matchRank} MATCH...`,
+                message: `${matchRank}`,
                 token: null,
                 userData: null,
                 others: null

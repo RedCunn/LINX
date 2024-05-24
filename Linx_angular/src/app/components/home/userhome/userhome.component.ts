@@ -15,6 +15,7 @@ import { IChat } from '../../../models/chat/IChat';
 import { ArticlemodalformComponent } from './artmodal/articlemodalform.component';
 import { IMessage } from '../../../models/chat/IMessage';
 import { BehaviorSubject, distinctUntilChanged } from 'rxjs';
+import { WebsocketService } from '../../../services/websocket.service';
 
 @Component({
   selector: 'app-userhome',
@@ -25,9 +26,9 @@ import { BehaviorSubject, distinctUntilChanged } from 'rxjs';
 })
 export class UserhomeComponent implements OnInit, AfterViewInit {
 
+  private socketsvc : WebsocketService = inject(WebsocketService);
   private signalStoreSvc: SignalStorageService = inject(SignalStorageService);
   private restSvc: RestnodeService = inject(RestnodeService);
-  private vcr = inject(ViewContainerRef);
   
   @ViewChild('chatcompoContainer', {read : ViewContainerRef, static : true}) 
   public chatcompoContainer! : ViewContainerRef;
@@ -186,6 +187,7 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
           this.isChainRequested.set(true);
         }else{
           this.isChained.set(true);
+          this.socketsvc.linxchain(this.linxdata?.userid!, this.userdata?.userid!, this.userdata?.account!, this.linxdata!)
           await this.getMyChain(this.userdata!)
         }
       } else {
@@ -207,13 +209,16 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
       initFlowbite();
     }
     try {
-      const res = await this.restSvc.getJoinChainRequests(this.userdata!.userid, this.linxdata!.userid);
+      const res = await this.restSvc.getJoinChainRequests(this.userdata!.userid);
       if (res.code === 0) {
-        const joinRequest = res.others
-        if (joinRequest === null || joinRequest.requesting !== this.userdata?.userid) {
-          this.isChainRequested.set(false);
-        } else {
+        const joinRequests : IAccount[]= res.others;
+
+        let isRequested = joinRequests.find(req => req._id === this.linxdata?._id)
+
+        if (isRequested) {
           this.isChainRequested.set(true);
+        } else {
+          this.isChainRequested.set(false);
         }
       } else {
         console.log('error getting join chain reqs ...', res.error)

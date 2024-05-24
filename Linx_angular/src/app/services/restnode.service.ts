@@ -105,8 +105,8 @@ export class RestnodeService {
     return lastValueFrom(res);
   }
 
-  public getJoinChainRequests(userid: string, linxuserid : string){
-    const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Chain/${userid}/chainreq/${linxuserid}`);
+  public getJoinChainRequests(userid: string){
+    const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Chain/${userid}/chainreqs`);
     return lastValueFrom(res);
   }
   //#endregion
