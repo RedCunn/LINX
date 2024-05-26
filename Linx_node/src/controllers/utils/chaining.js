@@ -77,13 +77,46 @@ module.exports = {
             await linxAccount.save({ session: session });
 
             await session.commitTransaction();
-            session.endSession();
 
             console.log('LINXS JOINED TO CHAIN SUCCESFULLY')
         } catch (error) {
             await session.abortTransaction();
-            session.endSession();
             console.error('Error durante la transacción JOINING CHAINS:', error);
+        }finally{
+            session.endSession();
+        }
+    },
+    breakChain : async (userid , linxuserid)=> {
+        const session = await Account.startSession();
+        session.startTransaction();
+        try {
+            await Account.updateOne(
+                { userid: userid },
+                { $pull: { "extendedChain": { mylinxuserid: linxuserid } } }
+              ).session(session);
+            await Account.updateOne(
+                { userid: linxuserid },
+                { $pull: { "extendedChain": { mylinxuserid: userid } } }
+              ).session(session);
+              
+            await Account.updateOne(
+            { "myChain.userid": linxuserid },
+            { $pull: { "myChain": { userid: linxuserid } } }
+            ).session(session);  
+            await Account.updateOne(
+            { "myChain.userid": userid },
+            { $pull: { "myChain": { userid: userid } } }
+            ).session(session);
+
+            await session.commitTransaction();
+
+            console.log('SUCCESFULLY BROKEN CHAIN')
+
+        } catch (error) {
+            await session.abortTransaction();
+            console.error('Error durante la transacción BREAKING CHAINS:', error);
+        }finally{
+            session.endSession();
         }
     }
 }

@@ -38,6 +38,7 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
   public isUser = signal(false);
   public isChained = signal(false);
   public isChainRequested = signal(false);
+  public isChainBeingRequested = signal(false);
   public showBreakChainAlert = signal(false);
   public showJoinChainRequested = signal(false);
 
@@ -161,10 +162,6 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
     }
   }
 
-  breakChain(){
-
-  }
-
   async getMyChain(userdata: IUser) {
     try {
       const res = await this.restSvc.getMyChain(userdata.userid);
@@ -185,6 +182,7 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
         if(res.message === 'REQUESTED'){
           this.showJoinChainRequested.set(false);
           this.isChainRequested.set(true);
+          this.isChainBeingRequested.set(false);
         }else{
           this.isChained.set(true);
           this.socketsvc.linxchain(this.linxdata?.userid!, this.userdata?.userid!, this.userdata?.account!, this.linxdata!)
@@ -197,6 +195,32 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
       console.log('error in requesting join chain...', error)
     }
   }
+
+  async rejectJoinReq(){
+    try {
+      const res = await this.restSvc.rejectJoinChainRequest(this.userdata?.userid!, this.linxdata?.userid!)
+      if(res.code === 0){
+
+      }else{
+        console.log('', res.message)
+      }
+    } catch (error) {
+      console.log('',error)    
+    }
+  }
+
+  async breakChain() {
+    try {
+      const res = await this.restSvc.breakChain(this.userdata?.userid!, this.linxdata?.userid!);
+      if (res.code === 0) {
+      } else {
+        console.log('', res.message);
+      }
+    } catch (error) {
+      console.log('', error);
+    }
+  }
+
 
   logout() {
     this.signalStoreSvc.StoreUserData(null);
@@ -211,15 +235,18 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
     try {
       const res = await this.restSvc.getJoinChainRequests(this.userdata!.userid);
       if (res.code === 0) {
-        const joinRequests : IAccount[]= res.others;
+        const joinRequests : {requestingUserid : string , requestedUserid : string , requestedAt : Date}[]= res.userdata;
 
-        let isRequested = joinRequests.find(req => req._id === this.linxdata?._id)
+        let isRequested = joinRequests.find(req => req.requestingUserid === this.linxdata?._id)
 
         if (isRequested) {
           this.isChainRequested.set(true);
+          this.isChainBeingRequested.set(false);
         } else {
           this.isChainRequested.set(false);
+          this.isChainBeingRequested.set(true);
         }
+
       } else {
         console.log('error getting join chain reqs ...', res.error)
       }

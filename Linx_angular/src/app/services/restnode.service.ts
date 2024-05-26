@@ -109,6 +109,17 @@ export class RestnodeService {
     const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Chain/${userid}/chainreqs`);
     return lastValueFrom(res);
   }
+
+  public breakChain(userid: string, linxuserid : string){
+    const res = this._httpClient.delete<IRestMessage>(`http://localhost:3000/api/Chain/${userid}/mychain/${linxuserid}`);
+    return lastValueFrom(res);
+  }
+
+  public rejectJoinChainRequest(userid: string, linxuserid : string){
+    const res = this._httpClient.delete<IRestMessage>(`http://localhost:3000/api/Chain/${userid}/chainreq/${linxuserid}`);
+    return lastValueFrom(res);
+  }
+
   //#endregion
 
   //#region ----------------------------- MY INTERACTIONS ------------------------

@@ -75,7 +75,7 @@ module.exports = {
     getJoinChainRequests: async (req, res, next) => {
         try {
             const userid = req.params.userid;
-            let _chainReqs = await ChainRequest.find({ requestedUserid: userid})
+            let _chainReqs = await ChainRequest.find({ requestedUserid: userid })
 
             let _requestingIDs = [];
             _chainReqs.forEach(r => {
@@ -89,7 +89,7 @@ module.exports = {
                 error: null,
                 message: 'retrieved joinchain reqs...',
                 token: null,
-                userdata: null,
+                userdata: _chainReqs,
                 others: _accounts
             })
         } catch (error) {
@@ -104,7 +104,13 @@ module.exports = {
         }
     },
     breakChain: async (req, res, next) => {
+        
         try {
+            const userid = req.params.userid;
+            const linxuserid = req.params.linxuserid;
+
+            await chaining.breakChain(userid, linxuserid);
+
             res.status(200).send({
                 code: 0,
                 error: null,
@@ -118,6 +124,35 @@ module.exports = {
                 code: 1,
                 error: error.message,
                 message: 'The chain was too strong...couldnt break',
+                token: null,
+                userdata: null,
+                others: null
+            })
+        }
+    },
+    rejectJoinChainRequest: async (req, res, next) => {
+        try {
+
+            const userid = req.params.userid;
+            const linxuserid = req.params.linxuserid;
+
+            let deleteReq = await ChainRequest.deleteOne({requestedUserid : userid, requestingUserid : linxuserid});
+
+            console.log('REJECTED JOIN CHAIN REQ !!!', deleteReq)
+
+            res.status(200).send({
+                code: 0,
+                error: null,
+                message: 'User rejected the join chain request.',
+                token: null,
+                userdata: null,
+                others: null
+            })
+        } catch (error) {
+            res.status(400).send({
+                code: 1,
+                error: error.message,
+                message: 'Couldnt complete rejection of join chain request.....',
                 token: null,
                 userdata: null,
                 others: null

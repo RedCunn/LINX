@@ -31,9 +31,12 @@ export class InteractionsComponent implements OnInit, OnDestroy {
 
   private _user!: IUser | null;
   public myMatches!: IAccount[];
+  public joinChainReqs : {requestingUserid : string , requestedUserid : string , requestedAt : Date} [] = []; 
 
   private destroy$ = new Subject<void>();
   public interactions: IInteraction = { matchingAccount: [], chainedAccount: [], newEvent: [], requestedChain: [] };
+
+  public currentDate : Date = new Date();
 
   constructor(private ref: ChangeDetectorRef) {
     this.websocketsvc.getInteractions().pipe(
@@ -51,7 +54,7 @@ export class InteractionsComponent implements OnInit, OnDestroy {
           break;
         case 'reqchain':
           console.log('REQUESTED CHAIN :::::::::::::::::', data.interaction)
-          this.interactions.requestedChain!.unshift(data.interaction as IAccount);
+          this.interactions.requestedChain!.unshift({account : data.interaction as IAccount, daysOfRequest : 0});
           this.ref.detectChanges();
           break;
         case 'event':
@@ -71,27 +74,78 @@ export class InteractionsComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl(`/Linx/Profile/${profile.linxname}`);
   }
 
-  async getMyInteractions() {
+  async getMatches(){
     try {
       const res = await this.restSvc.getMyMatches(this._user?.userid!);
       if (res.code === 0) {
         this.myMatches = res.others;
-        //this.signalStorageSvc.StoreMatchesAccounts(res.others);
         this.signalStorageSvc.StoreMatches(res.userdata);
-        this.myMatches.forEach(element => {
-          this.interactions.matchingAccount!.push(element);
-        });
       } else {
-        console.log('interactions never found...', res.message)
+        console.log('interactions MATCHES never found...', res.message)
       }
-
     } catch (error) {
-      console.log('interactions never found...', error)
+      console.log('interactions MATCHES never found...', error)
     }
   }
 
-  removeInteraction() {
+  async getJoinChainRequests(){
+    try {
+      const res = await this.restSvc.getJoinChainRequests(this._user?.userid!);
+      if(res.code === 0){
+        const reqaccounts = res.others;
+        const requests = res.userdata;
+        console.log('JOIN REQS : ', res.userdata)
+        return {accounts : reqaccounts , requests : requests};
+      }else{
+        console.log('interactions JOINCHAIN REQS never found...', res.message)
+        return null;
+      }
+    } catch (error) {
+       console.log('interactions JOINCHAIN REQS never found...', error)
+       return null;
+    }
+  }
 
+  getNewOnChains (){
+    const tenDaysAgo = new Date(this.currentDate);
+    tenDaysAgo.setDate(this.currentDate.getDate() - 10);
+    const signalchain = this.signalStorageSvc.RetrieveMyChain()()!;
+    
+    const linxson = this._user?.account.myChain;
+
+    let filteredLinxsOn = linxson?.filter(c => {
+                          const date = new Date(c.chainedAt)
+                          return date <= tenDaysAgo;
+                        });
+
+    const linxsonUserIds = filteredLinxsOn?.map(c => c.userid);
+
+    const newOnChains = signalchain?.filter(acc => linxsonUserIds?.includes(acc.userid));
+
+    return newOnChains;    
+  }
+
+  async getMyInteractions() {
+    await this.getMatches();
+    this.myMatches.forEach(element => {
+      this.interactions.matchingAccount!.push(element);
+    });
+    const joinchainreq = await this.getJoinChainRequests();
+    const reqaccounts : IAccount[]= joinchainreq?.accounts!;
+    this.joinChainReqs = joinchainreq?.requests;
+    reqaccounts.forEach(element => {
+      let dateOfReq = this.joinChainReqs
+        .filter(r => r.requestingUserid === element.userid)
+        .map(r => r.requestedAt)[0]; 
+      const dateType = new Date(dateOfReq);
+      const differenceInTime = this.currentDate.getTime() - dateType.getTime();
+      const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24));
+      this.interactions.requestedChain!.push({ account: element,daysOfRequest : differenceInDays });
+    });
+    const newOnChains = this.getNewOnChains()
+    newOnChains?.forEach(element => {
+      this.interactions.chainedAccount?.push(element)
+    })
   }
 
   async ngOnInit(): Promise<void> {

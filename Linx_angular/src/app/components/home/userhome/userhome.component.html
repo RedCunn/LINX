@@ -93,7 +93,8 @@
           <span class="material-symbols-outlined">
             edit
           </span>
-        </button>}
+        </button>
+      }
       </div>
     </article>
     <div class="editart">
@@ -103,7 +104,8 @@
         <span class="material-symbols-outlined">
           note_add
         </span>
-      </button>}
+      </button>
+    }
     </div>
   </div>
 
@@ -137,7 +139,8 @@
       Romper cadena
     </div>
   </div>
-  }@else {
+  }
+  @if(isChainRequested()){
   <div class="joinchainbutt">
     <button [disabled]="isChainRequested()" (click)="showAlert('requestchain')" data-tooltip-target="tooltip-animation"
       data-tooltip-placement="right" data-tooltip-style="light" class="hover:bg-slate-100 p-3 rounded-md">
@@ -148,6 +151,21 @@
       {{ isChainRequested() ? "" : "Unir a tu cadena"}}
     </div>
   </div>
+  }
+  @if(isChainBeingRequested()){
+    <div class="breakalert">
+      <h4>¿ Aceptas la solicitud de {{this.linxdata?.linxname}} de unir vuestras cadenas ?</h4>
+      <div class="flex flex-row justify-around">
+        <button type="button" (click)="requestJoinChain()"
+          class="alertbutt text-red-700 bg-white border border-red-600 hover:bg-red-100 font-normal rounded-lg text-sm px-2 me-2 mb-2 ">
+          Rechazar
+        </button>
+        <button type="button" (click)="rejectJoinReq()"
+          class="alertbutt text-violet-400 bg-white border border-violet-300 hover:bg-violet-100 font-normal rounded-lg text-sm px-2 me-2 mb-2">
+          Unir cadenas
+        </button>
+      </div>
+    </div>
   }
 
   @if (this.showBreakChainAlert()) {
@@ -191,10 +209,9 @@
   <div class="noalert"></div>
   }
 
-  @if(isChainRequested()){
+  @if(isChainRequested() && !isUser()){
   <div class="joinalert">
-    <h3>Hemos enviado tu solicitud a {{this.linxdata?.linxname}} ... quizás el principio de una alucinante cadena de
-      cadenas.</h3>
+    <h3>Hemos enviado tu solicitud a {{this.linxdata?.linxname}} . . . </h3>
   </div>
   }
 
@@ -206,7 +223,5 @@
     </a>
   </div>
   }
-
-
 </div>
 <ng-container #chatcompoContainer></ng-container>
