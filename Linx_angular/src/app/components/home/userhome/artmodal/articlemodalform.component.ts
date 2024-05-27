@@ -19,7 +19,7 @@ export class ArticlemodalformComponent {
   @Input() isOpen = signal(false);
   @Input() userdata!: IUser | null;
   @Input() article!: IArticle;
-
+  
   public formTitle = computed(()=> {
     if(this.article.artid !== null) {
       return 'Editar artículo'

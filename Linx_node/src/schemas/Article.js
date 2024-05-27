@@ -6,7 +6,7 @@ let ArticleSchema = new mongoose.Schema ({
     postedOn : {type : Date, default: Date.now},
     title : {type : String, maxLength : 50},
     body : {type : String, maxLength : 300},
-    img : {data : Buffer, contentType: String},
+    img : {data : Buffer, contentType: B},
     useAsProfilePic : {type : Boolean, default : false}
 })
 

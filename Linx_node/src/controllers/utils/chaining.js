@@ -6,6 +6,7 @@ const Match = require('../../schemas/Match');
 module.exports = {
     isJoinChainRequested: async (userid, linxid) => {
         try {
+            let reqState = 'NONE';
             let isRequested = await ChainReq.find({
                 $or:
                     [
@@ -13,8 +14,12 @@ module.exports = {
                         { $and: [{ requestingUserid: linxid }, { requestedUserid: userid }] }
                     ]
             })
-            console.log('select isRequested...', isRequested);
-            return isRequested;
+
+            if(isRequested.length > 0){
+                reqState = 'REQUESTED';
+            }
+            console.log('CHAIN REQ STATE...', reqState);
+            return reqState;
         } catch (error) {
             console.log('error selecting isRequested...', error)
         }

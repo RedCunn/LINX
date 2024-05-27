@@ -25,7 +25,7 @@
                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Título</label>
                     <input type="text" name="title" id="name"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                        placeholder="Escribe un título..." required="true" [(ngModel)]="article.title" #title="ngModel">
+                        [placeholder]="this.article.artid !== undefined ? this.article.title : 'Escribe un título...'" required="true" [(ngModel)]="article.title" #title="ngModel">
                     @if(artForm.submitted && artForm.control.get('title')?.invalid){
                     <span class="text-pink-600 pt-5">Dale algún título...</span>
                     }
@@ -35,8 +35,12 @@
                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Cuerpo</label>
                     <textarea id="bodycontent" name="bodycontent" rows="6"
                         class="resize-none block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder="Redacta el cuerpo..." [(ngModel)]="article.bodycontent"
-                        #bodycontent="ngModel"></textarea>
+                        [placeholder]="this.article.artid !== undefined ? this.article.bodycontent : 'Redacta el cuerpo...'" [(ngModel)]="article.bodycontent"
+                        #bodycontent="ngModel">
+                    </textarea>
+                </div>
+                <div class="col-span-2">
+                    
                 </div>
                 <div class="col-span-2">
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="img">Foto</label>
@@ -46,7 +50,7 @@
                 </div>
                 <div class="col-span-2">
                     <input type="checkbox" name="useAsUserPic" [(ngModel)]="article.useAsUserPic"
-                        #useAsUserPic="ngModel">
+                        #useAsUserPic="ngModel" [checked]="this.article.artid !== undefined ? this.article.useAsUserPic : false">
                     <label class="ps-3 pt-1">Usar como artículo principal</label>
                 </div>
                 <div class="col-span-2">

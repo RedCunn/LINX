@@ -34,22 +34,63 @@ module.exports = {
             })
         }
     },
+    getExtendedChain : async (req, res, next) => {
+        try {
+            const _userid = req.params.userid;
+            const _mylinx = req.params.linxuserid;
+            
+            let _userAccount = await Account.findOne({ userid: _userid });
+            
+            let mylinxUserIds = new Set();
+            for (const linx of _userAccount.extendedChain) {
+                if (linx.mylinxuserid === _mylinx) {
+                    mylinxUserIds.add(linx.mylinxuserid);
+                }
+            }
+            let mylinxUserIdsArray = Array.from(mylinxUserIds);
+            let accounts = await Account.find({ 'extendedChain.mylinxuserid': { $in: mylinxUserIdsArray } });
+
+            res.status(200).send({
+                code: 0,
+                error: null,
+                message: 'Cadena recuperada',
+                token: null,
+                userdata: null,
+                others: accounts
+            })
+        } catch (error) {
+            res.status(200).send({
+                code: 1,
+                error: error.message,
+                message: 'Error al recuperar cadena...',
+                token: null,
+                userdata: null,
+                others: null
+            })
+        }
+    },
     doChain: async (req, res, next) => {
         try {
             const userid = req.params.userid;
             const linxuserid = req.params.linxuserid;
-            let joinReqState = 'REQUESTED';
+            let joinReqState = '';
 
             console.log('userid : ', userid)
             console.log('linxid :', linxuserid)
 
-            let isChainRequested = await chaining.isJoinChainRequested(userid, linxuserid);
+            let requestState = await chaining.isJoinChainRequested(userid, linxuserid);
 
-            if (isChainRequested.length > 0) {
-                await chaining.joinChains(userid, linxuserid);
-                joinReqState = 'ONCHAIN';
-            } else {
-                await chaining.doChainRequest(userid, linxuserid);
+            switch (requestState) {
+                case 'NONE':
+                    await chaining.doChainRequest(userid, linxuserid);
+                    joinReqState = 'REQUESTING'
+                    break;
+                case 'REQUESTED':
+                    await chaining.joinChains(userid, linxuserid);
+                    joinReqState = 'ACCEPTED'
+                    break;
+                default:
+                    break;
             }
 
             res.status(200).send({
@@ -104,7 +145,7 @@ module.exports = {
         }
     },
     breakChain: async (req, res, next) => {
-        
+
         try {
             const userid = req.params.userid;
             const linxuserid = req.params.linxuserid;
@@ -136,7 +177,7 @@ module.exports = {
             const userid = req.params.userid;
             const linxuserid = req.params.linxuserid;
 
-            let deleteReq = await ChainRequest.deleteOne({requestedUserid : userid, requestingUserid : linxuserid});
+            let deleteReq = await ChainRequest.deleteOne({ requestedUserid: userid, requestingUserid: linxuserid });
 
             console.log('REJECTED JOIN CHAIN REQ !!!', deleteReq)
 

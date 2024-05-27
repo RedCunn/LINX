@@ -1,6 +1,6 @@
 <app-conversations [isOpen]="isChatsOpen"></app-conversations>
 <app-interactions [isOpen]="isInteractionsOpen"></app-interactions>
-<app-mychain [isOpen]="isMyChainOpen"></app-mychain>
+<app-mychain [isOpen]="isMyChainOpen" [isMyChain]="this.isMyChain"></app-mychain>
 
 <footer class="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 flex flex-row justify-around py-5">
     <button (click)="toggleChatsModal()"><mat-icon

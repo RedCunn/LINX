@@ -6,4 +6,5 @@ export interface IInteraction {
     chainedAccount? : IAccount[];
     newEvent? : IEvent[];
     requestedChain? : {account : IAccount, daysOfRequest :number}[];
+    brokenChain? : string;
 }

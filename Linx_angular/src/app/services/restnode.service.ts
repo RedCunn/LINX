@@ -13,7 +13,7 @@ export class RestnodeService {
 
   constructor(private _httpClient: HttpClient) { }
 
-  //#region -------------- SIGN UP -------------------------------------------
+  //#region -------------- ACCOUNTS -------------------------------------------
 
   public trackUserLocationGoogleGeocode(lat: number, long: number): Promise<IRestMessage> {
 
@@ -31,9 +31,6 @@ export class RestnodeService {
     )
     return lastValueFrom(res);
   }
-  //#endregion
-
-  //#region ----------------------- SIGN IN -----------------------------------
 
   public signin(credentials: { emailorlinxname: string, password: string }): Promise<IRestMessage> {
 
@@ -45,10 +42,6 @@ export class RestnodeService {
 
     return lastValueFrom(res);
   }
-
-  //#endregion
-
-  //#region ---------------------- UPDATE PROFILE -------------------------------
 
   public newArticle(userid: string, article: IArticle): Promise<IRestMessage> {
     const res = this._httpClient.post<IRestMessage>(`http://localhost:3000/api/Account/${userid}/article`,
@@ -66,6 +59,7 @@ export class RestnodeService {
       });
     return lastValueFrom(res);
   }
+
   //#endregion
 
   //#region -------------------------- MATCHING ----------------------------------------
@@ -93,6 +87,11 @@ export class RestnodeService {
 
   public getMyChain(userid: string): Promise<IRestMessage> {
     const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Chain/${userid}`);
+    return lastValueFrom(res);
+  }
+
+  public getExtendedChain(userid: string , mylinxuserid : string): Promise<IRestMessage> {
+    const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Chain/${userid}/extendedchain/${mylinxuserid}`);
     return lastValueFrom(res);
   }
 

@@ -1,5 +1,4 @@
-import { Component, Input, OnInit, ViewChild, inject, signal } from '@angular/core';
-import { RestnodeService } from '../../services/restnode.service';
+import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { SignalStorageService } from '../../services/signal-storage.service';
 import { IUser } from '../../models/userprofile/IUser';
 import { IAccount } from '../../models/useraccount/IAccount';
@@ -15,6 +14,8 @@ import { Router } from '@angular/router';
 export class MyChainComponent implements OnInit{
 
   @Input() isOpen = signal(false);
+  @Input() isMyChain = signal(true);
+  @Input() extendedChain ? : IAccount[];
 
   closeModal() {
     this.isOpen.set(false);
@@ -32,10 +33,8 @@ export class MyChainComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    const signaluser= this.signalStorageSvc.RetrieveUserData();
-    this._user = signaluser();
-    const signalchain = this.signalStorageSvc.RetrieveMyChain();
-    this.myChain = signalchain()!;
+    this._user = this.signalStorageSvc.RetrieveUserData()();
+    this.myChain = this.signalStorageSvc.RetrieveMyChain()();
   }
 
 }

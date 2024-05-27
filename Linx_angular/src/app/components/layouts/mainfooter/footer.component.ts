@@ -15,13 +15,9 @@ import { ModaldraftComponent } from '../../pruebamodal/modaldraft.component';
 export class FooterComponent{
 
   public isMyChainOpen = signal(false);
+  public isMyChain = signal(true);
   public isChatsOpen = signal(false);
   public isInteractionsOpen = signal(false);
-  public isDraftOpen = signal(false);
-
-  toggleDraftModal() {
-    this.isDraftOpen.update(v => !v)  
-  }
 
   toggleChatsModal() {
     this.isChatsOpen.update(v => !v)  

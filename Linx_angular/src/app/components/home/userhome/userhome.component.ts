@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ComponentRef, Inject, OnInit, PLATFORM_ID, ViewChild, ViewContainerRef, inject, signal } from '@angular/core';
+import { AfterViewInit, Component, Inject, OnInit, PLATFORM_ID, ViewChild, ViewContainerRef, inject, signal } from '@angular/core';
 import { UserhomeasideComponent } from '../userhomeaside/userhomeaside.component';
 import { MatIcon } from '@angular/material/icon';
 import { SignalStorageService } from '../../../services/signal-storage.service';
@@ -16,11 +16,12 @@ import { ArticlemodalformComponent } from './artmodal/articlemodalform.component
 import { IMessage } from '../../../models/chat/IMessage';
 import { BehaviorSubject, distinctUntilChanged } from 'rxjs';
 import { WebsocketService } from '../../../services/websocket.service';
+import { MyChainComponent } from '../../mychain/mychain.component';
 
 @Component({
   selector: 'app-userhome',
   standalone: true,
-  imports: [UserhomeasideComponent, MatIcon, FormsModule, RouterModule, ChatComponent, ArticlemodalformComponent],
+  imports: [UserhomeasideComponent, MatIcon, FormsModule, RouterModule, ChatComponent, ArticlemodalformComponent, MyChainComponent],
   templateUrl: './userhome.component.html',
   styleUrl: './userhome.component.css'
 })
@@ -35,17 +36,22 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
 
   public isChatOpen = signal(false);
   public isArtFormOpen = signal(false);
+  public isExtChainOpen = signal(false);
   public isUser = signal(false);
   public isChained = signal(false);
   public isChainRequested = signal(false);
   public isChainBeingRequested = signal(false);
+  public isMyChainModal = signal(false);
   public showBreakChainAlert = signal(false);
   public showJoinChainRequested = signal(false);
 
+  public currentDate : Date = new Date();
   public userdata!: IUser | null;
   public linxdata!: IAccount | null;
   public chat!: IChat;
-  public article: IArticle = { artid: null, title: '', bodycontent: '', img: '', postedOn: '', useAsUserPic: false }
+  public articles : IArticle[] = [];
+  public article: IArticle = {title: '', bodycontent: '', img: '', postedOn: '', useAsUserPic: false }
+  public extendedChain! : IAccount[];
   private roomkey! : string;
 
   public routePattern: RegExp = new RegExp("/Linx/Profile/[^/]+", "g");
@@ -53,12 +59,10 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
   constructor(@Inject(PLATFORM_ID) private platformId: Object, private router: Router) {
     this.userdata  = this.signalStoreSvc.RetrieveUserData()();
     const routePatternMatch$ = new BehaviorSubject<string | null>(null);
-
     this.router.events.subscribe((event: Event) => {
     
       if (event instanceof NavigationStart || event instanceof NavigationEnd) {
         this.linxdata = this.signalStoreSvc.RetrieveLinxData()();
-
         if (event.url.match(this.routePattern)) {
           routePatternMatch$.next(event.url);
         } else {
@@ -72,13 +76,30 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
     .subscribe((url) => {
       if (url) {
         this.isUser.set(false);
+        this.articles = this.linxdata?.articles !== undefined ? this.linxdata?.articles : [];
         this.isChained.set(this.isLinx());
         this.loadChatComponent();
+        this.getExtendedChain();
       } else {
         this.isUser.set(true);
+        this.articles = this.userdata?.account.articles !== undefined ? this.userdata?.account.articles : [];
       }
     });
 
+  }
+
+  async getExtendedChain(){
+    try {
+      const res = await this.restSvc.getExtendedChain(this.userdata?.userid! , this.linxdata?.userid!);
+      if(res.code === 0){
+        console.log('retrieved EXTENDED CHAIN',res.others)
+        this.extendedChain = res.others;
+      }else{
+        console.log('retrieving EXTENDED CHAIN',res.message)
+      }
+    } catch (error) {
+      console.log('ERROR retrieving EXTENDED CHAIN',error)
+    }
   }
 
   async loadChatComponent () {
@@ -129,12 +150,16 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
     return onChain !== undefined;
   }
 
-  async toggleChatModal() {
+  toggleChatModal() {
     this.isChatOpen.update(v => !v);
   }
 
   toggleArtFormModal() {
     this.isArtFormOpen.update(v => !v);
+  }
+
+  toggleExtChainModal(){
+    this.isExtChainOpen.update(v => !v);
   }
 
   showAlert(alert : string) {
@@ -179,11 +204,12 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
     try {
       const res = await this.restSvc.requestJoinChain(this.userdata!.userid!, this.linxdata!.userid!)
       if (res.code === 0) {
-        if(res.message === 'REQUESTED'){
+        if(res.message === 'REQUESTING'){
           this.showJoinChainRequested.set(false);
           this.isChainRequested.set(true);
-          this.isChainBeingRequested.set(false);
         }else{
+          this.isChainRequested.set(false);
+          this.isChainBeingRequested.set(false);
           this.isChained.set(true);
           this.socketsvc.linxchain(this.linxdata?.userid!, this.userdata?.userid!, this.userdata?.account!, this.linxdata!)
           await this.getMyChain(this.userdata!)
@@ -200,12 +226,12 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
     try {
       const res = await this.restSvc.rejectJoinChainRequest(this.userdata?.userid!, this.linxdata?.userid!)
       if(res.code === 0){
-
+        this.isChainBeingRequested.set(false);
       }else{
-        console.log('', res.message)
+        console.log('Error rejecting join request....', res.message)
       }
     } catch (error) {
-      console.log('',error)    
+      console.log('Error rejecting join request....',error)    
     }
   }
 
@@ -213,14 +239,14 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
     try {
       const res = await this.restSvc.breakChain(this.userdata?.userid!, this.linxdata?.userid!);
       if (res.code === 0) {
+        this.router.navigateByUrl('/Linx/Inicio');
       } else {
-        console.log('', res.message);
+        console.log('Error breaking chain.....', res.message);
       }
     } catch (error) {
-      console.log('', error);
+      console.log('Error breaking chain.....', error);
     }
   }
-
 
   logout() {
     this.signalStoreSvc.StoreUserData(null);
