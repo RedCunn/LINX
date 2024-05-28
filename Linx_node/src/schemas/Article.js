@@ -3,10 +3,11 @@ const mongoose = require('mongoose');
 
 let ArticleSchema = new mongoose.Schema ({
     userid : {type : String, required : true},
+    articleid : {type : String, required : true, unique : true},
     postedOn : {type : Date, default: Date.now},
     title : {type : String, maxLength : 50},
     body : {type : String, maxLength : 300},
-    img : {data : Buffer, contentType: B},
+    img : {type : String},
     useAsProfilePic : {type : Boolean, default : false}
 })
 

@@ -3,6 +3,6 @@ export interface IArticle{
     postedOn : string;
     title : string;
     bodycontent: string;
-    img : any;
+    img : string;
     useAsUserPic : boolean;
 }

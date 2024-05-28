@@ -43,20 +43,12 @@ export class RestnodeService {
     return lastValueFrom(res);
   }
 
-  public newArticle(userid: string, article: IArticle): Promise<IRestMessage> {
-    const res = this._httpClient.post<IRestMessage>(`http://localhost:3000/api/Account/${userid}/article`,
-      article,
-      {
-        headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-      });
+  public newArticle(userid: string, article : FormData): Promise<IRestMessage> {
+    const res = this._httpClient.post<IRestMessage>(`http://localhost:3000/api/Account/${userid}/article`,article);
     return lastValueFrom(res);
   }
-  public editArticle(userid: string, article: IArticle): Promise<IRestMessage> {
-    const res = this._httpClient.put<IRestMessage>(`http://localhost:3000/api/Account/${userid}/article/${article.artid}`,
-      article,
-      {
-        headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-      });
+  public editArticle(userid: string,artid : string, article : FormData): Promise<IRestMessage> {
+    const res = this._httpClient.put<IRestMessage>(`http://localhost:3000/api/Account/${userid}/article/${artid}`,article);
     return lastValueFrom(res);
   }
 

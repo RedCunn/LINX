@@ -1,5 +1,4 @@
 const bcrypt = require('bcrypt');
-const multer = require('multer');
 const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
@@ -13,6 +12,7 @@ const User = require('../schemas/User');
 const Chat = require('../schemas/Chat');
 const Article = require('../schemas/Article');
 const chating = require('./utils/chating');
+
 
 function generateToken(userdata) {
 
@@ -309,16 +309,16 @@ module.exports = {
     },
     newArticle : async (req, res, next) => {
         try {
-
-            const _userid = req.params.userid;
-            const {article} = req.body;
-
-            let _insertArt = await Article.create(article);
-            let _userAccount = await Account.findOne({ userid: _userid });
-            _userAccount.articles.push(_insertArt._id);
             
-            const _insertResult = await _userAccount.save();
-            console.log('RESULT INS NEW ART : ',_insertResult)
+            const _userid = req.params.userid;
+            const {title , body , postedOn , useAsProfilePic, articleid} = req.body;
+            console.log('BODY DEL ART : ', title + body + postedOn + useAsProfilePic + articleid)
+            // let _insertArt = await Article.create(article);
+            // let _userAccount = await Account.findOne({ userid: _userid });
+            // _userAccount.articles.push(_insertArt._id);
+            
+            // const _insertResult = await _userAccount.save();
+            // console.log('RESULT INS NEW ART : ',_insertResult)
             
             res.status(200).send({
                 code: 0,
