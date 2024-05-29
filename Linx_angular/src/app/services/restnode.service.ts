@@ -52,6 +52,11 @@ export class RestnodeService {
     return lastValueFrom(res);
   }
 
+  public deleteArticle(userid: string,artid : string): Promise<IRestMessage> {
+    const res = this._httpClient.delete<IRestMessage>(`http://localhost:3000/api/Account/${userid}/article/${artid}`);
+    return lastValueFrom(res);
+  }
+
   //#endregion
 
   //#region -------------------------- MATCHING ----------------------------------------

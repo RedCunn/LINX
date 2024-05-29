@@ -13,6 +13,8 @@ const Chat = require('../schemas/Chat');
 const Article = require('../schemas/Article');
 const chating = require('./utils/chating');
 
+const fs = require('fs');
+const path = require('path');
 
 function generateToken(userdata) {
 
@@ -312,13 +314,10 @@ module.exports = {
             
             const _userid = req.params.userid;
             const {title , body , postedOn , useAsProfilePic, articleid} = req.body;
-            console.log('BODY DEL ART : ', title + body + postedOn + useAsProfilePic + articleid)
-            // let _insertArt = await Article.create(article);
-            // let _userAccount = await Account.findOne({ userid: _userid });
-            // _userAccount.articles.push(_insertArt._id);
-            
-            // const _insertResult = await _userAccount.save();
-            // console.log('RESULT INS NEW ART : ',_insertResult)
+            const filePath = req.file.path;
+            console.log('FILEPATH : ',filePath)
+            // let insertArticle = await Article.create({userid : _userid, articleid , postedOn, useAsProfilePic, title , body, img : filePath})
+            // let insertArticleRef = await Account.updateOne({userid : _userid},{$push : {articles : insertArticle._id}})
             
             res.status(200).send({
                 code: 0,
@@ -344,16 +343,12 @@ module.exports = {
 
             const _userid = req.params.userid;
             const _artid = req.params.artid;
-            const {article} = req.body;
-
-            let _updatedArt = await Article.findByIdAndUpdate(_artid, article,{new : true});
-            let _userAccount = await Account.findOne({ userid: _userid });
-            const index = _userAccount.articles.findIndex(articleId => articleId.equals(_updatedArt._id))
-            _userAccount.articles[index] = _updatedArt._id;
-
-            const _updateResult = await _userAccount.save();
-            console.log('RESULT UP ART : ',_updateResult)
+            const {title , body , postedOn , useAsProfilePic} = req.body;
+            const filePath = req.file.path;
             
+            let updateArticle = await Article.updateOne({userid: _userid , articleid : _artid},{title, body , postedOn, useAsProfilePic, img : filePath})
+            console.log('UPDATE ART RESULT : ',updateArticle)
+
             res.status(200).send({
                 code: 0,
                 error: null,
@@ -367,6 +362,32 @@ module.exports = {
                 code: 1,
                 error: error.message,
                 message: 'couldnt save article changes...',
+                token: null,
+                userdata: null,
+                others: null
+            })
+        }
+    },
+    deleteArticle : async (req, res, next) => {
+        try {
+
+            const _userid = req.params.userid;
+            const _artid = req.params.artid;
+            let deleteArticle = await Article.deleteOne({userid: _userid , articleid : _artid});
+            console.log('DELETE ART RESULT : ',deleteArticle)
+            res.status(200).send({
+                code: 0,
+                error: null,
+                message: 'article deleted !!!',
+                token: null,
+                userdata: null,
+                others: null
+            })
+        } catch (error) {
+            res.status(400).send({
+                code: 1,
+                error: error.message,
+                message: 'couldnt delete article ...',
                 token: null,
                 userdata: null,
                 others: null

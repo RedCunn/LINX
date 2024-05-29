@@ -5,15 +5,14 @@ const AccountController = require('../controllers/account_controller');
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        const userid = req.params.userid; 
-        const artid = req.body.articleid;
+        const userid = req.params.userid;
         const userDirectory = path.join('C:/Users/cunns/Documents/TFGLinx/articles', userid);
 
         fs.access(userDirectory, (err) => {
             if (err) {
-                // El directorio no existe, intenta crearlo
                 fs.mkdir(userDirectory, { recursive: true }, (err) => {
                     if (err) {
                         console.error('Error al crear el directorio:', err);
@@ -23,19 +22,86 @@ const storage = multer.diskStorage({
                     }
                 });
             } else {
-                // El directorio ya existe, establece la ruta de destino
                 cb(null, userDirectory);
             }
-    })
+        })
     },
     filename: function (req, file, cb) {
-        cb(null, artid + '__' + file.originalname)
+        const artid = req.body.articleid;
+        const userDirectory = path.join('C:/Users/cunns/Documents/TFGLinx/articles', req.params.userid);
+        const newFilename = artid + '__' + file.originalname;
+
+        fs.readdir(userDirectory, (err, files) => {
+            if (err) {
+                console.error('Error al leer el directorio:', err);
+                return cb(err);
+            }
+
+            let fileToDelete = null;
+            for (const filename of files) {
+                const [existingArtid] = filename.split('__');
+                if (existingArtid === artid) {
+                    fileToDelete = filename;
+                    break;
+                }
+            }
+
+            if (fileToDelete) {
+                const filePath = path.join(userDirectory, fileToDelete);
+                fs.unlink(filePath, (err) => {
+                    if (err) {
+                        console.error('Error al eliminar el archivo existente:', err);
+                        return cb(err);
+                    } else {
+                        cb(null, newFilename);
+                    }
+                });
+            } else {
+                cb(null, newFilename);
+            }
+        });
+
     }
 })
 
 const upload = multer({
     storage: storage
 })
+
+const deleteFile = (req, res) => {
+    const { userid, articleid } = req.params;
+    const userDirectory = path.join('C:/Users/cunns/Documents/TFGLinx/articles', userid);
+
+    fs.readdir(userDirectory, (err, files) => {
+        if (err) {
+            console.error('Error al leer el directorio:', err);
+            return res.status(500).json({ message: 'Error al leer el directorio' });
+        }
+
+        let fileToDelete = null;
+        for (const filename of files) {
+            const [existingArtid] = filename.split('__');
+            if (existingArtid === articleid) {
+                fileToDelete = filename;
+                break;
+            }
+        }
+
+        if (fileToDelete) {
+            const filePath = path.join(userDirectory, fileToDelete);
+            fs.unlink(filePath, (err) => {
+                if (err) {
+                    console.error('Error al eliminar el archivo:', err);
+                    return res.status(500).json({ message: 'Error al eliminar el archivo' });
+                } else {
+                    return res.status(200).json({ message: 'Archivo eliminado exitosamente' });
+                }
+            });
+        } else {
+            return res.status(404).json({ message: 'Archivo no encontrado' });
+        }
+    });
+};
 
 const jwt = require('jsonwebtoken');
 
@@ -71,6 +137,7 @@ router.post('/resetPwd', checkJWT, AccountController.resetPassword);
 router.get('/activate_account', AccountController.activateAccount);
 router.put('/chat/:roomkey', AccountController.storeChatMessage);
 router.post('/:userid/article', upload.single('file'), AccountController.newArticle);
-router.put('/:userid/article/:artid', AccountController.editArticle)
+router.put('/:userid/article/:artid', upload.single('file'), AccountController.editArticle);
+router.delete('/:userid/article/:artid',deleteFile, AccountController.deleteArticle)
 router.get('/:userid/chat/:roomkey', AccountController.getChats)
 module.exports = router;
