@@ -12,6 +12,7 @@ const User = require('../schemas/User');
 const Chat = require('../schemas/Chat');
 const Article = require('../schemas/Article');
 const chating = require('./utils/chating');
+const Job = require('../schemas/Job');
 
 const fs = require('fs');
 const path = require('path');
@@ -225,11 +226,67 @@ module.exports = {
             })
         }
     },
+    authenticate : async (req, res, next) => {
+        try {
+            const userid = req.params
+            const { password } = req.body;
+
+            let _account = await Account.findOne({ userid : userid})
+            if (bcrypt.compareSync(password, _account.password)) {
+                res.status(200).send({
+                    code: 0,
+                    error: null,
+                    message: 'AUTHENTICATED ',
+                    token: null,
+                    userdata: null,
+                    others: null
+                })
+            }else{
+                res.status(200).send({
+                    code: 1,
+                    error: null,
+                    message: 'WRONG CREDENTIALS',
+                    token: null,
+                    userdata: null,
+                    others: null
+                })
+            }
+        } catch (error) {
+            res.status(400).send({
+                code: 1,
+                error: error.message,
+                message: 'Authentication failed...',
+                token: null,
+                userdata: null,
+                others: null
+            })
+        }
+    },
     resetPassword: async (req, res, next) => {
         try {
+            const userid = req.params
+            const { password } = req.body;
+            let _account = await Account.updateOne({ userid : userid},{password : bcrypt.hashSync(password, 10)});
 
+            console.log('UPDATE ACCOUNT result changing PWD : ',_account)
+
+            res.status(200).send({
+                code: 0,
+                error: null,
+                message: 'PWD CHANGED SUCCESSFULLY ',
+                token: null,
+                userdata: null,
+                others: null
+            })
         } catch (error) {
-
+            res.status(400).send({
+                code: 1,
+                error: error.message,
+                message: 'Error changing pwd...',
+                token: null,
+                userdata: null,
+                others: null
+            })
         }
     },
     modifyAccountData: async (req, res, next) => {
@@ -241,9 +298,41 @@ module.exports = {
     },
     deleteAccount: async (req, res, next) => {
         try {
+            const userid = req.params
+            const currentDate = new Date();
+            let account = await Account.findOne({userid : userid})
+            account.active = false;
+            account.save();
 
+            let insertJob = await Job.create({refid : userid, 
+                                              task : "delete_account", 
+                                              status : "pending", 
+                                              createdAt : currentDate.toISOString(),
+                                              payload : {refid: userid , 
+                                                         subject : "Cuenta LINX", 
+                                                         address : account.email, 
+                                                         message : `${account.linxname} tu cuenta y todos tus datos han sido eliminados definitivamente de las bases de datos de LINX. Gracias por los momentos compartidos...lo hemos pasado bien juntxs.`}
+                                            })
+
+            console.log('JOB INSERT RESULT : ',insertJob)
+
+            res.status(200).send({
+                code: 0,
+                error: null,
+                message: 'ACCOUNT DELETED ... the change will be irreversible in 10 days.',
+                token: null,
+                userdata: null,
+                others: null
+            })
         } catch (error) {
-
+            res.status(400).send({
+                code: 1,
+                error: error.message,
+                message: 'Error deleting account...',
+                token: null,
+                userdata: null,
+                others: null
+            })
         }
     },
     getChats: async (req, res, next) => {
@@ -252,15 +341,15 @@ module.exports = {
             const _roomkey = req.params.roomkey;
             console.log('ROOMKEY : ', _roomkey)
             let _chats;
-            if(_roomkey.trim() !== ''){
-                _chats = await Chat.findOne({ roomkey:_roomkey });
-            }else{
+            if (_roomkey.trim() !== '') {
+                _chats = await Chat.findOne({ roomkey: _roomkey });
+            } else {
                 _chats = await Chat.find({
-                    $or : [
-                        {userid_a : _userid},
-                        {userid_b : _userid}
+                    $or: [
+                        { userid_a: _userid },
+                        { userid_b: _userid }
                     ]
-                 });
+                });
             }
 
             res.status(200).send({
@@ -285,11 +374,11 @@ module.exports = {
     storeChatMessage: async (req, res, next) => {
         try {
             const roomkey = req.params.roomkey;
-            const {message, participants} = req.body;
+            const { message, participants } = req.body;
             console.log('BODY STORE MESSAGE : ', req.body)
             console.log('PARAMS ROOMKEY : ', roomkey)
             let insertResult = await chating.storeMessage(message, roomkey, participants.userid_a, participants.userid_b)
-            
+
             res.status(200).send({
                 code: 0,
                 error: null,
@@ -309,16 +398,16 @@ module.exports = {
             })
         }
     },
-    newArticle : async (req, res, next) => {
+    newArticle: async (req, res, next) => {
         try {
-            
+
             const _userid = req.params.userid;
-            const {title , body , postedOn , useAsProfilePic, articleid} = req.body;
+            const { title, body, postedOn, useAsProfilePic, articleid } = req.body;
             const filePath = req.file.path;
-            console.log('FILEPATH : ',filePath)
+            console.log('FILEPATH : ', filePath)
             // let insertArticle = await Article.create({userid : _userid, articleid , postedOn, useAsProfilePic, title , body, img : filePath})
             // let insertArticleRef = await Account.updateOne({userid : _userid},{$push : {articles : insertArticle._id}})
-            
+
             res.status(200).send({
                 code: 0,
                 error: null,
@@ -338,16 +427,16 @@ module.exports = {
             })
         }
     },
-    editArticle : async (req, res, next) => {
+    editArticle: async (req, res, next) => {
         try {
 
             const _userid = req.params.userid;
             const _artid = req.params.artid;
-            const {title , body , postedOn , useAsProfilePic} = req.body;
+            const { title, body, postedOn, useAsProfilePic } = req.body;
             const filePath = req.file.path;
-            
-            let updateArticle = await Article.updateOne({userid: _userid , articleid : _artid},{title, body , postedOn, useAsProfilePic, img : filePath})
-            console.log('UPDATE ART RESULT : ',updateArticle)
+
+            let updateArticle = await Article.updateOne({ userid: _userid, articleid: _artid }, { title, body, postedOn, useAsProfilePic, img: filePath })
+            console.log('UPDATE ART RESULT : ', updateArticle)
 
             res.status(200).send({
                 code: 0,
@@ -368,13 +457,13 @@ module.exports = {
             })
         }
     },
-    deleteArticle : async (req, res, next) => {
+    deleteArticle: async (req, res, next) => {
         try {
 
             const _userid = req.params.userid;
             const _artid = req.params.artid;
-            let deleteArticle = await Article.deleteOne({userid: _userid , articleid : _artid});
-            console.log('DELETE ART RESULT : ',deleteArticle)
+            let deleteArticle = await Article.deleteOne({ userid: _userid, articleid: _artid });
+            console.log('DELETE ART RESULT : ', deleteArticle)
             res.status(200).send({
                 code: 0,
                 error: null,

@@ -1,5 +1,13 @@
 module.exports = {
-    uploadArticle : async (req, res, next) => {
+    editProfileData : async (req, res, next) => {
+        try {
+            
+
+        } catch (error) {
+            
+        }
+    },
+    editProfilePreferences : async (req, res, next) => {
         try {
             
 

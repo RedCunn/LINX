@@ -30,6 +30,7 @@ async function checkJWT(req, res, next) {
     }
 }
 
-router.post('/uploadArticle', checkJWT,ProfileController.uploadArticle);
+router.put('/:userid/data', checkJWT , ProfileController.editProfileData)
+router.put('/:userid/preferences', checkJWT , ProfileController.editProfilePreferences)
 
 module.exports = router;
