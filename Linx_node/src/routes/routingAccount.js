@@ -29,7 +29,6 @@ const storage = multer.diskStorage({
     filename: function (req, file, cb) {
         const artid = req.body.articleid;
         const userDirectory = path.join('C:/Users/cunns/Documents/TFGLinx/articles', req.params.userid);
-        const newFilename = artid + '__' + file.originalname;
 
         fs.readdir(userDirectory, (err, files) => {
             if (err) {
@@ -53,11 +52,11 @@ const storage = multer.diskStorage({
                         console.error('Error al eliminar el archivo existente:', err);
                         return cb(err);
                     } else {
-                        cb(null, newFilename);
+                        cb(null, file.originalname);
                     }
                 });
             } else {
-                cb(null, newFilename);
+                cb(null, file.originalname);
             }
         });
 
@@ -127,7 +126,7 @@ async function checkJWT(req, res, next) {
             );
     }
 }
-
+router.use('/uploads', express.static(path.join('C:/Users/cunns/Documents/TFGLinx/articles/')))
 router.get('/trackLocationGeocode', AccountController.trackLocationGeocode);
 router.post('/signup', AccountController.signup);
 router.post('/signin', AccountController.signin);

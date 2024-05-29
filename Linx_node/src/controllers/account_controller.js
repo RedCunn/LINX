@@ -189,6 +189,7 @@ module.exports = {
                 let _userProfQuery = await User.findOne({ userid: _account.userid });
                 let _userProf = _userProfQuery.toObject();
                 let userData = { ..._userProf, accountid: _account._id, account: _account };
+                let accountArticles = await Article.find({userid : _account.userid})
 
                 let _jwt = jwt.sign(
                     {
@@ -209,7 +210,7 @@ module.exports = {
                     message: `${_account.linxname} ha iniciado sesión`,
                     token: _jwt,
                     userdata: userData,
-                    others: null
+                    others: accountArticles
                 })
             }
 
@@ -375,8 +376,6 @@ module.exports = {
         try {
             const roomkey = req.params.roomkey;
             const { message, participants } = req.body;
-            console.log('BODY STORE MESSAGE : ', req.body)
-            console.log('PARAMS ROOMKEY : ', roomkey)
             let insertResult = await chating.storeMessage(message, roomkey, participants.userid_a, participants.userid_b)
 
             res.status(200).send({
@@ -402,11 +401,15 @@ module.exports = {
         try {
 
             const _userid = req.params.userid;
-            const { title, body, postedOn, useAsProfilePic, articleid } = req.body;
-            const filePath = req.file.path;
-            console.log('FILEPATH : ', filePath)
-            // let insertArticle = await Article.create({userid : _userid, articleid , postedOn, useAsProfilePic, title , body, img : filePath})
-            // let insertArticleRef = await Account.updateOne({userid : _userid},{$push : {articles : insertArticle._id}})
+            const { title, body, postedOn, useAsProfilePic, articleid} = req.body;
+            let insertArticle; 
+            if (req.file) {
+                const filePath = _userid+'/'+req.file.originalname;
+                insertArticle = await Article.create({userid : _userid, articleid , postedOn, useAsProfilePic, title , body, img : filePath})
+            } else {
+                insertArticle = await Article.create({userid : _userid, articleid , postedOn, useAsProfilePic, title , body})
+            }
+            let insertArticleRef = await Account.updateOne({userid : _userid},{$push : {articles : insertArticle._id}})
 
             res.status(200).send({
                 code: 0,

@@ -64,6 +64,7 @@ export class SigninComponent{
     
     if(_response.code === 0){
       const user : IUser = _response.userdata;
+      user.account.articles = _response.others;
       this.signalstoresvc.StoreUserData(user);
       this.signalstoresvc.StoreJWT(_response.token!);
       this.socketSvc.initUserRoom(user.userid);

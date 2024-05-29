@@ -1,8 +1,8 @@
 export interface IArticle{
-    artid?: string;
+    articleid?: string;
     postedOn : string;
     title : string;
-    bodycontent: string;
+    body: string;
     img : string;
-    useAsUserPic : boolean;
+    useAsProfilePic : boolean;
 }

@@ -1,7 +1,6 @@
-import { Component, Input, computed, inject, signal } from '@angular/core';
+import { Component, EventEmitter, Input, computed, inject, signal } from '@angular/core';
 import { NgForm, FormsModule } from '@angular/forms';
 import { IArticle } from '../../../../models/useraccount/IArticle';
-import { SignalStorageService } from '../../../../services/signal-storage.service';
 import { RestnodeService } from '../../../../services/restnode.service';
 import { IUser } from '../../../../models/userprofile/IUser';
 import * as CryptoJS from 'crypto-js';
@@ -20,39 +19,42 @@ export class ArticlemodalformComponent {
   @Input() isOpen = signal(false);
   @Input() userdata!: IUser | null;
   @Input() article!: IArticle;
-  
+  @Input() articleChange = new EventEmitter<IArticle>();
+
   private formData : FormData = new FormData();
   public currentDate : Date = new Date();
 
-  public formTitle = computed(()=> {
-    if(this.article.artid !== null) {
-      return 'Editar artículo'
-    }else{
-      return 'Nuevo artículo'
-    } 
-  })
-
- getRandomNumber(min : number, max : number) {
-    const range = max - min + 1;
-    const randomBytes = CryptoJS.lib.WordArray.random(6); 
-    const randomNumber = randomBytes.words[0] % range + min; 
-    return randomNumber;
+  generateArticleId() {
+    const randomBytes = CryptoJS.lib.WordArray.random(8);
+    const articleId = CryptoJS.enc.Hex.stringify(randomBytes);
+    return articleId;
   }
 
+  generateFileName(originalName : string) {
+    const fileExtention = '.'+originalName.split('.')[1];
+    const hash = CryptoJS.SHA256(originalName).toString(CryptoJS.enc.Base64);
+    return hash.replace(/\//g, '_').replace(/\+/g, '-').substring(0, 16) + fileExtention;
+  }
   async uploadArticle(artForm: NgForm) {
     
+    if(artForm.form.invalid){
+      return;
+    }
+
     this.formData.append('title', artForm.form.get('title')?.value)
     this.formData.append('body', artForm.form.get('bodycontent')?.value)
     this.formData.append('useAsProfilePic', artForm.form.get('useAsUserPic')?.value)
     this.formData.append('postedOn', this.currentDate.toISOString())
     
 
-    if (this.article.artid !== undefined) {
+    if (this.article.articleid !== undefined) {
       
       try {
-        const response = await this.restSvc.editArticle(this.userdata!.userid,this.article.artid, this.formData);
+        const response = await this.restSvc.editArticle(this.userdata!.userid,this.article.articleid, this.formData);
         if (response.code === 0) {
           console.log('Article uploaded : ', response.message)
+          this.articleChange.emit(this.article);
+          this.isOpen.set(false);
         } else {
           console.log('Error en AWAIT editArticle : ',response.error)
         } 
@@ -61,12 +63,14 @@ export class ArticlemodalformComponent {
       }
 
     } else {
-      const _artid = this.getRandomNumber(1,100);
+      const _artid = this.generateArticleId();
       this.formData.append('articleid', _artid.toString());
       try {
         const response = await this.restSvc.newArticle(this.userdata!.userid, this.formData);
         if (response.code === 0) {
           console.log('Article uploaded : ', response.message)
+          this.articleChange.emit(this.article);
+          this.isOpen.set(false);
         } else {
           console.log('Error en AWAIT newArticle : ',response.error)
         }  
@@ -80,7 +84,8 @@ export class ArticlemodalformComponent {
     const file = event.target.files[0];
     if (file) {
     this.article.img = file.name;
-    this.formData.append("file", file, file.name);
+    const newFileName = this.generateFileName(file.name);
+    this.formData.append("file", file, newFileName);
     }
   }
 

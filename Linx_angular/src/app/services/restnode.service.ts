@@ -86,6 +86,11 @@ export class RestnodeService {
     return lastValueFrom(res);
   }
 
+  public getAccountArticles(userid : string): Promise<IRestMessage>{
+    const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Account/${userid}/articles`);
+    return lastValueFrom(res);
+  }
+
   //#endregion
 
   //#region ------------------------------ PROFILE -----------------------------------------
@@ -105,11 +110,7 @@ export class RestnodeService {
   //#region -------------------------- MATCHING ----------------------------------------
 
   public shuffleCandidateProfiles(userid: string): Promise<IRestMessage> {
-    const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Match/${userid}/shuffledProfiles`,
-      {
-        headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-      })
-
+    const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Match/${userid}/shuffledProfiles`)
     return lastValueFrom(res);
   }
 

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Inject, OnInit, PLATFORM_ID, ViewChild, ViewContainerRef, inject, signal } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, Inject, OnInit, PLATFORM_ID, ViewChild, ViewContainerRef, inject, signal } from '@angular/core';
 import { UserhomeasideComponent } from '../userhomeaside/userhomeaside.component';
 import { MatIcon } from '@angular/material/icon';
 import { SignalStorageService } from '../../../services/signal-storage.service';
@@ -44,25 +44,26 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
   public isMyChainModal = signal(false);
   public showBreakChainAlert = signal(false);
   public showJoinChainRequested = signal(false);
+  public loadingArts = signal(false);
 
   public currentDate : Date = new Date();
   public userdata!: IUser | null;
   public linxdata!: IAccount | null;
   public chat!: IChat;
   public articles : IArticle[] = [];
-  public article: IArticle = {title: '', bodycontent: '', img: '', postedOn: '', useAsUserPic: false }
+  public article: IArticle = {title: '', body: '', img: '', postedOn: '', useAsProfilePic: false }
   public extendedChain! : IAccount[];
   private roomkey! : string;
 
   public routePattern: RegExp = new RegExp("/Linx/Profile/[^/]+", "g");
   
-  constructor(@Inject(PLATFORM_ID) private platformId: Object, private router: Router) {
+  constructor(@Inject(PLATFORM_ID) private platformId: Object, private router: Router, private ref: ChangeDetectorRef) {
     this.userdata  = this.signalStoreSvc.RetrieveUserData()();
     const routePatternMatch$ = new BehaviorSubject<string | null>(null);
     this.router.events.subscribe((event: Event) => {
-    
       if (event instanceof NavigationStart || event instanceof NavigationEnd) {
         this.linxdata = this.signalStoreSvc.RetrieveLinxData()();
+        this.articles = this.linxdata?.articles!;
         if (event.url.match(this.routePattern)) {
           routePatternMatch$.next(event.url);
         } else {
@@ -76,13 +77,11 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
     .subscribe((url) => {
       if (url) {
         this.isUser.set(false);
-        this.articles = this.linxdata?.articles !== undefined ? this.linxdata?.articles : [];
         this.isChained.set(this.isLinx());
         this.loadChatComponent();
         this.getExtendedChain();
       } else {
         this.isUser.set(true);
-        this.articles = this.userdata?.account.articles !== undefined ? this.userdata?.account.articles : [];
       }
     });
 
@@ -248,6 +247,14 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
     }
   }
 
+  onArticleChange(newArt : any){
+    console.log('NEW ART ON HOME : ', newArt)
+    this.loadingArts.set(true);
+    this.userdata?.account.articles?.unshift(newArt)
+    this.ref.detectChanges();
+    this.signalStoreSvc.StoreLinxData(this.userdata?.account!)
+  }
+
   logout() {
     this.signalStoreSvc.StoreUserData(null);
     this.signalStoreSvc.StoreJWT(null);
@@ -258,6 +265,17 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
     if (isPlatformBrowser(this.platformId)) {
       initFlowbite();
     }
+    this.articles = [];
+    if(this.isUser()){
+      this.userdata?.account.articles!.forEach(a => {
+        this.articles.push(a);
+      });
+    }else{
+      this.linxdata?.articles?.forEach(a => {
+        this.articles.push(a);
+      })
+    }
+    
     try {
       const res = await this.restSvc.getJoinChainRequests(this.userdata!.userid);
       if (res.code === 0) {
