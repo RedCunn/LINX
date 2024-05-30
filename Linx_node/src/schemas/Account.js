@@ -38,7 +38,16 @@ let accountSchema = new mongoose.Schema({
     agenda: [{ eventid: { type: mongoose.Schema.Types.ObjectId, ref: 'Event' } }],
     myChain: [{ userid : {type: String} , roomkey : {type: String}, chainedAt : {type : Date, default: Date.now} }],
     extendedChain: [{mylinxuserid : { type: String }, userid : {type: String}, roomkey : {type: String}}],
-    articles : [{type:mongoose.Schema.Types.ObjectId , ref : 'Article', max : 4}]
+    articles: {
+        type: [{
+            type: String
+        }],
+        validate: [arrayLimit, '{PATH} exceeds the limit of 4'] 
+    }
 })
+
+function arrayLimit(val) {
+    return val.length <= 4;
+}
 
 module.exports = mongoose.model('Account', accountSchema, 'Accounts');

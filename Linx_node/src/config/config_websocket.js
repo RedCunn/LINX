@@ -40,6 +40,9 @@ const ioFn = (httpServer) => {
             //tengo que tener una roomkey para todos los de la misma cadena
             io.to(data.to_userid).emit('get_interaction',{type : 'event', interaction: data.event})
         })
+        socket.on("broken_chain", (data) => {
+            io.to(data.to_userid).emit('get_interaction',{type : 'broken', interaction : data.from_user})
+        })
         socket.on('disconnect', () => {
             console.log('User disconnected');
         });

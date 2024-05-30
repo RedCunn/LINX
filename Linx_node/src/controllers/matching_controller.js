@@ -5,6 +5,7 @@ let match = require('./utils/matching');
 const matching = require('./utils/matching');
 const Match = require('../schemas/Match');
 const Account = require('../schemas/Account');
+const Article = require('../schemas/Article');
 
 module.exports = {
     shuffleProfiles: async (req, res, next) => {
@@ -13,24 +14,35 @@ module.exports = {
             let _user = await User.findOne({ 'userid': userid })
 
             let matchingProfiles = await match.retrieveProfilesBasedOnCompatibility(_user);
+            
+            let artIDs = new Set();
+            matchingProfiles.forEach(p => {
+                if(p.articles !== undefined && p.articles.length > 0){
+                    p.articles.forEach( artid => {
+                        artIDs.add(artid)
+                    })
+                }
+            }) 
+            let artIDsToArray = Array.from(artIDs);
+            let accountArticles = await Article.find({ articleid: { $in:  artIDsToArray} });
 
             res.status(200).send({
                 code: 0,
                 error: null,
                 message: 'PERFILES COMPATIBLES ...',
                 token: null,
-                userData: null,
+                userdata: accountArticles,
                 others: matchingProfiles
             })
 
         } catch (error) {
-
+            console.log('ERROR SHUFFLING ...', error)
             res.status(400).send({
                 code: 1,
                 error: error.message,
                 message: 'no hemos encontrado PERFILES COMPATIBLES ...',
                 token: null,
-                userData: null,
+                userdata: null,
                 others: null
             })
 

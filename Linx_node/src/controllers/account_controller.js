@@ -409,7 +409,7 @@ module.exports = {
             } else {
                 insertArticle = await Article.create({userid : _userid, articleid , postedOn, useAsProfilePic, title , body})
             }
-            let insertArticleRef = await Account.updateOne({userid : _userid},{$push : {articles : insertArticle._id}})
+            let insertArticleRef = await Account.updateOne({userid : _userid},{$push : {articles : insertArticle.articleid}})
 
             res.status(200).send({
                 code: 0,

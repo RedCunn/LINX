@@ -37,13 +37,16 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
   public isChatOpen = signal(false);
   public isArtFormOpen = signal(false);
   public isExtChainOpen = signal(false);
+  public isMyChainModal = signal(false);
+
   public isUser = signal(false);
+  
   public isChained = signal(false);
   public isChainRequested = signal(false);
   public isChainBeingRequested = signal(false);
-  public isMyChainModal = signal(false);
   public showBreakChainAlert = signal(false);
   public showJoinChainRequested = signal(false);
+
   public loadingArts = signal(false);
 
   public currentDate : Date = new Date();

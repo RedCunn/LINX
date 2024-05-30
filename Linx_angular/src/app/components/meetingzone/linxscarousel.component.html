@@ -1,4 +1,4 @@
-<div class="flex flex-row items-center justify-center h-screen">
+<div class="carouselContainer">
 
     @if(this.loading()){
 
@@ -17,22 +17,30 @@
 
     }@else {
 
-    @if(this.candidateProfiles!.length > 0){ <button (click)="nextProfile()">
+    @if(this.candidateProfiles!.length > 0){
+
+    <button (click)="nextProfile()">
         <span class="material-symbols-outlined" id="next" style="color: greenyellow;">
             join_left
         </span>
-
     </button>
-    <div
-        class="max-w-md mb-10 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 h-96 flex flex-col">
-        <div class="overflow-hidden">
-            <img class="h-full w-full object-cover" src="../../../../assets/imgs/profpics/IMG20240122132938.jpg"
-                alt="" />
+    <div class="candidateCard">
+        <div class="overflowarticle">
+            @if(this.candidateProfiles![currentIndex()].articles!== undefined &&
+            this.candidateProfiles![currentIndex()].articles!.length > 0){
+            <article class="article">
+                <h1>{{this.candidateProfiles![currentIndex()].articles?.at(0)?.title}}</h1>
+                <p class="break-words">{{this.candidateProfiles![currentIndex()].articles?.at(0)?.body}}</p>
+                <div class="artimg">
+                    <img style="max-width: 100%; max-height: 100%;"
+                        [src]="'http://localhost:3000/api/Account/uploads/'+this.candidateProfiles![currentIndex()].articles?.at(0)?.img">
+                </div>
+            </article>
+            }
         </div>
-        <div class="p-5 text-center flex-grow">
-            <h3 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                {{this.candidateProfiles![currentIndex()].linxname}}</h3>
-            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Me encanta España ❤️‍🔥❤️‍🔥❤️‍🔥</p>
+        <div class="linxnamecontainer">
+            <p style="color: purple; font-size: 3rem; letter-spacing: 2px;">
+                {{this.candidateProfiles![currentIndex()].linxname}}</p>
             <button (click)="matchRequest(this.candidateProfiles![currentIndex()])" style="border: none;">
                 <span class="material-symbols-outlined" id="thumb" style="color: purple;">
                     lightning_stand
@@ -47,8 +55,13 @@
     </button>
     }@else(){
     <div class="nolinxfound">
-        <p>Linx está creciendo . . .</p>
-        <img style="height: 250px; width: 250px;" src="../../../assets/imgs/backgrounds/bacterias.png" alt="" />
+        <div class="nolinxfoundtext">
+            <p class="text-violet-700">. . .</p>
+            <p class="text-violet-700">Linx está . . .</p>
+            <p class="text-violet-700">creciendo . . .</p>
+            <p class="text-violet-700">. . .</p>
+        </div>
+        <img style="height: 250px; width: 250px;" src="../../../assets/imgs/bacteria/bacteriaqueue_black.png" alt="" />
     </div>
     }
     }
