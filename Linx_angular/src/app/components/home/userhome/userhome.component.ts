@@ -44,8 +44,10 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
   public isChained = signal(false);
   public isChainRequested = signal(false);
   public isChainBeingRequested = signal(false);
+
   public showBreakChainAlert = signal(false);
   public showJoinChainRequested = signal(false);
+  public showChainBeingRequested = signal(false);
 
   public loadingArts = signal(false);
 
@@ -79,17 +81,20 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
     .pipe(distinctUntilChanged())
     .subscribe((url) => {
       if (url) {
+        this.showAlert('all', false);
         this.isUser.set(false);
         this.isChained.set(this.isLinx());
         this.loadChatComponent();
-        this.getExtendedChain();
+        if(this.isLinx()){
+          this.getExtendedChain();
+        }
       } else {
         this.isUser.set(true);
       }
     });
 
   }
-
+  //#region ----------------- SET UP ----------------------------------------
   async getExtendedChain(){
     try {
       const res = await this.restSvc.getExtendedChain(this.userdata?.userid! , this.linxdata?.userid!);
@@ -145,50 +150,10 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
     }
     return _roomkey; 
   }
-
-
   isLinx(): boolean {
     let onChain = this.userdata?.account.myChain?.find(l => l.userid === this.linxdata?.userid)
     return onChain !== undefined;
   }
-
-  toggleChatModal() {
-    this.isChatOpen.update(v => !v);
-  }
-
-  toggleArtFormModal() {
-    this.isArtFormOpen.update(v => !v);
-  }
-
-  toggleExtChainModal(){
-    this.isExtChainOpen.update(v => !v);
-  }
-
-  showAlert(alert : string) {
-    switch (alert) {
-      case "breakchain":
-        this.showBreakChainAlert.set(true);   
-        break;
-      case "requestchain":
-        this.showJoinChainRequested.set(true);
-        break;
-      default:
-        break;
-    }
-  }
-  closeAlert(alert : string){
-    switch (alert) {
-      case "breakchain":
-        this.showBreakChainAlert.set(false);
-        break;
-      case "requestchain":
-        this.showJoinChainRequested.set(false);
-        break;
-      default:
-        break;
-    }
-  }
-
   async getMyChain(userdata: IUser) {
     try {
       const res = await this.restSvc.getMyChain(userdata.userid);
@@ -202,6 +167,41 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
     }
   }
 
+//#endregion -----------------------------------------------------------------
+  
+  toggleChatModal() {
+    this.isChatOpen.update(v => !v);
+  }
+
+  toggleArtFormModal() {
+    this.isArtFormOpen.update(v => !v);
+  }
+
+  toggleExtChainModal(){
+    this.isExtChainOpen.update(v => !v);
+  }
+
+  showAlert(alert : string, isOpen : boolean) {
+    switch (alert) {
+      case "breakchain":
+        this.showBreakChainAlert.set(isOpen);   
+        break;
+      case "requestchain":
+        this.showJoinChainRequested.set(isOpen);
+        break;
+      case "requestedchain":
+        this.showChainBeingRequested.set(isOpen);
+        break;
+      case "all":
+        this.showChainBeingRequested.set(false);
+        this.showJoinChainRequested.set(false);
+        this.showBreakChainAlert.set(false);   
+        break;
+      default:
+        break;
+    }
+  }
+  
   async requestJoinChain() {
     try {
       const res = await this.restSvc.requestJoinChain(this.userdata!.userid!, this.linxdata!.userid!)
@@ -258,11 +258,6 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
     this.signalStoreSvc.StoreLinxData(this.userdata?.account!)
   }
 
-  logout() {
-    this.signalStoreSvc.StoreUserData(null);
-    this.signalStoreSvc.StoreJWT(null);
-    this.router.navigateByUrl('/Linx/Login');
-  }
 
   async ngOnInit(): Promise<void> {
     if (isPlatformBrowser(this.platformId)) {
@@ -284,16 +279,27 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
       if (res.code === 0) {
         const joinRequests : {requestingUserid : string , requestedUserid : string , requestedAt : Date}[]= res.userdata;
 
-        let isRequested = joinRequests.find(req => req.requestingUserid === this.linxdata?._id)
+        if(joinRequests.length > 0){
+          let isBeingRequested = joinRequests.find(req => req.requestingUserid === this.linxdata?.userid)
+          let isAlreadyRequested = joinRequests.find(req => req.requestingUserid === this.userdata?.userid)
 
-        if (isRequested) {
-          this.isChainRequested.set(true);
+          if (isBeingRequested) {
+            this.isChainBeingRequested.set(true);
+          } else {
+            this.isChainBeingRequested.set(false);
+          }
+          if(isAlreadyRequested){
+            this.showJoinChainRequested.set(true);
+            this.isChainRequested.set(true)
+          }else{
+            this.showJoinChainRequested.set(false);
+            this.isChainRequested.set(false)
+          }
+        }else{
           this.isChainBeingRequested.set(false);
-        } else {
-          this.isChainRequested.set(false);
-          this.isChainBeingRequested.set(true);
+          this.showJoinChainRequested.set(false);
+          this.isChainRequested.set(false)
         }
-
       } else {
         console.log('error getting join chain reqs ...', res.error)
       }
@@ -306,4 +312,9 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
     initTooltips();
   }
 
+  logout() {
+    this.signalStoreSvc.StoreUserData(null);
+    this.signalStoreSvc.StoreJWT(null);
+    this.router.navigateByUrl('/Linx/Login');
+  }
 }

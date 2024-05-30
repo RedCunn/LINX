@@ -18,7 +18,7 @@ const getMatchingLocation = async (user, searchgroup) => {
         }
 
         const filteredByOthersPreferences = _filteredByUserPreferences.filter(doc =>
-            doc.preferences.proxyRange === locationkey
+            doc.geolocation[doc.preferences.proxyRange] === user.geolocation[doc.preferences.proxyRange]
         );
 
         return filteredByOthersPreferences;
@@ -364,20 +364,19 @@ module.exports = {
             const finalGroup = await getCompatibilityPercentage(user, _filteredByLang);
 
             const halfMatches = await retrieveHalfMatches(user);
-
-            if (halfMatches.length > 0) {
-                let finalGroupUserIds = new Set(finalGroup.map(profile => profile.userid));
-
+            
+            let finalGroupUserIds = new Set(finalGroup.map(profile => profile.userid));
+            console.log('HALF MATCHES DE ASTE : ', halfMatches)
+            if (halfMatches.length > 0) {    
                 halfMatches.forEach(halfMatch => {
-                    if (!finalGroupUserIds.has(halfMatch.userid)) {
-                        finalGroup.push(halfMatch);
-                        finalGroupUserIds.add(halfMatch.userid);
-                    }
+                    
+                    finalGroupUserIds.add(halfMatch.matchingUserid);
+                    
                 });
-
             }
-
-            const accounts = await usersFilterRepo.retrieveAccountsFromUsers(finalGroup);
+            let finalGroupUserIdsToArray = Array.from(finalGroupUserIds);
+            
+            const accounts = await usersFilterRepo.retrieveAccountsFromUsers(finalGroupUserIdsToArray);
 
             return accounts;
         } catch (error) {

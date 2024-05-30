@@ -55,6 +55,11 @@ export class LinxscarouselComponent implements OnInit {
           if (acc.articles !== undefined && acc.articles.length > 0) {
             acc.articles = [];
             acc.articles = articlesByUserid[acc.userid] || [];
+            const profilePicArticleIndex = articlesByUserid[acc.userid].findIndex(article => article.useAsProfilePic === true);
+            if (profilePicArticleIndex !== -1) {
+              const profilePicArticle = acc.articles.splice(profilePicArticleIndex, 1)[0];
+              acc.articles.unshift(profilePicArticle);
+            }
           }
         })
         this.candidateProfiles = _accounts;
@@ -104,7 +109,10 @@ export class LinxscarouselComponent implements OnInit {
       console.log('ERROR MATCH REQ : ', error)
     }
   }
-
+  goToLinxProfile(linx : IAccount){
+    this.signalStoreSvc.StoreLinxData(linx);
+    this.router.navigateByUrl(`/Linx/Profile/${linx.linxname}`);
+  }
   async ngOnInit(): Promise<void> {
     initCarousels();
     await this.setCandidateProfiles();

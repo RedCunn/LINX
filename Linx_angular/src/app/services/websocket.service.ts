@@ -70,7 +70,7 @@ export class WebsocketService {
   };
 
   getInteractions(){
-    //Full Match , New Event , On Chain 
+    //Full Match , New Event , On Chain , Broken Chain
     let obs = new Observable<{type : string , interaction : Object}>(observer => {
       socket.on('get_interaction', (data) => {
         observer.next(data);

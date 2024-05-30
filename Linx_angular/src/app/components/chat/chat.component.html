@@ -24,7 +24,6 @@
         <div #messageContainer class="p-4 md:p-5 flex flex-col justify-between items-center"
             style="height: calc(50vh - 120px); overflow-y: auto; width: 100%;">
 
-
             @for (item of messages; track $index) {
             <div class="flex items-start gap-3 mb-1">
                 @if(item.sender.accountid === this.receiverAccount._id){

@@ -25,6 +25,7 @@ const ioFn = (httpServer) => {
             io.to(data.roomkey).emit('get_message',data.message)
         })
         socket.on('full_match', (data)=> {
+            console.log('SOCKET ON FULL MATCH................. ', data)
             io.to(data.from_userid).emit('get_interaction',{type : 'match', interaction: data.to_user})
             io.to(data.to_userid).emit('get_interaction',{type : 'match', interaction: data.from_user})
         })

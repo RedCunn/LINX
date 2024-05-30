@@ -44,6 +44,7 @@ export class InteractionsComponent implements OnInit, OnDestroy {
     ).subscribe(data => {
       switch (data.type) {
         case 'match':
+          console.log('FULL MATCH :::::::::::::::::', data.interaction)
           this.interactions.matchingAccount!.unshift(data.interaction as IAccount);
           this.ref.detectChanges();
           break;

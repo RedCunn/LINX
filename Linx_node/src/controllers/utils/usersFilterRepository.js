@@ -21,16 +21,10 @@ module.exports = {
                     return [];
                 });
     },
-    retrieveAccountsFromUsers : async (users) => {
+    retrieveAccountsFromUsers : async (userids) => {
         try {
-            const promises = users.map(async (user, i) => {
-                const account = await Account.find({ "userid": user.userid });
-                return account;
-            });
-        
-            const accounts = await Promise.all(promises);
-        
-            return accounts.flat();
+            const accounts = await Account.find({ "userid": {$in : userids} });
+            return accounts;
         } catch (error) {
             console.error('Error al buscar cuentas:', error);
             throw error;

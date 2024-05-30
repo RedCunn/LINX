@@ -1,4 +1,4 @@
-import { AfterViewChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild, inject, signal } from '@angular/core';
+import { AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild, computed, inject, signal } from '@angular/core';
 import { WebsocketService } from '../../services/websocket.service';
 import { IChat } from '../../models/chat/IChat';
 import { IMessage } from '../../models/chat/IMessage';
@@ -18,7 +18,7 @@ import { initDropdowns} from 'flowbite';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class ChatComponent implements OnInit, OnDestroy , AfterViewChecked{
+export class ChatComponent implements OnInit, OnDestroy , AfterContentInit{
 
   @Input() isOpen = signal(false);
   @Input() chatRef!: IChat;
@@ -92,14 +92,13 @@ export class ChatComponent implements OnInit, OnDestroy , AfterViewChecked{
 
     if (this.chatRef.messages !== null ) {
       this.messages = this.chatRef.messages;
+      this.scrollToBottom();
       console.log('messages updated on init chatcompo !!', this.messages)
     }
     this.joinRoom();
   }
-  ngAfterViewChecked(): void {
-    this.scrollToBottom();
-  }
-  ngAfterViewInit(): void {
+
+  ngAfterContentInit(): void {
     this.scrollToBottom();
   }
   ngOnInit(): void {
