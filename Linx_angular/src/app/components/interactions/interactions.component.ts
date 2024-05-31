@@ -8,6 +8,7 @@ import { WebsocketService } from '../../services/websocket.service';
 import { Subject, takeUntil } from 'rxjs';
 import { IInteraction } from '../../models/userprofile/IInteraction';
 import { IEvent } from '../../models/useraccount/IEvent';
+import { IArticle } from '../../models/useraccount/IArticle';
 
 @Component({
   selector: 'app-interactions',
@@ -38,6 +39,9 @@ export class InteractionsComponent implements OnInit, OnDestroy {
 
   public currentDate : Date = new Date();
 
+  public signalOpenUnMatchAlert = signal<{[key : string]: boolean}>({});
+  private setUnMatchAlertOpen : {[key : string]: boolean} = {};
+
   constructor(private ref: ChangeDetectorRef) {
     this.websocketsvc.getInteractions().pipe(
       takeUntil(this.destroy$)
@@ -45,7 +49,14 @@ export class InteractionsComponent implements OnInit, OnDestroy {
       switch (data.type) {
         case 'match':
           console.log('FULL MATCH :::::::::::::::::', data.interaction)
-          this.interactions.matchingAccount!.unshift(data.interaction as IAccount);
+          let accountInteracting = data.interaction as IAccount
+          this.interactions.matchingAccount!.unshift(accountInteracting);
+          this.interactions.matchingAccount?.forEach(acc => {
+            if(!this.setUnMatchAlertOpen[acc.userid]){
+              this.setUnMatchAlertOpen[acc.userid] = false
+            }
+          })
+          this.signalOpenUnMatchAlert.set(this.setUnMatchAlertOpen)
           this.ref.detectChanges();
           break;
         case 'chain':
@@ -75,15 +86,31 @@ export class InteractionsComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl(`/Linx/Profile/${profile.linxname}`);
   }
 
-  async getMatches(){
+  showUnMatchAlert(isOpen : boolean, userid : string){
+    this.setUnMatchAlertOpen[userid] = isOpen;
+    this.signalOpenUnMatchAlert.set(this.setUnMatchAlertOpen);
+  }
+
+  async unMatch(matchuserid : string){
     try {
-      const res = await this.restSvc.getMyMatches(this._user?.userid!);
-      if (res.code === 0) {
-        this.myMatches = res.others;
-        this.signalStorageSvc.StoreMatches(res.userdata);
-      } else {
-        console.log('interactions MATCHES never found...', res.message)
+      const res = await this.restSvc.unMatch(this._user?.userid! , matchuserid)
+      if(res.code === 0){
+       console.log('Undone Match : ', res.message)
+       const delindex = this.interactions.matchingAccount?.findIndex(acc => acc.userid === matchuserid)
+       if (delindex !== -1 && delindex !== undefined) {
+        this.interactions.matchingAccount?.splice(delindex, 1);
+      }  
+      }else{
+        console.log('Error undoing match ....', res.error)
       }
+    } catch (error) {
+      console.log('Error undoing match ....', error)
+    }
+  }
+
+  getMatches(){
+    try {
+        this.myMatches = this.signalStorageSvc.RetrieveMatchesAccounts()();
     } catch (error) {
       console.log('interactions MATCHES never found...', error)
     }
@@ -91,12 +118,13 @@ export class InteractionsComponent implements OnInit, OnDestroy {
 
   async getJoinChainRequests(){
     try {
+      // aqui me interesan las accounts que me los están pidiendo a mí
       const res = await this.restSvc.getJoinChainRequests(this._user?.userid!);
       if(res.code === 0){
-        const reqaccounts = res.others;
-        const requests = res.userdata;
+        const requestingaccounts = res.others.accounts;
+        const chainreques = res.others.reqs;
         console.log('JOIN REQS : ', res.userdata)
-        return {accounts : reqaccounts , requests : requests};
+        return {accounts : requestingaccounts , requests : chainreques};
       }else{
         console.log('interactions JOINCHAIN REQS never found...', res.message)
         return null;
@@ -127,7 +155,7 @@ export class InteractionsComponent implements OnInit, OnDestroy {
   }
 
   async getMyInteractions() {
-    await this.getMatches();
+    this.getMatches();
     this.myMatches.forEach(element => {
       this.interactions.matchingAccount!.push(element);
     });

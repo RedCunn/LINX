@@ -174,6 +174,11 @@ export class RestnodeService {
     return lastValueFrom(res);
   }
 
+  public unMatch(userid : string , matchuserid : string): Promise<IRestMessage>{
+    const res = this._httpClient.delete<IRestMessage>(`http://localhost:3000/api/Match/${userid}/match/${matchuserid}`);
+    return lastValueFrom(res);
+  }
+
   //#endregion
 
   //#region -------------------------------- CHAT ---------------------------------

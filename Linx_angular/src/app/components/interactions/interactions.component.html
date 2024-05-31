@@ -43,8 +43,18 @@
                         }
                         @for(item of interactions.matchingAccount ; track item.userid){
                             <li>
-                                <div class="flex items-center w-full p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 dark:bg-gray-600 dark:text-white">
+                                <div class="flex flex-col items-start w-full p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50">
                                 <p>✨ Has hecho match con <button (click)="this.goToProfile(item)" style="color: purple;">{{item.linxname}}</button></p>
+                                @if(signalOpenUnMatchAlert()[item.userid]){
+                                    <div class="w-full flex flex-row justify-between font-light">
+                                        <button class="text-red-500 text-xs" (click)="unMatch(item.userid)">Deshacer match con {{item.linxname}}</button>
+                                        <button class="text-black text-xs" (click)="showUnMatchAlert(false, item.userid)">X</button>
+                                    </div>
+                                }@else {
+                                    <div class="w-full flex justify-end">
+                                        <button class="font-light text-fuchsia-500 text-xs" (click)="showUnMatchAlert(true, item.userid)">Deshacer</button>
+                                    </div>
+                                }
                                 </div>
                             </li>
                         }

@@ -6,6 +6,7 @@ const matching = require('./utils/matching');
 const Match = require('../schemas/Match');
 const Account = require('../schemas/Account');
 const Article = require('../schemas/Article');
+const ChainReq = require('../schemas/ChainRequest');
 
 module.exports = {
     shuffleProfiles: async (req, res, next) => {
@@ -14,17 +15,17 @@ module.exports = {
             let _user = await User.findOne({ 'userid': userid })
 
             let matchingProfiles = await match.retrieveProfilesBasedOnCompatibility(_user);
-            
+
             let artIDs = new Set();
             matchingProfiles.forEach(p => {
-                if(p.articles !== undefined && p.articles.length > 0){
-                    p.articles.forEach( artid => {
+                if (p.articles !== undefined && p.articles.length > 0) {
+                    p.articles.forEach(artid => {
                         artIDs.add(artid)
                     })
                 }
-            }) 
+            })
             let artIDsToArray = Array.from(artIDs);
-            let accountArticles = await Article.find({ articleid: { $in:  artIDsToArray} });
+            let accountArticles = await Article.find({ articleid: { $in: artIDsToArray } });
 
             res.status(200).send({
                 code: 0,
@@ -96,9 +97,9 @@ module.exports = {
             const userid = req.params.userid;
 
             let _matches = await Match.find({
-                $or : [
-                 {userid_a : userid},
-                 {userid_b : userid}   
+                $or: [
+                    { userid_a: userid },
+                    { userid_b: userid }
                 ]
             })
 
@@ -113,8 +114,12 @@ module.exports = {
             })
 
             let accounts = await Account.find({
-                userid : {$in : Array.from(matchUserIds)}
+                userid: { $in: Array.from(matchUserIds) }
             })
+
+            let accountArticles = await Article.find({ userid: { $in: Array.from(matchUserIds) } });
+
+            let accountsAndArticles = {accounts : accounts , articles : accountArticles}
 
             res.status(200).send({
                 code: 0,
@@ -122,13 +127,57 @@ module.exports = {
                 message: 'MATCH ACCOUNTS WERE RETRIEVED : ',
                 token: null,
                 userdata: _matches,
-                others: accounts
+                others: accountsAndArticles
             })
         } catch (error) {
             res.status(400).send({
                 code: 1,
                 error: error.message,
                 message: 'ERROR RETRIEVING MATCH ACCOUNTS',
+                token: null,
+                userdata: null,
+                others: null
+            })
+        }
+    },
+    unMatchUsers: async (req, res, next) => {
+        try {
+            const userid = req.params.userid;
+            const matchuserid = req.params.matchuserid;
+
+            let deleteMatch = await Match.deleteOne({$or: 
+                [
+                    {$and : [{userid_a : userid , userid_b : matchuserid}]},
+                    {$and : [{userid_a : matchuserid , userid_b : userid}]}
+                ]
+            })
+
+            let chainReq = await ChainReq.findOne({$or: 
+                [
+                    {$and : [{requestedUserid : userid , requestingUserid : matchuserid}]},
+                    {$and : [{requestedUserid : matchuserid , requestingUserid : userid}]}
+                ]
+            })
+
+            if (chainReq) {
+                await ChainReq.deleteOne({ _id: chainReq._id });
+            }            
+
+            console.log('DELETE MATCH RESULT : ', deleteMatch)
+
+            res.status(200).send({
+                code: 0,
+                error: null,
+                message: 'MATCH DELETED !!!',
+                token: null,
+                userdata: null,
+                others: null
+            })
+        } catch (error) {
+            res.status(400).send({
+                code: 1,
+                error: error.message,
+                message: 'ERROR DELETING MATCH .........',
                 token: null,
                 userdata: null,
                 others: null

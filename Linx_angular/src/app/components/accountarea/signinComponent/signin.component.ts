@@ -8,6 +8,8 @@ import { WebsocketService } from '../../../services/websocket.service';
 import { IUser } from '../../../models/userprofile/IUser';
 import { IAccount } from '../../../models/useraccount/IAccount';
 import { IArticle } from '../../../models/useraccount/IArticle';
+import { IMatch } from '../../../models/userprofile/IMatch';
+import { UtilsService } from '../../../services/utils.service';
 
 @Component({
   selector: 'app-signin',
@@ -20,6 +22,7 @@ export class SigninComponent {
 
   private socketSvc: WebsocketService = inject(WebsocketService);
   private signalstoresvc: SignalStorageService = inject(SignalStorageService);
+  private utilsvc : UtilsService = inject(UtilsService);
 
   @ViewChild('emailorlinxname') emailorlinxname!: ElementRef;
   @ViewChild('password') password!: ElementRef;
@@ -40,28 +43,14 @@ export class SigninComponent {
       if (res.code === 0) {
         let accounts: IAccount[] = res.others as IAccount[];
         const articles: IArticle[] = res.userdata as IArticle[];
-
+        
         //cogemos todas las llaves de las habitaciones
         user.account.myChain?.forEach(c => {
           this.roomkeys.add(c.roomkey);
         })
+        const wholeAccounts = this.utilsvc.putArticleObjectsIntoAccounts(accounts, articles);
 
-        // Crear un mapa de artículos para un acceso rápido por id
-        const articleMap: { [key: string]: IArticle } = {};
-          articles.forEach(article => {
-            articleMap[article.articleid!] = article;
-        });
-
-        // Reemplazar los articleid en accounts con los objetos de artículo correspondientes
-        accounts = accounts.map(account => ({
-          ...account,
-          articles: account.articles
-            ? account.articles.map(article => articleMap[article.articleid!] || article) // Sustituir por el objeto artículo o dejar el id si no se encuentra
-            : [] 
-        }));
-
-        console.log('CHAIN ACCOUNTS : ', accounts)
-        this.signalstoresvc.StoreMyChain(accounts);
+        this.signalstoresvc.StoreMyChain(wholeAccounts);
       } else {
         console.log('mychain never found...')
       }
@@ -75,23 +64,25 @@ export class SigninComponent {
     try {
       const res = await this.restSvc.getMyMatches(userid)
       if (res.code === 0) {
-        const matches: { userid_a: string, userid_b: string, roomkey: string }[] = res.userdata;
+        const matches: IMatch[] = res.userdata;
+        this.signalstoresvc.StoreMatches(matches);
+
         matches.forEach(element => {
           this.roomkeys.add(element.roomkey);
         });
+        
+        let accounts : IAccount[] = res.others.accounts as IAccount[];
+        const articles : IArticle[] = res.others.articles as IArticle[];
+
+        const myMatches : IAccount[] = this.utilsvc.putArticleObjectsIntoAccounts(accounts, articles);        
+        this.signalstoresvc.StoreMatchesAccounts(myMatches);
+
       } else {
         console.log('myMATCHA never found...', res.error)
       }
     } catch (error) {
       console.log('myMATCHA never found...', error)
     }
-  }
-
-
-  joinRooms() {
-    this.roomkeys.forEach(room => {
-      this.socketSvc.initChat(room);
-    })
   }
 
   async Signin(loginForm: NgForm) {
@@ -122,7 +113,7 @@ export class SigninComponent {
       await this.getMyChain(user)
       await this.getMyMatches(user.userid)
       this.socketSvc.userLogin(user.account._id!, user.account.linxname);
-      this.joinRooms();
+      this.utilsvc.joinRooms(this.roomkeys);
       this.router.navigateByUrl('/Linx/Inicio');
     } else {
       this.loginerrors.update(v => true);

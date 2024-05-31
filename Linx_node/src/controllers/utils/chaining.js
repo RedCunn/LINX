@@ -48,6 +48,10 @@ module.exports = {
                 ]
             })
 
+            if (!linxAccount || !userAccount || !match) {
+                throw new Error('Account or match not found');
+            }
+
             linxAccount.myChain.forEach(l => {
                 const _roomkey = uuidv4();
                 userAccount.extendedChain.push({mylinxuserid : linxid, userid : l.userid, roomkey : _roomkey})
@@ -62,6 +66,9 @@ module.exports = {
                 { $push: { myChain: { userid: linxid, roomkey: match.roomkey } }}).session(session)
             let insertOnLinxChain = await Account.updateOne({ userid: linxid },
                 { $push: { myChain: { userid: userid, roomkey: match.roomkey } } }).session(session)
+
+            console.log('INSERT ON USER CHAIN : ', insertOnUserChain)
+            console.log('INSERT ON LINX CHAIN : ', insertOnLinxChain)
 
             let removeChainReq = await ChainReq.deleteOne({
                 $or:

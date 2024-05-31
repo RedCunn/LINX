@@ -95,6 +95,17 @@ export class WebsocketService {
       console.log('RES OK : ', res.status)
     })
   }
+  linxreject_reqchain(to_userid : string,from_userid : string , from_user : IAccount, to_user : IAccount) {
+    socket.emit('on_reject_req_chain', {to_userid, from_userid, to_user, from_user}, (res : any) => {
+      console.log('RES OK : ', res.status)
+    })
+  }
+  linxbrokechain(to_userid : string,from_userid : string , from_user : IAccount, to_user : IAccount) {
+    socket.emit('broken_chain', {to_userid, from_userid, to_user, from_user}, (res : any) => {
+      console.log('RES OK : ', res.status)
+    })
+  }
+  
   newEventOnChain() {
     socket.on('new_event', () => {
 

@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { initFlowbite} from 'flowbite';
+import { initDropdowns, initFlowbite} from 'flowbite';
 import { MatIcon } from '@angular/material/icon';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
@@ -18,9 +18,9 @@ export class UserhomeasideComponent implements OnInit{
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       initFlowbite();
+      initDropdowns();
     }
   }
-
   goToEventsPanel(){
     this.router.navigateByUrl("/Linx/Home/Events");
   }

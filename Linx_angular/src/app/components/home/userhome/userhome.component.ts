@@ -17,6 +17,7 @@ import { IMessage } from '../../../models/chat/IMessage';
 import { BehaviorSubject, distinctUntilChanged } from 'rxjs';
 import { WebsocketService } from '../../../services/websocket.service';
 import { MyChainComponent } from '../../mychain/mychain.component';
+import { UtilsService } from '../../../services/utils.service';
 
 @Component({
   selector: 'app-userhome',
@@ -30,6 +31,7 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
   private socketsvc : WebsocketService = inject(WebsocketService);
   private signalStoreSvc: SignalStorageService = inject(SignalStorageService);
   private restSvc: RestnodeService = inject(RestnodeService);
+  private utilsvc : UtilsService = inject(UtilsService);
   
   @ViewChild('chatcompoContainer', {read : ViewContainerRef, static : true}) 
   public chatcompoContainer! : ViewContainerRef;
@@ -86,7 +88,8 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
         this.isChained.set(this.isLinx());
         this.loadChatComponent();
         if(this.isLinx()){
-          this.getExtendedChain();
+          this.getExtendedChain(this.linxdata!);
+          this.getExtendedChainRoomkeys()
         }
       } else {
         this.isUser.set(true);
@@ -95,19 +98,6 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
 
   }
   //#region ----------------- SET UP ----------------------------------------
-  async getExtendedChain(){
-    try {
-      const res = await this.restSvc.getExtendedChain(this.userdata?.userid! , this.linxdata?.userid!);
-      if(res.code === 0){
-        console.log('retrieved EXTENDED CHAIN',res.others)
-        this.extendedChain = res.others;
-      }else{
-        console.log('retrieving EXTENDED CHAIN',res.message)
-      }
-    } catch (error) {
-      console.log('ERROR retrieving EXTENDED CHAIN',error)
-    }
-  }
 
   async loadChatComponent () {
     const viewContainerRef = this.chatcompoContainer;
@@ -154,11 +144,60 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
     let onChain = this.userdata?.account.myChain?.find(l => l.userid === this.linxdata?.userid)
     return onChain !== undefined;
   }
+
+  isCandidate() : boolean {
+    let onMatch = this.signalStoreSvc.RetrieveMatches()()!;
+    let index = onMatch.findIndex(match => match.userid_a === this.linxdata?.userid || match.userid_b === this.linxdata?.userid)
+
+    if(index !== -1){
+      return false;
+    }else{
+      return true;
+    }
+  }
+
+  async getExtendedChain(linxdata : IAccount) {
+    try {
+      const res = await this.restSvc.getMyChain(linxdata.userid);
+      if (res.code === 0) {
+        const extaccounts : IAccount[] = res.others as IAccount[];
+        const extarticles : IArticle[] = res.userdata as IArticle[];
+
+        const extAccountsButMe = extaccounts.filter(acc => acc.userid !== this.userdata?.userid)
+
+        this.extendedChain = this.utilsvc.putArticleObjectsIntoAccounts(extAccountsButMe, extarticles);
+        console.log('EXTENDED CHAIN --------------', this.extendedChain);
+      } else {
+        console.log('', res.message);
+      }
+    } catch (error) {
+      console.log('', error);
+    }
+  }
+
+  async getExtendedChainRoomkeys (){
+    try {
+      const res = await this.restSvc.getExtendedChain(this.userdata?.userid! , this.linxdata?.userid!);
+      if(res.code === 0){
+        let roomkeysSet = res.userdata;
+        this.utilsvc.joinRooms(roomkeysSet);
+        console.log('retrieved EXTENDED CHAIN roomkeys',res.userdata)
+      }else{
+        console.log('retrieving EXTENDED CHAIN',res.message)
+      }
+    } catch (error) {
+      console.log('ERROR retrieving EXTENDED CHAIN',error)
+    }
+  }
+
   async getMyChain(userdata: IUser) {
     try {
       const res = await this.restSvc.getMyChain(userdata.userid);
       if (res.code === 0) {
-        this.signalStoreSvc.StoreMyChain(res.others);
+        let accounts: IAccount[] = res.others as IAccount[];
+        const articles: IArticle[] = res.userdata as IArticle[];
+        const wholeAccounts = this.utilsvc.putArticleObjectsIntoAccounts(accounts, articles);
+        this.signalStoreSvc.StoreMyChain(wholeAccounts);
       } else {
         console.log('mychain never found...')
       }
@@ -195,7 +234,9 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
       case "all":
         this.showChainBeingRequested.set(false);
         this.showJoinChainRequested.set(false);
-        this.showBreakChainAlert.set(false);   
+        this.showBreakChainAlert.set(false);  
+        this.isChainBeingRequested.set(false);
+        this.isChainRequested.set(false); 
         break;
       default:
         break;
@@ -209,12 +250,13 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
         if(res.message === 'REQUESTING'){
           this.showJoinChainRequested.set(false);
           this.isChainRequested.set(true);
+          this.isChained.set(false);
         }else{
-          this.isChainRequested.set(false);
-          this.isChainBeingRequested.set(false);
+          this.showAlert('all', false);
           this.isChained.set(true);
           this.socketsvc.linxchain(this.linxdata?.userid!, this.userdata?.userid!, this.userdata?.account!, this.linxdata!)
-          await this.getMyChain(this.userdata!)
+          const res = await this.getMyChain(this.userdata!)
+          
         }
       } else {
         console.log(`${this.userdata?.account.linxname} and ${this.linxdata?.linxname} couldnt chain...`)
@@ -275,31 +317,35 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
     }
     
     try {
+      //aquí me interesan las accounts a las que yo se lo he pedido
       const res = await this.restSvc.getJoinChainRequests(this.userdata!.userid);
       if (res.code === 0) {
-        const joinRequests : {requestingUserid : string , requestedUserid : string , requestedAt : Date}[]= res.userdata;
+        const joinRequests : {requestingUserid : string , requestedUserid : string , requestedAt : Date}[]= res.userdata.reqs;
+        const joinRequestings : {requestingUserid : string , requestedUserid : string , requestedAt : Date}[]= res.others.reqs;
 
         if(joinRequests.length > 0){
-          let isBeingRequested = joinRequests.find(req => req.requestingUserid === this.linxdata?.userid)
-          let isAlreadyRequested = joinRequests.find(req => req.requestingUserid === this.userdata?.userid)
-
-          if (isBeingRequested) {
-            this.isChainBeingRequested.set(true);
-          } else {
-            this.isChainBeingRequested.set(false);
-          }
-          if(isAlreadyRequested){
-            this.showJoinChainRequested.set(true);
+          let reqIndex = joinRequests.findIndex(req => req.requestedUserid === this.linxdata?.userid)
+          if(reqIndex !== -1){
             this.isChainRequested.set(true)
           }else{
-            this.showJoinChainRequested.set(false);
             this.isChainRequested.set(false)
           }
+
         }else{
-          this.isChainBeingRequested.set(false);
-          this.showJoinChainRequested.set(false);
           this.isChainRequested.set(false)
         }
+
+        if(joinRequestings.length > 0){
+          let reqIndex = joinRequestings.findIndex(req => req.requestedUserid === this.userdata?.userid)
+          if(reqIndex !== -1){
+            this.isChainBeingRequested.set(true)
+          }else{
+            this.isChainBeingRequested.set(false)
+          }
+        }else{
+          this.isChainBeingRequested.set(false)
+        }
+
       } else {
         console.log('error getting join chain reqs ...', res.error)
       }
