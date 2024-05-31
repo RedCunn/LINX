@@ -121,7 +121,7 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
   async setChat(){
     this.roomkey = this.setRoomKey();
     
-    this.chat = {participants : {userid_a : this.userdata?.userid! , userid_b : this.linxdata?.userid!}, roomkey : this.roomkey, messages : []}
+    this.chat = {conversationname:this.linxdata?.linxname!, participants : {userid_a : this.userdata?.userid! , userid_b : this.linxdata?.userid!}, roomkey : this.roomkey, messages : []}
     try {
       const res = await this.restSvc.getMyChats(this.roomkey, this.userdata?.userid!);
       if(res.code === 0){
@@ -315,6 +315,7 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
   logout() {
     this.signalStoreSvc.StoreUserData(null);
     this.signalStoreSvc.StoreJWT(null);
+    this.socketsvc.disconnect();
     this.router.navigateByUrl('/Linx/Login');
   }
 }

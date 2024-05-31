@@ -1,6 +1,7 @@
 const Account = require('../schemas/Account');
 const ChainRequest = require('../schemas/ChainRequest');
 const chaining = require('./utils/chaining');
+const Article = require('../schemas/Article');
 
 module.exports = {
     getMyChain: async (req, res, next) => {
@@ -15,12 +16,23 @@ module.exports = {
             })
             const accounts = await Promise.all(_myChainPromises);
 
+            let artIDs = new Set();
+            accounts.forEach(p => {
+                if(p.articles !== undefined && p.articles.length > 0){
+                    p.articles.forEach( artid => {
+                        artIDs.add(artid)
+                    })
+                }
+            }) 
+            let artIDsToArray = Array.from(artIDs);
+            let accountArticles = await Article.find({ articleid: { $in:  artIDsToArray} });
+
             res.status(200).send({
                 code: 0,
                 error: null,
                 message: 'Cadena recuperada',
                 token: null,
-                userdata: null,
+                userdata: accountArticles,
                 others: accounts.flat()
             })
         } catch (error) {
@@ -50,12 +62,23 @@ module.exports = {
             let mylinxUserIdsArray = Array.from(mylinxUserIds);
             let accounts = await Account.find({ 'extendedChain.mylinxuserid': { $in: mylinxUserIdsArray } });
 
+            let artIDs = new Set();
+            accounts.forEach(p => {
+                if(p.articles !== undefined && p.articles.length > 0){
+                    p.articles.forEach( artid => {
+                        artIDs.add(artid)
+                    })
+                }
+            }) 
+            let artIDsToArray = Array.from(artIDs);
+            let accountArticles = await Article.find({ articleid: { $in:  artIDsToArray} });
+
             res.status(200).send({
                 code: 0,
                 error: null,
                 message: 'Cadena recuperada',
                 token: null,
-                userdata: null,
+                userdata: accountArticles,
                 others: accounts
             })
         } catch (error) {

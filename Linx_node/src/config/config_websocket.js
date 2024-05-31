@@ -19,9 +19,11 @@ const ioFn = (httpServer) => {
             socket.join(data.roomkey);
         })
         socket.on('init_chat',(data) => {
+            console.log('CHAT INITIALIZED ........',data)
             socket.join(data.roomkey);
         })
         socket.on('chat_message', (data) => {
+            console.log('config websocket chat_message : ', data)
             io.to(data.roomkey).emit('get_message',data.message)
         })
         socket.on('full_match', (data)=> {

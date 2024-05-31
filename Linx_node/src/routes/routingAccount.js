@@ -127,6 +127,7 @@ async function checkJWT(req, res, next) {
     }
 }
 router.use('/uploads', express.static(path.join('C:/Users/cunns/Documents/TFGLinx/articles/')))
+
 router.get('/trackLocationGeocode', AccountController.trackLocationGeocode);
 router.post('/signup', AccountController.signup);
 router.post('/signin', AccountController.signin);

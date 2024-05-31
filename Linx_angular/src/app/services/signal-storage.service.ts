@@ -16,8 +16,15 @@ export class SignalStorageService implements IStorageService{
   private _mychainsignal : WritableSignal<IAccount[]> = signal<IAccount[]>([]);
   private _matchesaccountsignal : WritableSignal<IAccount[]> = signal<IAccount[]>([]);
   private _matchessignal : WritableSignal<IMatch[]> = signal<IMatch[]>([]);
+  private _roomkeyssignal : WritableSignal<string[]> = signal<string[]>([]);
 
   constructor() { }
+  StoreRoomKeys(keys: string): void {
+    this._roomkeyssignal.update((currents) => ([...keys]))
+  }
+  RetrieveRoomKeys(): WritableSignal<string[]> {
+    return this._roomkeyssignal;
+  }
   StoreMatches(matches: IMatch[]): void {
     if(matches !== null){
       this._matchessignal.update((currentstate) => ([...matches]))

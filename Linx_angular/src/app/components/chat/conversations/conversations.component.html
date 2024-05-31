@@ -24,22 +24,28 @@
                 <!-- Modal body -->
                 <div class="p-4 md:p-5">
                     <ul class="my-4 space-y-3">
-                        <li>
-                            <button (click)="openChat()"
-                                class="flex items-center w-full p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 hover:bg-gray-100 group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white">
-                                <p class="pe-2 pt-1">
-                                    <span class="material-symbols-outlined">
-                                        link
-                                    </span>
-                                </p>
-                                <p>Giorgio Moroders </p>
-                            </button>
-                        </li>
+                        @for(chat of this.chats; track $index){
+                            <li>
+                                <button (click)="openChat(chat)"
+                                    class="flex items-center w-full p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 hover:bg-gray-100 group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white">
+                                    <p class="pe-2 pt-1">
+                                        <span class="material-symbols-outlined">
+                                            link
+                                        </span>
+                                    </p>
+                                    <p>{{chat.conversationname}}</p>
+                                </button>
+                            </li>
+                        }@empty {
+                            <li>
+                                <p>No tienes conversaciones pendientes...</p>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>
         </div>
     </div>
-    <app-chat [isOpen]="isChatOpen"></app-chat>
+    <app-chat [isOpen]="isChatOpen" [chatRef]="this.chatToOpen"></app-chat>
 </div>
 }

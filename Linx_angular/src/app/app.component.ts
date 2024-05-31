@@ -5,6 +5,7 @@ import { FooterComponent } from './components/layouts/mainfooter/footer.componen
 import { WebsocketService } from './services/websocket.service';
 import { initFlowbite } from 'flowbite';
 import { isPlatformBrowser } from '@angular/common';
+import { SignalStorageService } from './services/signal-storage.service';
 
 @Component({
   selector: 'app-root',
@@ -16,6 +17,7 @@ import { isPlatformBrowser } from '@angular/common';
 export class AppComponent implements OnInit, OnDestroy {
   title = 'Linx_angular';
 
+  private signalsvc : SignalStorageService = inject(SignalStorageService);
   private websocketsvc: WebsocketService = inject(WebsocketService);
   public routePattern: RegExp = new RegExp("(/Linx/(Login|Registro|error|registrada|activa)|^/?$)", "g");
   public showStickyFooter = signal(true);

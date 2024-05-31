@@ -29,8 +29,8 @@ export class ChatComponent implements OnInit, OnDestroy , AfterContentInit{
   private restSvc = inject(RestnodeService);
   private socketSvc = inject(WebsocketService);
 
-  public chat: IChat = { participants: { userid_a: '', userid_b: '' }, messages: [], roomkey: '' };
-  public message: IMessage = { text: '', timestamp: '', sender: { accountid: '', linxname: '' } };
+  public chat: IChat = {conversationname:'', participants: { userid_a: '', userid_b: '' }, messages: [], roomkey: '' };
+  public message: IMessage = { text: '', timestamp: '', sender: { userid: '', linxname: '' } };
   public user!: IUser;
   public receiverAccount!: IAccount;
 
@@ -40,8 +40,9 @@ export class ChatComponent implements OnInit, OnDestroy , AfterContentInit{
   constructor(private ref: ChangeDetectorRef) {
     this.socketSvc.getMessages().pipe(
       takeUntil(this.destroy$)
-    ).subscribe(message => {
-      this.messages.push(message);
+    ).subscribe(data => {
+      console.log('constr chat getMessages : ', data)
+      this.messages.push(data);
       this.ref.detectChanges();
       this.scrollToBottom();
     });
@@ -58,8 +59,8 @@ export class ChatComponent implements OnInit, OnDestroy , AfterContentInit{
 
   async sendMessage() {
     if (this.message.text.trim() !== '') {
-      console.log('SENDIGN MESSAGE -> ', { userid_a: this.chatRef.participants.userid_a, userid_b: this.chatRef.participants.userid_b, message: this.message, roomkey: this.chatRef.roomkey })
-      this.socketSvc.sendMessage(this.chatRef.participants.userid_a, this.chatRef.participants.userid_b, this.message, this.chatRef.roomkey);
+      this.socketSvc.sendMessage( this.message, this.chatRef.roomkey);
+      console.log('SENDING MESSAGE ------> ', this.message)
       this.messageTextarea.nativeElement.value = '';
       await this.storeMessage(this.message);
     }
@@ -81,21 +82,14 @@ export class ChatComponent implements OnInit, OnDestroy , AfterContentInit{
     }, 1500);
   }
 
-  private joinRoom(): void {
-    this.socketSvc.initChat(this.chatRef.roomkey);
-  }
-
   initializeChat() {
     this.user = this.signalStorageSvc.RetrieveUserData()()!;
     this.receiverAccount = this.signalStorageSvc.RetrieveLinxData()()!;
-    this.message.sender = { accountid: this.user.accountid, linxname: this.user.account.linxname }
-
+    this.message.sender = { userid: this.user.userid, linxname: this.user.account.linxname }
     if (this.chatRef.messages !== null ) {
       this.messages = this.chatRef.messages;
       this.scrollToBottom();
-      console.log('messages updated on init chatcompo !!', this.messages)
     }
-    this.joinRoom();
   }
 
   ngAfterContentInit(): void {

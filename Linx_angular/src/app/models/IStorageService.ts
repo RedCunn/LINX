@@ -24,6 +24,9 @@ export interface IStorageService {
 
     StoreMatchesAccounts (matches : IAccount[]) : void;
     RetrieveMatchesAccounts () : WritableSignal<IAccount[]>;
+
+    StoreRoomKeys (key : string) : void;
+    RetrieveRoomKeys () : WritableSignal<string[]>;
     //#endregion
 
     //#region ---------------------------- [ ASYNC ] --------------------

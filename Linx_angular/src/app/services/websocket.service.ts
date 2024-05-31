@@ -45,28 +45,28 @@ export class WebsocketService {
   }
 
   initChat (key : string){
+    console.log('initializing room......', key)
     socket.emit("init_chat", {roomkey : key}, (res: any) => {
       console.log('RES OK : ', res.status)
     }
     )
   }
 
-  sendMessage(userid_a : string, userid_b : string, message : IMessage, roomkey : string) {
-    socket.emit("chat_message", {userid_a, userid_b, message, roomkey : roomkey }, (res: any) => {
+  sendMessage( message : IMessage, roomkey : string) {
+    socket.emit("chat_message", {message, roomkey}, (res: any) => {
       console.log('RES OK : ', res.status)
     }
     )
   }
   getMessages() {
-    let obs = new Observable<IMessage>(observer => {
-      socket.on('get_message', (data) => {
+    return new Observable<IMessage>(observer => {
+      const messageHandler = (data: IMessage) => {
+        console.log('socketsvc get_message: ', data);
         observer.next(data);
-      });
-
-      return () => {socket.disconnect()}
-    })
-
-    return obs;
+      };
+  
+      socket.on('get_message', messageHandler);
+    })  
   };
 
   getInteractions(){
@@ -75,8 +75,6 @@ export class WebsocketService {
       socket.on('get_interaction', (data) => {
         observer.next(data);
       });
-
-      return () => {socket.disconnect()}
     })
 
     return obs;

@@ -1,8 +1,10 @@
-import { Component, Input, OnInit, inject, signal} from '@angular/core';
+import { Component, Input, OnInit, ViewChild, ViewContainerRef, inject, signal} from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import{ChatComponent} from '../chat.component'
 import { RestnodeService } from '../../../services/restnode.service';
 import { SignalStorageService } from '../../../services/signal-storage.service';
+import { IUser } from '../../../models/userprofile/IUser';
+import { IChat } from '../../../models/chat/IChat';
 
 @Component({
   selector: 'app-conversations',
@@ -17,8 +19,12 @@ export class ConversationsComponent implements OnInit{
   private restSvc = inject(RestnodeService);
   private signalStorageSvc = inject(SignalStorageService);
   public isChatOpen = signal(false);
+  private _user! : IUser;
+  public chats : IChat[] = [];
+  public chatToOpen! : IChat; 
 
-  openChat(){
+  openChat(chat : IChat){
+    this.chatToOpen = chat;
     this.isChatOpen.update(v => !v);
   }
   
@@ -33,14 +39,16 @@ export class ConversationsComponent implements OnInit{
   async ngOnInit(): Promise<void> {
 
    try {
-    const usersignal = this.signalStorageSvc.RetrieveUserData();
-    const user = usersignal();
-    const jwtsignal = this.signalStorageSvc.RetrieveJWT();
-    const jwt = jwtsignal();
-
-    //const res = await this.restSvc.getMyChats(user?.userid!);
+    this._user = this.signalStorageSvc.RetrieveUserData()()!;
+    const res = await this.restSvc.getMyChats( null, this._user?.userid!);
+    if(res.code === 0){
+      this.chats = res.others as IChat[]; 
+      console.log('CHATS RECUPERADOS EN CONVERSACIONES ....', this.chats)
+    }else{
+      console.log('ERROR ON RETRIEVING CHATS ON CONVERCOMPO ; ', res.error)
+    }
    } catch (error) {
-    
+    console.log('ERROR ON RETRIEVING CHATS ON CONVERCOMPO ; ', error)
    } 
   }
 }

@@ -2,7 +2,7 @@ import { IAccount } from "../useraccount/IAccount";
 
 export interface IMessage {
     sender : {
-        accountid : string;
+        userid : string;
         linxname : string;
     };
     text : string;

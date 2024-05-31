@@ -340,18 +340,28 @@ module.exports = {
         try {
             const _userid = req.params.userid;
             const _roomkey = req.params.roomkey;
-            console.log('ROOMKEY : ', _roomkey)
+            
             let _chats;
-            if (_roomkey.trim() !== '') {
-                _chats = await Chat.findOne({ roomkey: _roomkey });
-            } else {
+
+            if (_roomkey === 'null') {
                 _chats = await Chat.find({
                     $or: [
-                        { userid_a: _userid },
-                        { userid_b: _userid }
+                        { 'participants.userid_a': _userid },
+                        { 'participants.userid_b': _userid }
                     ]
                 });
+            } else {
+                _chats = await Chat.findOne({ roomkey: _roomkey });
+                _chats = _chats ? [_chats] : []
             }
+
+            await Promise.all(_chats.map(async (chat) => {
+                let linxid = chat.participants.userid_a === _userid ? chat.participants.userid_b : chat.participants.userid_a;
+                let linxaccount = await Account.findOne({ userid: linxid });
+                chat.conversationname = linxaccount ? linxaccount.linxname : 'Unknown';
+            }));
+        
+            console.log('CHATTISSS : : : : : : :', _chats)
 
             res.status(200).send({
                 code: 0,
