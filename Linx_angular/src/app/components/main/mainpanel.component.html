@@ -1,14 +1,66 @@
 @if(showMeetingZone()){
-    <app-linxscarousel></app-linxscarousel>
+<app-linxscarousel></app-linxscarousel>
 }@else {
-    <div class="flex flex-col justify-center items-center p-5" style="height: 80vh;">
-        <button (click)="showMeetingZone.set(!showMeetingZone())" class="bg-violet-200 p-8 px-10 py-5 rounded-md flex flex-col items-center">
-            <div class="w-fit pt-5">
-                <img src="../../../assets/imgs/logos/chainlink_80919.png " style="width: 200px;">
-            </div>
-            <p class="pt-2 text-lime-400 font-extrabold text-3xl">Linxme</p>
-        </button>
+<div class="tooltips">
+    <div class="matchtip hover:shadow-2xl hover:shadow-pink-400 px-5" data-tooltip-target="tooltip-animation-match"
+        data-tooltip-style="light" data-tooltip-placement="bottom">
+        <span class="material-symbols-outlined" id="thumb">
+            lightning_stand
+        </span>
+        <p class="ms-3 text-xl">Match</p>
     </div>
+    <div id="tooltip-animation-match" role="tooltip"
+        class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-pink-400 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+        <p class="text-xl"><strong>El juego empieza haciendo MATCH</strong></p>
+        <p>deslizando <span class="material-symbols-outlined">swipe</span> encontrarás los perfiles que hemos encontrado para tí</p>
+        <p>basándonos en tus preferencias y vuestra compatibilidad.</p>
+        <p>Se hará match cuando dos usuarixs se den mutuamente match <span class="material-symbols-outlined">lightning_stand</span></p>
+        <p>a partir de entonces podréis enviaros mensajes  <span class="material-symbols-outlined"> deployed_code</span></p>
+        <div class="tooltip-arrow" data-popper-arrow></div>
+    </div>
+    <div class="linxtip hover:shadow-2xl hover:shadow-yellow-300 px-5" data-tooltip-target="tooltip-animation-linx"
+        data-tooltip-style="light" data-tooltip-placement="bottom">
+        <img style="width: 40px; height: auto;" src="../../../../assets/imgs/logos/joinchainbutt.png">
+        <p class="ms-3 text-xl">Linx</p>
+    </div>
+    <div id="tooltip-animation-linx" role="tooltip"
+        class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-lime-200 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+        <p class="text-xl"><strong>La oportunidad de haceros LINX</strong></p>
+        <p>Revisa tus interacciones <span class="material-symbols-outlined">bubble_chart</span> para saber si has hecho match con alguien.</p>
+        <p>Una vez que hagáis match podéis proponer una unión de cadenas,</p>
+        <p>esto os hace linxs, y como linxs, tendréis acceso a la cadena del otrx.</p>
+        <p>Estar en cadena os permite ver los perfiles y comunicaros con lxs linxs de vuestrxs linxs,</p>
+        <p>además de ser notificadxs de los eventos <span class="material-symbols-outlined">local_activity</span> e intercambiables <span class="material-symbols-outlined"> handshake</span> de vuestrx linx.</p>
+        <div class="tooltip-arrow" data-popper-arrow></div>
+    </div>
+    <div class="chaintip hover:shadow-2xl hover:shadow-purple-400 px-5" data-tooltip-target="tooltip-animation-chain"
+        data-tooltip-style="light" data-tooltip-placement="bottom">
+        <img src="../../../assets/imgs/logos/mychainicon.png" style="width: 40px ; height: auto;opacity: 80%;">
+        <p class="ms-3 text-xl">Cadena</p>
+    </div>
+    <div id="tooltip-animation-chain" role="tooltip"
+        class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-purple-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+        <p class="text-xl"><strong>Todos tus linxs forman tu CADENA</strong></p>
+        <p>dentro de tu cadena puedes intercambiar pertenencias <span class="material-symbols-outlined"> handshake</span> y publicar eventos <span class="material-symbols-outlined">local_activity</span></p>
+        <p>y ser notificadx de las publicaciones de tus linxs en cadena.</p>
+        <p>Recuerda mirar tus interacciones para estar al día <span class="material-symbols-outlined">bubble_chart</span> </p>
+        <div class="tooltip-arrow" data-popper-arrow></div>
+    </div>
+</div>
+<div class="swipe">
+    <button (click)="showMeetingZone.set(!showMeetingZone())" data-tooltip-target="tooltip-animation-swipe"
+        data-tooltip-style="light" data-tooltip-placement="right"
+        class="hover:shadow-none hover:bg-violet-300 hover:text-violet-500 hover:border-collapse shadow-2xl text-violet-300 bg-violet-200 border-b-8 border-r-4 border-violet-300 p-8 px-10 py-5 rounded-lg flex flex-col items-center">
+        <div class="pt-5 pb-1 px-3 text-3xl">
+            <span id="divers" class="material-symbols-outlined">
+                swipe
+            </span>
+        </div>
+    </button>
+    <div id="tooltip-animation-swipe" role="tooltip"
+        class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-extralight text-violet-500 transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip ">
+        <p>Empieza a deslizar...</p>
+        <div class="tooltip-arrow" data-popper-arrow></div>
+    </div>
+</div>
 }
-
-

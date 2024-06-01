@@ -16,6 +16,11 @@ export const routes: Routes = [
                 canActivate: [AuthGuard]
             },
             {
+                path:'linxme',
+                loadComponent : () => import('./components/meetingzone/linxscarousel.component').then(c => c.LinxscarouselComponent),
+                canActivate: [AuthGuard]
+            },
+            {
                 path: 'Registro',
                 loadComponent : ()=> import('./components/accountarea/signupComponent/signupuserprof/signup-userdata.component').then(c => c.SignupUserdataComponent)
             },

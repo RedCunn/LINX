@@ -26,9 +26,7 @@
         <span class="material-symbols-outlined">flag</span>
         <p class="ps-2">Reportes</p>
       </a>
-    </div>
-    <div class="logout text-violet-300">
-      <button (click)="logout()" class="flex flex-row items-inline">
+      <button (click)="logout()" class="flex flex-row items-inline pt-3 hover:text-gray-600 text-gray-400">
         <span class="material-symbols-outlined">
           meeting_room
         </span>
@@ -39,12 +37,14 @@
   }@else {
   <div class="leftSideLinks">
     <div>
-      <button (click)="toggleChatModal()" class="flex flex-row text-purple-400 hover:text-blue-700 pt-3">
-        <span class="material-symbols-outlined">
-          change_history
-        </span>
-        <p class="ps-2 pt-1 font-bold text-xl">Chat</p>
-      </button>
+      @if(!this.isCandidate() || isChained()){
+        <button (click)="toggleChatModal()" class="flex flex-row text-purple-400 hover:text-blue-700 pt-3">
+          <span class="material-symbols-outlined">
+            chat_bubble
+          </span>
+          <p class="ps-2 pt-1 font-bold text-xl">Chat</p>
+        </button>
+      }
       @if(isChained()){
       <button (click)="toggleExtChainModal()" class="flex flex-row text-green-400 hover:text-purple-500 pt-3">
         <span class="material-symbols-outlined">
@@ -246,6 +246,5 @@
 
 <app-articlemodalform [isOpen]="isArtFormOpen" [article]="article" [userdata]="userdata"
   (articleChange)="onArticleChange"></app-articlemodalform>
-<app-mychain [extendedChain]="this.extendedChain" [isOpen]="this.isExtChainOpen"
-  [isMyChain]="this.isMyChainModal"></app-mychain>
+<app-mychain [extendedChain]="this.extendedChain" [isOpen]="this.isExtChainOpen"></app-mychain>
 <ng-container #chatcompoContainer></ng-container>

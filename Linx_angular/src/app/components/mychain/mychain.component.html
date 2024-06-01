@@ -1,80 +1,77 @@
 <!-- Main modal -->
 @if(isOpen()){
-    <div class="fixed inset-0 z-50 flex justify-center items-center">
-        <div id="modalBackground" class="fixed inset-0 bg-slate-800 opacity-50"></div>
-        <div id="modalchain"  tabindex="-1" aria-hidden="true"
-        class="modal-container w-1/2">
+<div class="fixed inset-0 z-50 flex justify-center items-center">
+    <div id="modalBackground" class="fixed inset-0 bg-slate-800 opacity-50"></div>
+    <div id="modalchain" tabindex="-1" aria-hidden="true" class="modal-container w-1/2">
         <div class="windowchain relative p-4">
             <!-- Modal content -->
             <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
                 <!-- Modal header -->
-                <div class="flex items-center justify-between border-b rounded-t dark:border-gray-600">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                        @if(isMyChain()){
-                            <span id="circleicon" class="material-symbols-outlined text-green-300 p-3">
-                                trip_origin
-                            </span>
-                        }@else{
-                            <span id="circleicon" class="material-symbols-outlined text-purple-300 p-3">
-                                trip_origin
-                            </span>
-                        }
-                    </h3>
-                    <button type="button"
-                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                        (click)="closeModal()">
-                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                            viewBox="0 0 14 14">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                        </svg>
-                        <span class="sr-only">Close modal</span>
-                    </button>
+                <div class="modalheader">
+                    <div class="col-span-2 flex flex-row text-center ps-2 pt-4 mb-3">
+                        <div class="w-full">
+                            <img src="../../../assets/imgs/logos/mychainicon.png"
+                                style="width: 40px ; height: auto;opacity: 80%;">
+                        </div>
+                    </div>
+                    <div class="col-span-1 flex align-middle justify-end">
+                        <button type="button"
+                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                            (click)="closeModal()">
+                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 14 14">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                            </svg>
+                            <span class="sr-only">Close modal</span>
+                        </button>
+                    </div>
                 </div>
                 <!-- Modal body -->
                 <div class="p-4 md:p-5" style="height: auto; max-height: 30dvh; overflow-y: auto;">
                     <ul class="my-4 space-y-3">
-                        @if(isMyChain()){
-                            @for(linx of this.myChain; track linx._id){
-                                <li>
-                                    <button (click)="this.goToLinxProfile(linx)"
-                                        class="flex items-center w-full p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 dark:bg-gray-600 dark:text-white">
-                                        <p style="color: green;" class="px-2 pt-2"> <span class="material-symbols-outlined">
-                                                account_circle
-                                            </span> </p>
-                                        <p  style="color: green;">{{linx.linxname}}</p>
-                                    </button>
-                                </li>
-                            }@empty {
-                                <div>
-                                    <p style="color: green;">Todavía no has hecho linx...</p>
-                                </div>
-                            }
-                        }@else{
-                            @for(linx of this.extendedChain; track linx._id){
-                                <li>
-                                    <button (click)="this.goToLinxProfile(linx)"
-                                        class="flex items-center w-full p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 dark:bg-gray-600 dark:text-white">
-                                        <p class="px-2 pt-2" style="color: purple;"> 
-                                            <span class="material-symbols-outlined">
-                                                account_circle
-                                            </span> 
-                                        </p>
-                                        <p  style="color: purple;">{{linx.linxname}}</p>
-                                    </button>
-                                </li>
-                            }@empty{
-                                <div>
-                                    <p style="color: purple;">Todavía no ha hecho linx...</p>
-                                </div>
-                            }
+                        @if(this.myChain.length > 0){
+                        @for(linx of this.myChain; track linx._id){
+                        <li>
+                            <button (click)="this.goToLinxProfile(linx)"
+                                class="flex items-center w-full p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 dark:bg-gray-600 dark:text-white">
+                                <p style="color: green;" class="px-2 pt-2"> 
+                                    <span class="material-symbols-outlined">
+                                        account_circle
+                                    </span> </p>
+                                <p style="color: green;">{{linx.linxname}}</p>
+                            </button>
+                        </li>
+                        }@empty {
+                        <div>
+                            <p style="color: green;">Todavía no has hecho linx...</p>
+                        </div>
                         }
-                        
+                        }@else{
+                        @for(linx of this.extendedChain; track linx._id){
+                        <li>
+                            <button (click)="this.goToLinxProfile(linx)"
+                                class="flex items-center w-full p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 dark:bg-gray-600 dark:text-white">
+                                <p class="px-2 pt-2" style="color: purple;">
+                                    <span class="material-symbols-outlined">
+                                        account_circle
+                                    </span>
+                                </p>
+                                <p style="color: purple;">{{linx.linxname}}</p>
+                            </button>
+                        </li>
+                        }@empty{
+                        <div>
+                            <p style="color: purple;">Todavía no ha hecho linx...</p>
+                        </div>
+                        }
+                        }
+
                     </ul>
                 </div>
             </div>
         </div>
     </div>
-    </div>
-     
+</div>
+
 }

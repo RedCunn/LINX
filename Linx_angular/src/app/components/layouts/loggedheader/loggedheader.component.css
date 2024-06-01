@@ -12,26 +12,51 @@
     align-items: center;
 }
 
+.sessionheader {
+    grid-column: 10 / span 2;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+.userhome{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+}
 .companyname{
     position: relative;
-    grid-column: span 10 / span 10;
+    grid-column: 1 / span 8;
     margin-top: 20px;
     margin-left: 20px;
     display: flex;
     flex-direction: column;
     height: 100%;
-    letter-spacing: 50px;
-    text-shadow: 2px 2px 5px rgba(70, 250, 61, 0.5);
     opacity: 85%;
 }
 
+.companyname button {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.companyname p {
+    letter-spacing: 50px;
+    text-shadow: 2px 2px 5px rgba(70, 250, 61, 0.5);
+}
+.greenp {
+    left: 5px; 
+    top: 5px;  
+}
 
-.headsignins{
-    grid-column: span 2 / span 2;
-    display: flex;
-    flex-direction: row;
-    justify-content: baseline;
-    padding-top: 5%;
+#mychainimg{
+    width: 65px;
+}
+
+#myaccountimg{
+    width: 60px;
 }
 
 @media screen and (max-width: 767px) {
@@ -48,11 +73,16 @@
         left : 0;
         right : 0;
     }
-    .headspan {
-        grid-column: span 2 / span 2;
+
+    .companyname p {
+        font-size: 1rem;
+    }
+
+    #mychainimg{
+        width: 45px;
     }
     
-    .headsignins{
-        display: none;
+    #myaccountimg{
+        width: 40px;
     }
 }

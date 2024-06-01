@@ -1,4 +1,6 @@
-<app-mainheader></app-mainheader>
+@if(!this.isLogged()){
+    <app-mainheader></app-mainheader>
+}
 <div class="container">
     <router-outlet />
 </div>

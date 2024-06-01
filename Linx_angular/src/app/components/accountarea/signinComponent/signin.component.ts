@@ -51,6 +51,7 @@ export class SigninComponent {
         const wholeAccounts = this.utilsvc.putArticleObjectsIntoAccounts(accounts, articles);
 
         this.signalstoresvc.StoreMyChain(wholeAccounts);
+        console.log('STORING MY CHAIN ON SIGNIN : ', wholeAccounts)
       } else {
         console.log('mychain never found...')
       }

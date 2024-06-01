@@ -1,0 +1,114 @@
+#thumb {
+    font-size: 50px;
+}
+
+#divers{
+    font-size: 100px;
+}
+
+.tooltips{
+    height: 30vh;
+    width: 100%;
+    display: grid;
+    grid-template-columns:  repeat(12, minmax(0,1fr));
+    align-items: center;
+    justify-content: center;
+}
+.swipe{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 3rem;
+    height: 40vh;
+}
+.matchtip{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    grid-column: 1 / span 3;
+    width: 100%;
+}
+
+.linxtip{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    grid-column: 5 / span 3;
+    width: 100%;
+}
+
+.chaintip{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    grid-column: 9 / span 4;
+    width: 100%;
+}
+
+@media screen and (max-width: 767px) {
+    .tooltips{
+        width: 100%;
+        display: grid;
+        grid-template-columns:  repeat(1, minmax(0,1fr));
+        align-items: center;
+    }
+    
+    .matchtip{
+        display: flex;
+        flex-direction: row;
+        justify-content: start;
+        align-items: center;
+        text-align: center;
+        grid-column: span 1 / span 1;
+        width: 100%;
+    }
+    
+    .matchtip p{
+        flex-grow: 1;
+        justify-self: end;
+    }
+
+    .linxtip{
+        display: flex;
+        flex-direction: row;
+        justify-content: start;
+        align-items: center;
+        text-align: center;
+        grid-column: span 1 / span 1;
+        width: 100%;
+    }
+    
+    .linxtip p{
+        flex-grow: 1;
+        justify-self: end;
+    }
+
+    .chaintip{
+        display: flex;
+        flex-direction: row;
+        justify-content: start;
+        align-items: center;
+        text-align: center;
+        grid-column: span 1 / span 1;
+        width: 100%;
+    }
+
+    .chaintip p{
+        flex-grow: 1;
+        justify-self: end;
+    }
+
+    .swipe{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 3rem;
+        height: 55vh;
+    }
+    
+}

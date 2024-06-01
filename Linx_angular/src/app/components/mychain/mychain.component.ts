@@ -14,7 +14,7 @@ import { Router } from '@angular/router';
 export class MyChainComponent implements OnInit{
 
   @Input() isOpen = signal(false);
-  @Input() isMyChain = signal(true);
+  @Input() myChain! : IAccount[]
   @Input() extendedChain ? : IAccount[];
 
   closeModal() {
@@ -24,7 +24,6 @@ export class MyChainComponent implements OnInit{
   private signalStorageSvc = inject(SignalStorageService);
   private router = inject(Router);
   private _user! : IUser | null; 
-  public myChain! : IAccount[];
 
   goToLinxProfile(linx : IAccount){
     this.isOpen.set(false);
@@ -34,7 +33,6 @@ export class MyChainComponent implements OnInit{
 
   ngOnInit(): void {
     this._user = this.signalStorageSvc.RetrieveUserData()();
-    this.myChain = this.signalStorageSvc.RetrieveMyChain()();
   }
 
 }

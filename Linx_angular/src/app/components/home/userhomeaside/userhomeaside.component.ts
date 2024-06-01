@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import {Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { initDropdowns, initFlowbite} from 'flowbite';
 import { MatIcon } from '@angular/material/icon';
 import { isPlatformBrowser } from '@angular/common';

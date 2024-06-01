@@ -1,29 +1,14 @@
 <header class="gridhead">
-    <div class="headspan">
-        <!-- @if(this.rotatelogo()){
-            <a (click)="this.goInit()"><img src="../../../../../assets/imgs/logos/eslabon6.png" class="rotate-90"
-                style="width: 250px; height: 110px;"></a>
-        }@else {
-            <a (click)="this.goInit()"><img src="../../../../../assets/imgs/logos/eslabon6.png"
-                style="width: 250px; height: 110px;"></a>
-        }
-         -->
+    <div class="companyname">
+        <p class="greenp text-5xl text-lime-400">LINX</p>
+        <p class="text-5xl text-purple-600">LINX</p>
     </div>
     <div class="headsignins">
-        @if(!isLogged()){
         <div class="text-violet-500 me-4">
             <button (click)="this.goToSignin()" class="lettering hover:text-violet-800">Inicio sesión </button>
         </div>
         <div class="text-green-500">
             <button (click)="this.goToSignup()" class="lettering hover:text-green-800">Registro</button>
         </div>
-        }@else {
-        <div class="text-violet-300">
-            <button (click)="this.goHome()" class="me-2 text-5xl">
-                <img src="../../../../assets/imgs/account/myaccounticon.jpg" style="width: 100px;"
-                    class="rounded-lg opacity-30 hover:opacity-70">
-            </button>
-        </div>
-        }
     </div>
 </header>
