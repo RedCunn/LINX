@@ -81,6 +81,7 @@ export class InteractionsComponent implements OnInit, OnDestroy {
   }
 
   goToProfile(profile: IAccount) {
+    this.signalStorageSvc.StoreCandidateData(null);
     this.isOpen.set(false);
     this.signalStorageSvc.StoreLinxData(profile);
     this.router.navigateByUrl(`/Linx/Profile/${profile.linxname}`);

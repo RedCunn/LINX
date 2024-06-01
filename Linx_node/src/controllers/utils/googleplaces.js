@@ -5,9 +5,6 @@ module.exports = {
     geocode : async (lat,long) => {
         const _res = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${long}&key=${process.env.GOOGLE_MAPS_APIKEY}`)
 
-        //PLACE DETAILS :
-        //  const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=${campos}&key=${apiKey}`;
-
         console.log("GOOGLE RESPONSE : ", _res.data);
 
         
@@ -39,6 +36,14 @@ module.exports = {
         formatAddr : relevantAddress};
 
         return userlocation;
+    },
+    placeDetails : async(placeId) => {
+        try {
+            const response = await axios.get(`https://maps.googleapis.com/maps/api/place/details/json?placeid=${placeId}&fields=address_components&key=${process.env.GOOGLE_MAPS_APIKEY}`);
+            return response.data.result;
+        } catch (error) {
+            console.log('WRONG DETAIL............', error)
+        }
     },
     placeAutocomplete : async () => {
         /*

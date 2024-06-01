@@ -27,6 +27,7 @@ export class MyChainComponent implements OnInit{
 
   goToLinxProfile(linx : IAccount){
     this.isOpen.set(false);
+    this.signalStorageSvc.StoreCandidateData(null);
     this.signalStorageSvc.StoreLinxData(linx);
     this.router.navigateByUrl(`/Linx/Profile/${linx.linxname}`);
   }

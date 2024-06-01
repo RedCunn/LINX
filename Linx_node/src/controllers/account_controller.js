@@ -57,9 +57,34 @@ module.exports = {
             })
         }
     },
+    getPlaceDetails : async (req, res, next) => {
+        try {
+          const city_id = req.params.cityid;  
+          const addrComponents = await places.placeDetails(city_id);
+
+          res.status(200).send({
+            code: 0,
+            error: null,
+            message: 'Trackeada localizacion user por Google Places',
+            token: null,
+            userData: null,
+            others: addrComponents
+        })
+        } catch (error) {
+         
+         res.status(400).send({
+            code: 1,
+            error: error.message,
+            message: 'error al trackear localizacion por Google Places',
+            token: null,
+            userData: null,
+            others: null
+        })
+        }
+    },
     signup: async (req, res, next) => {
 
-        let { account, location } = req.body;
+        let { account, geolocation } = req.body;
         const session = await mongoose.startSession();
         session.startTransaction();
 
@@ -109,11 +134,11 @@ module.exports = {
                 birthday: req.body.birthday,
                 gender: req.body.gender,
                 geolocation: {
-                    country_id: location.country_id,
-                    city_id: location.city_id,
-                    area1_id: location.area1_id,
-                    area2_id: location.area2_id,
-                    global_code: location.global_code
+                    country_id: geolocation.country_id,
+                    city_id: geolocation.city_id,
+                    area1_id: geolocation.area1_id,
+                    area2_id: geolocation.area2_id,
+                    global_code: geolocation.global_code
                 },
                 politics: req.body.politics,
                 diet: req.body.diet,

@@ -20,7 +20,7 @@ export interface IUser {
     account : IAccount;
     birthday: string;
     gender : string;
-    location : {
+    geolocation : {
         country_id : string;
         city_id : string;
         area1_id : string;

@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { IAccount } from '../../models/useraccount/IAccount';
 import { WebsocketService } from '../../services/websocket.service';
 import { IArticle } from '../../models/useraccount/IArticle';
+import { UtilsService } from '../../services/utils.service';
 
 @Component({
   selector: 'app-linxscarousel',
@@ -21,9 +22,10 @@ export class LinxscarouselComponent implements OnInit {
   private restsvc: RestnodeService = inject(RestnodeService);
   private signalStoreSvc: SignalStorageService = inject(SignalStorageService);
   private socketsvc: WebsocketService = inject(WebsocketService);
+  private utilsvc : UtilsService = inject(UtilsService);
 
   public userdata!: IUser | null;
-  public candidateProfiles!: IAccount[] | null;
+  public candidateProfiles!: IUser[] | null;
 
   public loading = signal(true);
   public currentIndex = signal(0);
@@ -40,29 +42,14 @@ export class LinxscarouselComponent implements OnInit {
       const response: IRestMessage = await this.restsvc.shuffleCandidateProfiles(this.userdata?.userid!);
       if (response.code === 0) {
         
-        const accountsArticles = response.userdata;
-        // Crear un objeto para almacenar los artículos agrupados por userid
-        let articlesByUserid: { [key: string]: IArticle[] } = {};
+        const _accountsArticles : IArticle[] = response.userdata as IArticle[];
+        const _accounts = response.others.accounts as IAccount[];
+        const wholeAccounts : IAccount[] = this.utilsvc.putArticleObjectsIntoAccounts(_accounts , _accountsArticles)
 
-        accountsArticles.forEach((art : IArticle)=> {
-          if (!articlesByUserid[art.userid!]) {
-            articlesByUserid[art.userid!] = [];
-          }
-          articlesByUserid[art.userid!].push(art);
-        })
-        let _accounts = response.others as IAccount[];
-        _accounts.forEach(acc => {
-          if (acc.articles !== undefined && acc.articles.length > 0) {
-            acc.articles = [];
-            acc.articles = articlesByUserid[acc.userid] || [];
-            const profilePicArticleIndex = articlesByUserid[acc.userid].findIndex(article => article.useAsProfilePic === true);
-            if (profilePicArticleIndex !== -1) {
-              const profilePicArticle = acc.articles.splice(profilePicArticleIndex, 1)[0];
-              acc.articles.unshift(profilePicArticle);
-            }
-          }
-        })
-        this.candidateProfiles = _accounts;
+        const _users = response.others.users as IUser[];
+        const wholeUsers : IUser[] = this.utilsvc.integrateAccountsIntoUsers(wholeAccounts , _users);
+
+        this.candidateProfiles = wholeUsers;
         this.loading.set(false);
       } else {
         this.loading.set(false);
@@ -90,7 +77,7 @@ export class LinxscarouselComponent implements OnInit {
     }
   }
 
-  async matchRequest(linx: IAccount) {
+  async matchRequest(linx: IUser) {
     try {
       const res = await this.restsvc.requestMatch(this.userdata?.userid!, linx.userid);
       if (res.code === 0) {
@@ -100,7 +87,7 @@ export class LinxscarouselComponent implements OnInit {
         }
         console.log('RESPONSE MATCH REQ : ', res)
         if (res.message === 'FULL') {
-          this.socketsvc.linxmatch(linx.userid, this.userdata?.userid!, this.userdata?.account!, linx);
+          this.socketsvc.linxmatch(linx.userid, this.userdata?.userid!, this.userdata?.account!, linx.account);
         }
       } else {
         console.log('RESPONSE ERROR MATCH REQ : ', res)
@@ -109,9 +96,9 @@ export class LinxscarouselComponent implements OnInit {
       console.log('ERROR MATCH REQ : ', error)
     }
   }
-  goToLinxProfile(linx : IAccount){
-    this.signalStoreSvc.StoreLinxData(linx);
-    this.router.navigateByUrl(`/Linx/Profile/${linx.linxname}`);
+  goToLinxProfile(linx : IUser){
+    this.signalStoreSvc.StoreCandidateData(linx as IUser);
+    this.router.navigateByUrl(`/Linx/Profile/${linx.account.linxname}`);
   }
   async ngOnInit(): Promise<void> {
     initCarousels();

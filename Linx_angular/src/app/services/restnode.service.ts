@@ -122,6 +122,11 @@ export class RestnodeService {
 
     return lastValueFrom(res);
   }
+
+  public getPlaceDetails (cityid : string) : Promise<IRestMessage>{
+    const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Account/places/${cityid}`);
+    return lastValueFrom(res);
+  }
   //#endregion
 
   //#region ----------------------------- MY CHAIN --------------------------------

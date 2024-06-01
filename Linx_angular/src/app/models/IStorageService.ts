@@ -13,8 +13,11 @@ export interface IStorageService {
     RetrieveUserData () : WritableSignal<IUser | null> ;
     RetrieveJWT () : Signal<string | null>;
 
-    StoreLinxData (newstate : IAccount | null) : void ;
-    RetrieveLinxData () : WritableSignal<IAccount | null> ;
+    StoreLinxData (newstate : IAccount| null) : void ;
+    RetrieveLinxData () : WritableSignal<IAccount| null> ;
+
+    StoreCandidateData (newstate : IUser | null) : void ;
+    RetrieveCandidateData () : WritableSignal<IUser | null> ;
 
     StoreMyChain (mychain : IAccount[]) : void;
     RetrieveMyChain () : WritableSignal<IAccount[]>;

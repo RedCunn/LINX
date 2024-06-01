@@ -42,7 +42,7 @@ export class ProxyfilterComponent implements OnInit{
       if(_res.code === 0){
         this._locationData = _res.others;
         this.userCurrentAddress = _res.others.formatAddr;
-        this.userProfile.location = this._locationData.fullLoc;
+        this.userProfile.geolocation = this._locationData.fullLoc;
         this.userProfileChange.emit(this.userProfile);
       }else{
         this.userCurrentAddress = 'no podemos localizarte... 👹'

@@ -1,12 +1,12 @@
 
 const { v4: uuidv4 } = require('uuid');
-let User = require('../schemas/User');
 let match = require('./utils/matching');
 const matching = require('./utils/matching');
 const Match = require('../schemas/Match');
 const Account = require('../schemas/Account');
 const Article = require('../schemas/Article');
 const ChainReq = require('../schemas/ChainRequest');
+const User = require('../schemas/User');
 
 module.exports = {
     shuffleProfiles: async (req, res, next) => {
@@ -16,8 +16,11 @@ module.exports = {
 
             let matchingProfiles = await match.retrieveProfilesBasedOnCompatibility(_user);
 
+            let userIDs = new Set();
             let artIDs = new Set();
+
             matchingProfiles.forEach(p => {
+                userIDs.add(p.userid);
                 if (p.articles !== undefined && p.articles.length > 0) {
                     p.articles.forEach(artid => {
                         artIDs.add(artid)
@@ -27,13 +30,18 @@ module.exports = {
             let artIDsToArray = Array.from(artIDs);
             let accountArticles = await Article.find({ articleid: { $in: artIDsToArray } });
 
+            let useridsToArray = Array.from(userIDs)
+            let userProfiles = await User.find({userid : {$in : useridsToArray}})
+
+            const accountsAndProfiles = {accounts : matchingProfiles, users : userProfiles}
+
             res.status(200).send({
                 code: 0,
                 error: null,
                 message: 'PERFILES COMPATIBLES ...',
                 token: null,
                 userdata: accountArticles,
-                others: matchingProfiles
+                others: accountsAndProfiles
             })
 
         } catch (error) {

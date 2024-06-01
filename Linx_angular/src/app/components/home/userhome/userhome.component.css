@@ -134,6 +134,19 @@
     border-radius: 9999px;
     margin-bottom: 1rem;
 }
+.lidata li{
+    color: grey;
+    margin-bottom: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    width: 100%;
+}
+
+.lidata p {
+    margin-right: 5px;
+    font-weight: 600;
+}
 
 /*ALERTS---------------------------*/
 

@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, Inject, OnInit, PLATFORM_ID, ViewChild, ViewContainerRef, inject, signal } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, PLATFORM_ID, ViewChild, ViewContainerRef, inject, signal } from '@angular/core';
 import { UserhomeasideComponent } from '../userhomeaside/userhomeaside.component';
 import { MatIcon } from '@angular/material/icon';
 import { SignalStorageService } from '../../../services/signal-storage.service';
@@ -26,7 +26,7 @@ import { UtilsService } from '../../../services/utils.service';
   templateUrl: './userhome.component.html',
   styleUrl: './userhome.component.css'
 })
-export class UserhomeComponent implements OnInit, AfterViewInit {
+export class UserhomeComponent implements OnInit, AfterViewInit , OnDestroy{
 
   private socketsvc : WebsocketService = inject(WebsocketService);
   private signalStoreSvc: SignalStorageService = inject(SignalStorageService);
@@ -42,7 +42,7 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
   public isMyChainModal = signal(false);
 
   public isUser = signal(false);
-  
+  public isCandidate = signal(false);
   public isChained = signal(false);
   public isChainRequested = signal(false);
   public isChainBeingRequested = signal(false);
@@ -56,6 +56,9 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
   public currentDate : Date = new Date();
   public userdata!: IUser | null;
   public linxdata!: IAccount | null;
+  public candidateData! : IUser;
+  public cadidateAttributes : Map<string,string>  = new Map<string,string>();
+  public candidateResidency : string = '';
   public chat!: IChat;
   public articles : IArticle[] = [];
   public article: IArticle = {title: '', body: '', img: '', postedOn: '', useAsProfilePic: false }
@@ -69,13 +72,24 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
     const routePatternMatch$ = new BehaviorSubject<string | null>(null);
     this.router.events.subscribe((event: Event) => {
       if (event instanceof NavigationStart || event instanceof NavigationEnd) {
-        this.linxdata = this.signalStoreSvc.RetrieveLinxData()();
-        this.articles = this.linxdata?.articles!;
+        let signalcandidate = this.signalStoreSvc.RetrieveCandidateData()();
+        if(signalcandidate !== null){
+          console.log('LA CANDI : ', signalcandidate)
+          this.candidateData = this.signalStoreSvc.RetrieveCandidateData()()!;
+          this.isCandidate.set(true);
+          this.articles = this.candidateData.account.articles!;
+          this.cadidateAttributes = this.utilsvc.mapCandidateProfileDataToLegible(this.candidateData);
+          this.getPlaceDetail()
+        }else{
+          this.isCandidate.set(false);
+          this.linxdata = this.signalStoreSvc.RetrieveLinxData()();
+          this.articles = this.linxdata?.articles!;
+        }
         if (event.url.match(this.routePattern)) {
           routePatternMatch$.next(event.url);
         } else {
           routePatternMatch$.next(null);
-        }
+        } 
       }
     })
 
@@ -98,6 +112,20 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
 
   }
   //#region ----------------- SET UP ----------------------------------------
+
+  async getPlaceDetail (){
+    try {
+      const res = await this.restSvc.getPlaceDetails(this.candidateData.geolocation.city_id);
+      if(res.code === 0){
+        const addrComponents = res.others.address_components;
+        this.candidateResidency = addrComponents[1].long_name+' , ' + addrComponents[2].long_name;
+      }else{
+        console.log('RES DE GOOGLE : ', res.error)
+      }
+    } catch (error) {
+      console.log('RES DE GOOGLE : ', error)
+    }
+  }
 
   async loadChatComponent () {
     const viewContainerRef = this.chatcompoContainer;
@@ -145,16 +173,16 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
     return onChain !== undefined;
   }
 
-  isCandidate() : boolean {
-    let onMatch = this.signalStoreSvc.RetrieveMatches()()!;
-    let index = onMatch.findIndex(match => match.userid_a === this.linxdata?.userid || match.userid_b === this.linxdata?.userid)
+  // isCandidate() : boolean {
+  //   let onMatch = this.signalStoreSvc.RetrieveMatches()()!;
+  //   let index = onMatch.findIndex(match => match.userid_a === this.linxdata?.userid || match.userid_b === this.linxdata?.userid)
 
-    if(index !== -1){
-      return false;
-    }else{
-      return true;
-    }
-  }
+  //   if(index !== -1){
+  //     return false;
+  //   }else{
+  //     return true;
+  //   }
+  // }
 
   async getExtendedChain(linxdata : IAccount) {
     try {
@@ -356,6 +384,10 @@ export class UserhomeComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     initTooltips();
+  }
+
+  ngOnDestroy(): void {
+    this.signalStoreSvc.StoreCandidateData(null);
   }
 
   logout() {

@@ -72,7 +72,7 @@ export class SignupUserdataComponent {
     account: this.UserAccount,
     birthday: '',
     gender: '',
-    location: {
+    geolocation: {
       country_id: '',
       city_id: '',
       area1_id: '',

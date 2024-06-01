@@ -26,22 +26,22 @@
     </button>
     <div class="candidateCard">
 
-        @if(this.candidateProfiles![currentIndex()].articles!== undefined &&
-        this.candidateProfiles![currentIndex()].articles!.length > 0){
+        @if(this.candidateProfiles![currentIndex()].account.articles!== undefined &&
+        this.candidateProfiles![currentIndex()].account.articles!.length > 0){
         <div class="overflowarticle">
             <article class="article">
-                <h1>{{this.candidateProfiles![currentIndex()].articles?.at(0)?.title}}</h1>
-                <p class="break-words">{{this.candidateProfiles![currentIndex()].articles?.at(0)?.body}}</p>
+                <h1>{{this.candidateProfiles![currentIndex()].account.articles?.at(0)?.title}}</h1>
+                <p class="break-words">{{this.candidateProfiles![currentIndex()].account.articles?.at(0)?.body}}</p>
                 <div class="artimg">
                     <img style="max-width: 100%; max-height: 100%;"
-                        [src]="'http://localhost:3000/api/Account/uploads/'+this.candidateProfiles![currentIndex()].articles?.at(0)?.img">
+                        [src]="'http://localhost:3000/api/Account/uploads/'+this.candidateProfiles![currentIndex()].account.articles?.at(0)?.img">
                 </div>
             </article>
         </div>
         <div class="linxnamecontainer">
             <button (click)="goToLinxProfile(this.candidateProfiles![currentIndex()])">
                 <p id="linxname" style="color: purple;" class="linxname"> 
-                    {{this.candidateProfiles![currentIndex()].linxname}}</p>
+                    {{this.candidateProfiles![currentIndex()].account.linxname}}</p>
             </button>
             <button (click)="matchRequest(this.candidateProfiles![currentIndex()])" style="border: none;">
                 <span class="material-symbols-outlined" id="thumb" style="color: purple;">
@@ -53,7 +53,7 @@
         <div class="linxnameNoART">
             <button (click)="goToLinxProfile(this.candidateProfiles![currentIndex()])">
                 <p id="linxname" style="color: purple;" class="linxname">
-                    {{this.candidateProfiles![currentIndex()].linxname}}</p>
+                    {{this.candidateProfiles![currentIndex()].account.linxname}}</p>
             </button>
             <button (click)="matchRequest(this.candidateProfiles![currentIndex()])" style="border: none;">
                 <span class="material-symbols-outlined" id="thumb" style="color: purple;">

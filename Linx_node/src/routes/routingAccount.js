@@ -140,4 +140,5 @@ router.post('/:userid/article', upload.single('file'), AccountController.newArti
 router.put('/:userid/article/:artid', upload.single('file'), AccountController.editArticle);
 router.delete('/:userid/article/:artid',deleteFile, AccountController.deleteArticle)
 router.get('/:userid/chat/:roomkey', AccountController.getChats)
+router.get('/places/:cityid', AccountController.getPlaceDetails)
 module.exports = router;

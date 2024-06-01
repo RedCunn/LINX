@@ -11,6 +11,7 @@ import { IMatch } from '../models/userprofile/IMatch';
 export class SignalStorageService implements IStorageService{
 
   private _userstatesignal : WritableSignal<IUser | null> = signal<IUser | null>(null);
+  private _candidatesignal : WritableSignal<IUser | null> = signal<IUser | null>(null);
   private _jwtsignal : WritableSignal<string | null> = signal<string | null>('');
   private _linxstatesignal : WritableSignal<IAccount | null> = signal<IAccount | null>(null);
   private _mychainsignal : WritableSignal<IAccount[]> = signal<IAccount[]>([]);
@@ -19,6 +20,16 @@ export class SignalStorageService implements IStorageService{
   private _roomkeyssignal : WritableSignal<string[]> = signal<string[]>([]);
 
   constructor() { }
+  StoreCandidateData(newstate: IUser | null): void {
+    if(newstate !== null){
+      this._candidatesignal.update((currentstate) => ({...currentstate , ...newstate}))
+    }else{
+      this._candidatesignal.set(null);
+    }
+  }
+  RetrieveCandidateData(): WritableSignal<IUser | null> {
+    return this._candidatesignal;
+  }
   StoreRoomKeys(keys: string): void {
     this._roomkeyssignal.update((currents) => ([...keys]))
   }
