@@ -40,12 +40,19 @@ export class UtilsService {
     return wholeAccounts;
   }
 
-  public joinRooms(roomkeys: Set<string>): void {
-    const storedkeys = new Set<string>(this.signalSvc.RetrieveRoomKeys()());
-    const roomkeysToJoin = new Set([...roomkeys].filter(roomkey => !storedkeys.has(roomkey)));
-    roomkeysToJoin.forEach(room => {
-      this.socketSvc.initChat(room);
-    });
+  public joinRooms(userRooms : Map<string, string>): void {
+    const storedkeys = new Map<string,string>(this.signalSvc.RetrieveRoomKeys()());
+    const roomkeysToJoin = new Map<string,string>();
+
+    for (const [key , value] of userRooms) {
+      if(storedkeys.get(key) === undefined){
+        roomkeysToJoin.set(key , value);
+        this.signalSvc.StoreRoomKeys({userid : key , roomkey : value})
+      }
+    }
+    for (const [key , value] of roomkeysToJoin) {
+      this.socketSvc.initChat(value); 
+    }
   }
 
   public integrateAccountsIntoUsers(accounts: IAccount[], users: IUser[]): IUser[] {

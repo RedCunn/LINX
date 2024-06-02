@@ -22,6 +22,12 @@ const ioFn = (httpServer) => {
             console.log('CHAT INITIALIZED ........',data)
             socket.join(data.roomkey);
         })
+
+        socket.on('req_init_chat',(data) => {
+            console.log('REQUESTING CHAT ........',data)
+            io.to(data.touserid).emit('chat_req', {userid : data.fromuserid ,roomkey : data.roomkey});
+        })
+
         socket.on('chat_message', (data) => {
             console.log('config websocket chat_message : ', data)
             io.to(data.roomkey).emit('get_message',data.message)
@@ -50,6 +56,12 @@ const ioFn = (httpServer) => {
             //tengo que tener una roomkey para todos los de la misma cadena
             io.to(data.to_userid).emit('get_interaction',{type : 'event', interaction: data.event})
         })
+
+        // socket.on("new_exitem" , (data) => {
+        //     socket.broadcast.emit('item_tags', data.exitem);
+        //--> el cliente solo lo pesca si está en sus alertas
+        // })
+
         socket.on('disconnect', () => {
             console.log('User disconnected');
         });

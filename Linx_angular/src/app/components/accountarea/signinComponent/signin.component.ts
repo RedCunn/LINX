@@ -30,7 +30,7 @@ export class SigninComponent {
   public credentials: { emailorlinxname: String, password: String } = { emailorlinxname: '', password: '' };
   public loginerrors = signal(false);
 
-  private roomkeys: Set<string> = new Set();
+  private userRooms: Map<string,string> = new Map<string,string>();
   constructor(private router: Router, private restSvc: RestnodeService) { }
 
   goToSignup() {
@@ -43,15 +43,11 @@ export class SigninComponent {
       if (res.code === 0) {
         let accounts: IAccount[] = res.others as IAccount[];
         const articles: IArticle[] = res.userdata as IArticle[];
-        
-        //cogemos todas las llaves de las habitaciones
         user.account.myChain?.forEach(c => {
-          this.roomkeys.add(c.roomkey);
+          this.userRooms.set(c.userid, c.roomkey);
         })
         const wholeAccounts = this.utilsvc.putArticleObjectsIntoAccounts(accounts, articles);
-
         this.signalstoresvc.StoreMyChain(wholeAccounts);
-        console.log('STORING MY CHAIN ON SIGNIN : ', wholeAccounts)
       } else {
         console.log('mychain never found...')
       }
@@ -69,7 +65,11 @@ export class SigninComponent {
         this.signalstoresvc.StoreMatches(matches);
 
         matches.forEach(element => {
-          this.roomkeys.add(element.roomkey);
+          if(element.userid_a === userid){
+            this.userRooms.set(element.userid_b ,element.roomkey);
+          }else{
+            this.userRooms.set(element.userid_a ,element.roomkey);
+          }
         });
         
         let accounts : IAccount[] = res.others.accounts as IAccount[];
@@ -114,7 +114,7 @@ export class SigninComponent {
       await this.getMyChain(user)
       await this.getMyMatches(user.userid)
       this.socketSvc.userLogin(user.account._id!, user.account.linxname);
-      this.utilsvc.joinRooms(this.roomkeys);
+      this.utilsvc.joinRooms(this.userRooms);
       this.router.navigateByUrl('/Linx/Inicio');
     } else {
       this.loginerrors.update(v => true);

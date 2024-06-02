@@ -148,6 +148,14 @@
     font-weight: 600;
 }
 
+.candidateatt {
+    position: fixed;
+    left: 0;
+    margin-left: 20px;
+    width: 100%;
+}
+
+
 /*ALERTS---------------------------*/
 
 .alertcontainer {

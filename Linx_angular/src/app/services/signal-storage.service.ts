@@ -17,9 +17,16 @@ export class SignalStorageService implements IStorageService{
   private _mychainsignal : WritableSignal<IAccount[]> = signal<IAccount[]>([]);
   private _matchesaccountsignal : WritableSignal<IAccount[]> = signal<IAccount[]>([]);
   private _matchessignal : WritableSignal<IMatch[]> = signal<IMatch[]>([]);
-  private _roomkeyssignal : WritableSignal<string[]> = signal<string[]>([]);
-
+  private _roomkeyssignal : WritableSignal<Map<string,string>> = signal<Map<string,string>>(new Map<string,string>());
+  private _candidateindex : WritableSignal<number> = signal<number>(0);
   constructor() { }
+
+  StoreCandidateIndex(index: number): void {
+    this._candidateindex.set(index);
+  }
+  RetrieveCandidateIndex(): WritableSignal<number> {
+    return this._candidateindex;
+  }
   StoreCandidateData(newstate: IUser | null): void {
     if(newstate !== null){
       this._candidatesignal.update((currentstate) => ({...currentstate , ...newstate}))
@@ -30,10 +37,13 @@ export class SignalStorageService implements IStorageService{
   RetrieveCandidateData(): WritableSignal<IUser | null> {
     return this._candidatesignal;
   }
-  StoreRoomKeys(keys: string): void {
-    this._roomkeyssignal.update((currents) => ([...keys]))
+  StoreRoomKeys(userRoom : {userid : string , roomkey : string}): void {
+    const newmap = this._roomkeyssignal();
+    newmap.set(userRoom.userid , userRoom.roomkey)
+    this._roomkeyssignal.set(newmap)
   }
-  RetrieveRoomKeys(): WritableSignal<string[]> {
+  RetrieveRoomKeys(): WritableSignal<Map<string, string>> {
+    console.log('RETRIEVE ROOMKEYS SIGNAL SVC : ', this._roomkeyssignal())
     return this._roomkeyssignal;
   }
   StoreMatches(matches: IMatch[]): void {

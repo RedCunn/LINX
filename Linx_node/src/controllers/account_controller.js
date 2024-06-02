@@ -364,11 +364,11 @@ module.exports = {
     getChats: async (req, res, next) => {
         try {
             const _userid = req.params.userid;
-            const _roomkey = req.params.roomkey;
+            const _linxuserid = req.params.linxuserid;
             
             let _chats;
 
-            if (_roomkey === 'null') {
+            if (_linxuserid === 'null') {
                 _chats = await Chat.find({
                     $or: [
                         { 'participants.userid_a': _userid },
@@ -376,7 +376,12 @@ module.exports = {
                     ]
                 });
             } else {
-                _chats = await Chat.findOne({ roomkey: _roomkey });
+                _chats = await Chat.findOne({ 
+                    $or : [
+                            {$and : [{'participants.userid_a': _userid, 'participants.userid_b': _linxuserid }]},
+                            {$and : [{'participants.userid_a': _linxuserid , 'participants.userid_b':  _userid}]}
+                    ]
+                 });
                 _chats = _chats ? [_chats] : []
             }
 

@@ -40,7 +40,7 @@ export class ConversationsComponent implements OnInit{
 
    try {
     this._user = this.signalStorageSvc.RetrieveUserData()()!;
-    const res = await this.restSvc.getMyChats( null, this._user?.userid!);
+    const res = await this.restSvc.getMyChats( this._user?.userid!, null);
     if(res.code === 0){
       this.chats = res.others as IChat[]; 
       console.log('CHATS RECUPERADOS EN CONVERSACIONES ....', this.chats)

@@ -1,10 +1,10 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { Carousel, initCarousels, initFlowbite } from 'flowbite';
+import { initCarousels} from 'flowbite';
 import { RestnodeService } from '../../services/restnode.service';
 import { SignalStorageService } from '../../services/signal-storage.service';
 import { IUser } from '../../models/userprofile/IUser';
 import { IRestMessage } from '../../models/IRestMessage';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Event, NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { IAccount } from '../../models/useraccount/IAccount';
 import { WebsocketService } from '../../services/websocket.service';
 import { IArticle } from '../../models/useraccount/IArticle';
@@ -35,6 +35,8 @@ export class LinxscarouselComponent implements OnInit {
     if (_userdata() !== null) {
       this.userdata = _userdata();
     }
+    const index = this.signalStoreSvc.RetrieveCandidateIndex()();
+    this.currentIndex.set(index);
   }
 
   async setCandidateProfiles() {
@@ -98,6 +100,7 @@ export class LinxscarouselComponent implements OnInit {
   }
   goToLinxProfile(linx : IUser){
     this.signalStoreSvc.StoreCandidateData(linx as IUser);
+    this.signalStoreSvc.StoreCandidateIndex(this.currentIndex());
     this.router.navigateByUrl(`/Linx/Profile/${linx.account.linxname}`);
   }
   async ngOnInit(): Promise<void> {

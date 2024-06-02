@@ -187,9 +187,9 @@ export class RestnodeService {
   //#endregion
 
   //#region -------------------------------- CHAT ---------------------------------
-  public getMyChats(roomkey: string | null, userid: string): Promise<IRestMessage> {
+  public getMyChats( userid: string, linxuserid: string | null): Promise<IRestMessage> {
     
-    const  res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Account/${userid}/chat/${roomkey}`);
+    const  res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Account/${userid}/chat/${linxuserid}`);
     return lastValueFrom(res);
   }
 

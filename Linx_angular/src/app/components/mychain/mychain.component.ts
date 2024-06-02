@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject, signal } from '@angular/core';
+import { Component, Input, OnInit, Signal, inject, signal } from '@angular/core';
 import { SignalStorageService } from '../../services/signal-storage.service';
 import { IUser } from '../../models/userprofile/IUser';
 import { IAccount } from '../../models/useraccount/IAccount';
@@ -14,7 +14,8 @@ import { Router } from '@angular/router';
 export class MyChainComponent implements OnInit{
 
   @Input() isOpen = signal(false);
-  @Input() myChain! : IAccount[]
+  @Input() isMyChain! : Signal<boolean>;
+  @Input() myChain? : IAccount[]
   @Input() extendedChain ? : IAccount[];
 
   closeModal() {
@@ -34,6 +35,9 @@ export class MyChainComponent implements OnInit{
 
   ngOnInit(): void {
     this._user = this.signalStorageSvc.RetrieveUserData()();
+
+    console.log('EXTENT ON MY CHAIN COMPO : ', this.extendedChain)
+    console.log('chain ON MY CHAIN COMPO : ', this.myChain)
   }
 
 }

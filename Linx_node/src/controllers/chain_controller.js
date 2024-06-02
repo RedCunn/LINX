@@ -58,13 +58,16 @@ module.exports = {
                     roomkeys.add(linx.roomkey)
                 }
             })
+
+            const roomkeysToArray = Array.from(roomkeys);
+
             res.status(200).send({
                 code: 0,
                 error: null,
                 message: 'Llaves de cadena extendida recuperada',
                 token: null,
-                userdata: roomkeys,
-                others: null
+                userdata: roomkeysToArray,
+                others: _userAccount.extendedChain
             })
         } catch (error) {
             res.status(400).send({

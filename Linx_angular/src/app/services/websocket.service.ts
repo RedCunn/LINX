@@ -52,6 +52,24 @@ export class WebsocketService {
     )
   }
 
+  requestInitChat(touserid : string, fromuserid : string, roomkey : string){
+    console.log('requesting initialize room with ....', touserid)
+    socket.emit("req_init_chat", {touserid,fromuserid, roomkey}, (res: any) => {
+      console.log('RES OK : ', res.status)
+    }
+    )
+  }
+
+  getChatRequests(){
+    return new Observable<{roomkey : string , userid : string}>(observer => {
+      const messageHandler = (data : {roomkey : string , userid : string}) => {
+        console.log('socketsvc req_chat: ', data.userid);
+        observer.next(data);
+      };  
+      socket.on('chat_req', messageHandler);
+    })  
+  }
+
   sendMessage( message : IMessage, roomkey : string) {
     socket.emit("chat_message", {message, roomkey}, (res: any) => {
       console.log('RES OK : ', res.status)

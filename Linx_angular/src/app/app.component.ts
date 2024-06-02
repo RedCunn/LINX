@@ -6,6 +6,8 @@ import { LoggedheaderComponent } from './components/layouts/loggedheader/loggedh
 import { WebsocketService } from './services/websocket.service';
 import { initFlowbite } from 'flowbite';
 import { isPlatformBrowser } from '@angular/common';
+import { Subject, takeUntil } from 'rxjs';
+import { UtilsService } from './services/utils.service';
 
 @Component({
   selector: 'app-root',
@@ -18,6 +20,7 @@ export class AppComponent implements OnInit, OnDestroy {
   title = 'Linx_angular';
 
   private websocketsvc: WebsocketService = inject(WebsocketService);
+  private utilsvc : UtilsService = inject(UtilsService);
   public routePattern: RegExp = new RegExp("(/Linx/(Login|Registro|error|registrada|activa)|^/?$)", "g");
   public showStickyFooter = signal(true);
 
@@ -25,6 +28,8 @@ export class AppComponent implements OnInit, OnDestroy {
   public footercompo: any;
   public headercompo: any;
   public isLogged = signal(false);
+
+  private destroy$ = new Subject<void>();
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object, private router: Router) {
 
@@ -39,6 +44,14 @@ export class AppComponent implements OnInit, OnDestroy {
         }
       }
     })
+    this.websocketsvc.getChatRequests().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(data => {
+      console.log('chat requests on app compo : ', data)
+      const room = new Map<string,string>();
+      room.set(data.userid , data.roomkey)
+      this.utilsvc.joinRooms(room);
+    });
   }
 
   loadHeaderFooter() {

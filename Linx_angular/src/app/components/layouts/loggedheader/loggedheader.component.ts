@@ -25,7 +25,7 @@ export class LoggedheaderComponent implements OnInit {
 
   ngOnInit(): void {
     this.myChain = this.signalStoreSvc.RetrieveMyChain()();
-    console.log('MY CHAIN RETRIEVED ON HEADER : ', this.myChain)
+    this.isMyChain.set(true);
   }
 
   goInit(){
