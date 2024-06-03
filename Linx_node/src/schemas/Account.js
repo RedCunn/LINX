@@ -47,7 +47,7 @@ let accountSchema = new mongoose.Schema({
 })
 
 function arrayLimit(val) {
-    return val.length <= 4;
+    return val.length <= 6;
 }
 
 module.exports = mongoose.model('Account', accountSchema, 'Accounts');

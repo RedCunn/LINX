@@ -20,6 +20,10 @@
         <!-- Modal body -->
         <form #artForm="ngForm" (ngSubmit)="uploadArticle(artForm)" class="p-4 md:p-5" enctype="multipart/form-data">
             <div class="grid gap-4 mb-4 grid-cols-2">
+                @if(this.article.articleid !== undefined ){
+                    <div class="col-span-2 flex flex-row justify-end"><button (click)="deleteArticle()" style="color: red; text-decoration: underline;">Eliminar artículo</button></div>
+                    <div class="col-span-2 flex flex-row justify-end"><button (click)="archiveArticle()" style="color: blue; text-decoration: underline;">Archivar artículo</button></div>
+                }
                 <div class="col-span-2">
                     <label for="name"
                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Título</label>
@@ -62,12 +66,12 @@
                 </div>
                 <div class="col-span-2">
                     @if(this.userdata?.account?.articles?.length === 4 && this.article.articleid === undefined){
-                        <p class="text-orange-500 font-extralight">( Solo pueden colgarse un máximo de 4 artículos en el perfil. Si ya has
-                            alcanzado el límite, al añadir uno nuevo se eliminará el más antiguo. )</p>
+                        <p class="text-orange-500 font-extralight">( Solo pueden colgarse un máximo de 6 artículos en el perfil. Si ya has
+                            alcanzado el límite, al añadir uno nuevo se eliminará el más antiguo. Si quieres, puedes archivarlos.)</p>
                     }
                 </div>
                 <div class="col-span-2 flex justify-end">
-                    <button type="submit" (click)="uploadArticle"
+                    <button type="submit" (click)="uploadArticle(artForm)"
                         class="text-white inline-flex items-center bg-orange-500 hover:bg-orange-400 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                         Guardar
                     </button>

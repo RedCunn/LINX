@@ -13,6 +13,8 @@ export class UtilsService {
   private socketSvc: WebsocketService = inject(WebsocketService);
   private signalSvc: SignalStorageService = inject(SignalStorageService);
 
+  private currentDate: Date = new Date();
+
   constructor() { }
 
   public putArticleObjectsIntoAccounts(accounts: IAccount[], articles: IArticle[]): IAccount[] {
@@ -40,18 +42,18 @@ export class UtilsService {
     return wholeAccounts;
   }
 
-  public joinRooms(userRooms : Map<string, string>): void {
-    const storedkeys = new Map<string,string>(this.signalSvc.RetrieveRoomKeys()());
-    const roomkeysToJoin = new Map<string,string>();
+  public joinRooms(userRooms: Map<string, string>): void {
+    const storedkeys = new Map<string, string>(this.signalSvc.RetrieveRoomKeys()());
+    const roomkeysToJoin = new Map<string, string>();
 
-    for (const [key , value] of userRooms) {
-      if(storedkeys.get(key) === undefined){
-        roomkeysToJoin.set(key , value);
-        this.signalSvc.StoreRoomKeys({userid : key , roomkey : value})
+    for (const [key, value] of userRooms) {
+      if (storedkeys.get(key) === undefined) {
+        roomkeysToJoin.set(key, value);
+        this.signalSvc.StoreRoomKeys({ userid: key, roomkey: value })
       }
     }
-    for (const [key , value] of roomkeysToJoin) {
-      this.socketSvc.initChat(value); 
+    for (const [key, value] of roomkeysToJoin) {
+      this.socketSvc.initChat(value);
     }
   }
 
@@ -76,11 +78,10 @@ export class UtilsService {
   public mapCandidateProfileDataToLegible(profile: IUser): Map<string, string> {
     const attributesMap = new Map<string, string>();
 
-    const currentDate = new Date();
     const birthday = new Date(profile.birthday);
-    const yearsOld = currentDate.getFullYear() - birthday.getFullYear();
+    const yearsOld = this.currentDate.getFullYear() - birthday.getFullYear();
 
-    attributesMap.set('years',yearsOld.toString());
+    attributesMap.set('years', yearsOld.toString());
 
     const dietValue = profile.diet;
     let diet = '';
@@ -160,5 +161,39 @@ export class UtilsService {
     attributesMap.set('work', work)
 
     return attributesMap;
+  }
+
+  sortArticlesDateDESC(articles: IArticle[]): IArticle[] {
+    const sortedArticles = articles.sort((a, b) => {
+      const dateA = new Date(a.postedOn);
+      const dateB = new Date(b.postedOn);
+      return dateB.getTime() - dateA.getTime();
+    });
+    return sortedArticles;
+  }
+
+  formatDateISOStringToLegible(date: string) {
+
+    let legibleDate = '';
+    const dateObj = new Date(date);
+
+    if (dateObj.getFullYear() === this.currentDate.getFullYear() &&
+      dateObj.getMonth() === this.currentDate.getMonth() &&
+      dateObj.getDate() === this.currentDate.getDate()) {
+      return 'Hoy';
+    }else{
+      const yesterday = new Date(this.currentDate);
+      yesterday.setDate(this.currentDate.getDate() - 1);
+      
+      if (dateObj.getFullYear() === yesterday.getFullYear() &&
+          dateObj.getMonth() === yesterday.getMonth() &&
+          dateObj.getDate() === yesterday.getDate()) {
+          return 'Ayer';
+      }
+    }
+
+    legibleDate = dateObj.getDate().toString() + ' del ' + (dateObj.getMonth() + 1).toString() +' de '+dateObj.getFullYear().toString()
+
+    return legibleDate;
   }
 }

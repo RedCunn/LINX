@@ -93,6 +93,17 @@
 }
 
 /*PIECES---------------------------*/
+
+.wordchain {
+    font-family: "Lexend Tera", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+    font-weight: 600;
+    font-size:large;
+    padding-left: 0.5rem;
+    padding-top: 0.25rem;
+    letter-spacing: 15px;
+}
 .footart {
     position: absolute;
     bottom: 0;
@@ -210,15 +221,15 @@
 }
 
 article h1 {
-    font-family: "IBM Plex Mono", monospace;
-    font-weight: 800;
+    font-family: "Kanit", sans-serif;
+    font-weight: 500;
     font-style: normal;
     font-size: xx-large;
 }
 
 .article {
-    font-family: "IBM Plex Mono", monospace;
-    font-weight: 400;
+    font-family: "Kanit", sans-serif;
+    font-weight: 200;
     font-style: normal;
     font-size: large;
     position: relative;
@@ -304,7 +315,7 @@ article h1 {
         display: grid;
         grid-template-columns: repeat(1, minmax(0, 1fr));
         row-gap: 2rem;
-        margin-top: 1.25rem;
+        margin-top: 1rem;
         width: 100%;
         height: 100%;
     }
@@ -405,5 +416,12 @@ article h1 {
         text-align: center;
         color: #AC94FA;
         margin-bottom: 5%;
+    }
+
+    .candidateatt {
+        position: static;
+        grid-column: span 2 / span 2;
+        margin-left: 20px;
+        width: 100%;
     }
 }

@@ -29,36 +29,37 @@ const storage = multer.diskStorage({
     filename: function (req, file, cb) {
         const artid = req.body.articleid;
         const userDirectory = path.join('C:/Users/cunns/Documents/TFGLinx/articles', req.params.userid);
-
-        fs.readdir(userDirectory, (err, files) => {
-            if (err) {
-                console.error('Error al leer el directorio:', err);
-                return cb(err);
-            }
-
-            let fileToDelete = null;
-            for (const filename of files) {
-                const [existingArtid] = filename.split('__');
-                if (existingArtid === artid) {
-                    fileToDelete = filename;
-                    break;
+        if(file){
+            fs.readdir(userDirectory, (err, files) => {
+                if (err) {
+                    console.error('Error al leer el directorio:', err);
+                    return cb(err);
                 }
-            }
-
-            if (fileToDelete) {
-                const filePath = path.join(userDirectory, fileToDelete);
-                fs.unlink(filePath, (err) => {
-                    if (err) {
-                        console.error('Error al eliminar el archivo existente:', err);
-                        return cb(err);
-                    } else {
-                        cb(null, file.originalname);
+    
+                let fileToDelete = null;
+                for (const filename of files) {
+                    const [existingArtid] = filename.split('__');
+                    if (existingArtid === artid) {
+                        fileToDelete = filename;
+                        break;
                     }
-                });
-            } else {
-                cb(null, file.originalname);
-            }
-        });
+                }
+    
+                if (fileToDelete) {
+                    const filePath = path.join(userDirectory, fileToDelete);
+                    fs.unlink(filePath, (err) => {
+                        if (err) {
+                            console.error('Error al eliminar el archivo existente:', err);
+                            return cb(err);
+                        } else {
+                            cb(null, file.originalname);
+                        }
+                    });
+                } else {
+                    cb(null, file.originalname);
+                }
+            });
+        }
 
     }
 })

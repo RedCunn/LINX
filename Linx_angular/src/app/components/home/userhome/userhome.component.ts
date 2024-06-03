@@ -13,7 +13,6 @@ import { IAccount } from '../../../models/useraccount/IAccount';
 import { ChatComponent } from '../../chat/chat.component';
 import { IChat } from '../../../models/chat/IChat';
 import { ArticlemodalformComponent } from './artmodal/articlemodalform.component';
-import { IMessage } from '../../../models/chat/IMessage';
 import { BehaviorSubject, distinctUntilChanged } from 'rxjs';
 import { WebsocketService } from '../../../services/websocket.service';
 import { MyChainComponent } from '../../mychain/mychain.component';
@@ -259,7 +258,12 @@ export class UserhomeComponent implements OnInit, AfterViewInit , OnDestroy{
     this.isChatOpen.update(v => !v);
   }
 
-  toggleArtFormModal() {
+  toggleArtFormModal(article : IArticle | null) {
+    if(article !== null){
+      this.article = article
+    }else{
+      this.article = {title: '', body: '', img: '', postedOn: '', useAsProfilePic: false }
+    }
     this.isArtFormOpen.update(v => !v);
   }
 
@@ -340,28 +344,21 @@ export class UserhomeComponent implements OnInit, AfterViewInit , OnDestroy{
     }
   }
 
-  onArticleChange(newArt : any){
-    console.log('NEW ART ON HOME : ', newArt)
+  onArticleChange(newArts : IArticle[]){
+    console.log('NEW ARTsss ON HOME : ', newArts)
     this.loadingArts.set(true);
-    this.userdata?.account.articles?.unshift(newArt)
+    this.articles = newArts;
     this.ref.detectChanges();
-    this.signalStoreSvc.StoreLinxData(this.userdata?.account!)
+    this.loadingArts.set(false);
   }
 
+  formatDate(postedon : string) : string{
+    return this.utilsvc.formatDateISOStringToLegible(postedon)
+  }
 
   async ngOnInit(): Promise<void> {
     if (isPlatformBrowser(this.platformId)) {
       initFlowbite();
-    }
-    this.articles = [];
-    if(this.isUser()){
-      this.userdata?.account.articles!.forEach(a => {
-        this.articles.push(a);
-      });
-    }else{
-      this.linxdata?.articles?.forEach(a => {
-        this.articles.push(a);
-      })
     }
     
     try {
@@ -404,13 +401,26 @@ export class UserhomeComponent implements OnInit, AfterViewInit , OnDestroy{
 
   ngAfterViewInit(): void {
     initTooltips();
+
+    let sortedArticles : IArticle []= [];
+    this.articles = [];
+
     if(this.isCandidate()){
-      this.articles = [];
-      this.articles = this.candidateData.account.articles!;
+      sortedArticles = this.utilsvc.sortArticlesDateDESC(this.candidateData.account.articles !== undefined ? this.candidateData.account.articles! : [])
       console.log('AFTER VIEW INIT CANDI ARTICLES : ', this.articles)
       this.ref.detectChanges();
       this.loadingArts.set(false);
+    }else{
+      if(this.isUser()){
+      sortedArticles = this.utilsvc.sortArticlesDateDESC(this.userdata?.account.articles !== undefined ? this.userdata?.account.articles : [] )
+      console.log('AFTER VIEW INIT USER ARTICLES : ', this.articles)
+      }else{
+        sortedArticles = this.utilsvc.sortArticlesDateDESC(this.linxdata?.articles !== undefined ? this.linxdata.articles! : [])
+        console.log('AFTER VIEW INIT LINX/MATCH ARTICLES : ', this.articles)
+      }
     }
+
+    this.articles = sortedArticles;
   }
 
   ngOnDestroy(): void {

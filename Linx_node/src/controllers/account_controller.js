@@ -476,9 +476,13 @@ module.exports = {
             const _userid = req.params.userid;
             const _artid = req.params.artid;
             const { title, body, postedOn, useAsProfilePic } = req.body;
-            const filePath = req.file.path;
+            if(req.file){
+                const filePath = req.file.path;
+                let updateArticle = await Article.updateOne({ userid: _userid, articleid: _artid }, { title, body, postedOn, useAsProfilePic, img: filePath })
+            }else{
+                let updateArticle = await Article.updateOne({ userid: _userid, articleid: _artid }, { title, body, postedOn, useAsProfilePic})
+            }
 
-            let updateArticle = await Article.updateOne({ userid: _userid, articleid: _artid }, { title, body, postedOn, useAsProfilePic, img: filePath })
             console.log('UPDATE ART RESULT : ', updateArticle)
 
             res.status(200).send({
@@ -502,7 +506,6 @@ module.exports = {
     },
     deleteArticle: async (req, res, next) => {
         try {
-
             const _userid = req.params.userid;
             const _artid = req.params.artid;
             let deleteArticle = await Article.deleteOne({ userid: _userid, articleid: _artid });

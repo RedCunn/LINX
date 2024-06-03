@@ -4,6 +4,7 @@ import { IRestMessage } from '../models/IRestMessage';
 import { Observable, lastValueFrom } from 'rxjs';
 import { IUser } from '../models/userprofile/IUser';
 import { IMessage } from '../models/chat/IMessage';
+import { IArticle } from '../models/useraccount/IArticle';
 
 @Injectable({
   providedIn: 'root'
@@ -85,7 +86,10 @@ export class RestnodeService {
     const res = this._httpClient.delete<IRestMessage>(`http://localhost:3000/api/Account/${userid}/article/${artid}`);
     return lastValueFrom(res);
   }
-
+  public archiveArticle(userid: string, artid: string, article : IArticle): Promise<IRestMessage> {
+    const res = this._httpClient.post<IRestMessage>(`http://localhost:3000/api/Account/${userid}/articlearchive`, article);
+    return lastValueFrom(res);
+  }
   public getAccountArticles(userid : string): Promise<IRestMessage>{
     const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Account/${userid}/articles`);
     return lastValueFrom(res);

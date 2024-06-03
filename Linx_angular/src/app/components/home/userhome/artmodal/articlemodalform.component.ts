@@ -19,7 +19,8 @@ export class ArticlemodalformComponent {
   @Input() isOpen = signal(false);
   @Input() userdata!: IUser | null;
   @Input() article!: IArticle;
-  @Input() articleChange = new EventEmitter<IArticle>();
+  @Input() articleChange = new EventEmitter<IArticle[]>();
+  @Input() articles! : IArticle[];
 
   private formData : FormData = new FormData();
   public currentDate : Date = new Date();
@@ -50,10 +51,12 @@ export class ArticlemodalformComponent {
     if (this.article.articleid !== undefined) {
       
       try {
+        console.log('THIS ARTICLE ON ARTMODAL : ', this.article)
         const response = await this.restSvc.editArticle(this.userdata!.userid,this.article.articleid, this.formData);
         if (response.code === 0) {
           console.log('Article uploaded : ', response.message)
-          this.articleChange.emit(this.article);
+          this.articles.unshift(this.article);
+          this.articleChange.emit(this.articles);
           this.isOpen.set(false);
         } else {
           console.log('Error en AWAIT editArticle : ',response.error)
@@ -69,7 +72,8 @@ export class ArticlemodalformComponent {
         const response = await this.restSvc.newArticle(this.userdata!.userid, this.formData);
         if (response.code === 0) {
           console.log('Article uploaded : ', response.message)
-          this.articleChange.emit(this.article);
+          this.articles.unshift(this.article);
+          this.articleChange.emit(this.articles);
           this.isOpen.set(false);
         } else {
           console.log('Error en AWAIT newArticle : ',response.error)
@@ -89,6 +93,31 @@ export class ArticlemodalformComponent {
     }
   }
 
+  async deleteArticle() {
+    try {
+      const res = await this.restSvc.deleteArticle(this.userdata?.userid!, this.article.articleid!);
+      if (res.code === 0) {
+        console.log('Removed article on artmodal : ', res.message)
+      } else {
+        console.log('Couldnt delete article on artmodal....', res.error);
+      }
+    } catch (error) {
+      console.log('Couldnt delete article on artmodal....', error);
+    }
+  }
+  
+  async archiveArticle() {
+    try {
+      const res = await this.restSvc.archiveArticle(this.userdata?.userid!, this.article.articleid!, this.article);
+      if (res.code === 0) {
+        console.log('Archived article on artmodal : ', res.message)
+      } else {
+        console.log('Couldnt archive article on artmodal....', res.error);
+      }
+    } catch (error) {
+      console.log('Couldnt archive article on artmodal....', error);
+    }
+  }
   closeModal() {
     this.isOpen.set(false);
   }
