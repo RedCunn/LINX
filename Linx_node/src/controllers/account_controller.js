@@ -14,9 +14,6 @@ const Article = require('../schemas/Article');
 const chating = require('./utils/chating');
 const Job = require('../schemas/Job');
 
-const fs = require('fs');
-const path = require('path');
-
 function generateToken(userdata) {
 
     const payload = {
@@ -439,17 +436,23 @@ module.exports = {
     },
     newArticle: async (req, res, next) => {
         try {
-
             const _userid = req.params.userid;
             const { title, body, postedOn, useAsProfilePic, articleid} = req.body;
             let insertArticle; 
+            let filePath = '';
+            console.log('VALOR DE REQ BODY NEW ART-------', req.body)
             if (req.file) {
-                const filePath = _userid+'/'+req.file.originalname;
+                console.log('REQ FILE entry: ', req.file)
+                filePath = _userid+'/'+req.file.originalname;
+                console.log('VALOR DE REQ FILE ORIGINALNAME-------', req.file.originalname)
                 insertArticle = await Article.create({userid : _userid, articleid , postedOn, useAsProfilePic, title , body, img : filePath})
             } else {
                 insertArticle = await Article.create({userid : _userid, articleid , postedOn, useAsProfilePic, title , body})
             }
             let insertArticleRef = await Account.updateOne({userid : _userid},{$push : {articles : insertArticle.articleid}})
+
+            console.log('INSERT RESULT ', insertArticle);
+            console.log('INSERT REF ART ON ACC ', insertArticleRef);
 
             res.status(200).send({
                 code: 0,
@@ -457,7 +460,7 @@ module.exports = {
                 message: 'saved new article!!!',
                 token: null,
                 userdata: null,
-                others: null
+                others: filePath
             })
         } catch (error) {
             res.status(400).send({
@@ -476,11 +479,13 @@ module.exports = {
             const _userid = req.params.userid;
             const _artid = req.params.artid;
             const { title, body, postedOn, useAsProfilePic } = req.body;
+            let updateArticle;
+            let filePath = '';
             if(req.file){
-                const filePath = req.file.path;
-                let updateArticle = await Article.updateOne({ userid: _userid, articleid: _artid }, { title, body, postedOn, useAsProfilePic, img: filePath })
+                filePath = _userid+'/'+req.file.originalname;
+                updateArticle = await Article.updateOne({ userid: _userid, articleid: _artid }, { title, body, postedOn, useAsProfilePic, img: filePath })
             }else{
-                let updateArticle = await Article.updateOne({ userid: _userid, articleid: _artid }, { title, body, postedOn, useAsProfilePic})
+                updateArticle = await Article.updateOne({ userid: _userid, articleid: _artid }, { title, body, postedOn, useAsProfilePic})
             }
 
             console.log('UPDATE ART RESULT : ', updateArticle)
@@ -491,7 +496,7 @@ module.exports = {
                 message: 'saved article changes!!!',
                 token: null,
                 userdata: null,
-                others: null
+                others: filePath
             })
         } catch (error) {
             res.status(400).send({
@@ -508,8 +513,7 @@ module.exports = {
         try {
             const _userid = req.params.userid;
             const _artid = req.params.artid;
-            let deleteArticle = await Article.deleteOne({ userid: _userid, articleid: _artid });
-            console.log('DELETE ART RESULT : ', deleteArticle)
+            await Article.deleteOne({ userid: _userid, articleid: _artid });
             res.status(200).send({
                 code: 0,
                 error: null,
@@ -519,6 +523,7 @@ module.exports = {
                 others: null
             })
         } catch (error) {
+            console.log('ERROR ON DELETE : ', error)
             res.status(400).send({
                 code: 1,
                 error: error.message,

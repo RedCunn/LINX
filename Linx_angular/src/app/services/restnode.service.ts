@@ -54,7 +54,7 @@ export class RestnodeService {
     return lastValueFrom(res);
   }
 
-  public editAccount(userid: string, jwt: string, changes: {linxname : string , email : string}): Promise<IRestMessage> {
+  public editAccount(userid: string, jwt: string, changes: { linxname: string, email: string }): Promise<IRestMessage> {
     const res = this._httpClient.put<IRestMessage>(`http://localhost:3000/api/Account/${userid}`,
       changes,
       {
@@ -74,23 +74,26 @@ export class RestnodeService {
   }
 
   public newArticle(userid: string, article: FormData): Promise<IRestMessage> {
-    const res = this._httpClient.post<IRestMessage>(`http://localhost:3000/api/Account/${userid}/article`, article);
+    let url = `http://localhost:3000/api/Account/${userid}/article`;
+    const res = this._httpClient.post<IRestMessage>(url, article);
     return lastValueFrom(res);
   }
   public editArticle(userid: string, artid: string, article: FormData): Promise<IRestMessage> {
-    const res = this._httpClient.put<IRestMessage>(`http://localhost:3000/api/Account/${userid}/article/${artid}`, article);
+    let url = `http://localhost:3000/api/Account/${userid}/article/${artid}`;
+    const res = this._httpClient.put<IRestMessage>(url, article);
     return lastValueFrom(res);
   }
 
-  public deleteArticle(userid: string, artid: string): Promise<IRestMessage> {
-    const res = this._httpClient.delete<IRestMessage>(`http://localhost:3000/api/Account/${userid}/article/${artid}`);
+  public deleteArticle(userid: string, artid: string, filepath : string): Promise<IRestMessage> {
+    let url = `http://localhost:3000/api/Account/${userid}/article/${artid}?img=${filepath}`
+    const res = this._httpClient.delete<IRestMessage>(url);
     return lastValueFrom(res);
   }
-  public archiveArticle(userid: string, artid: string, article : IArticle): Promise<IRestMessage> {
+  public archiveArticle(userid: string, artid: string, article: IArticle): Promise<IRestMessage> {
     const res = this._httpClient.post<IRestMessage>(`http://localhost:3000/api/Account/${userid}/articlearchive`, article);
     return lastValueFrom(res);
   }
-  public getAccountArticles(userid : string): Promise<IRestMessage>{
+  public getAccountArticles(userid: string): Promise<IRestMessage> {
     const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Account/${userid}/articles`);
     return lastValueFrom(res);
   }
@@ -99,12 +102,12 @@ export class RestnodeService {
 
   //#region ------------------------------ PROFILE -----------------------------------------
 
-  public editProfileData(userid : string , data : Object): Promise<IRestMessage>{
+  public editProfileData(userid: string, data: Object): Promise<IRestMessage> {
     const res = this._httpClient.put<IRestMessage>(`http://localhost:3000/api/Profile/${userid}/data`, data);
     return lastValueFrom(res);
   }
 
-  public editProfilePreferences(userid : string , preferences : Object): Promise<IRestMessage>{
+  public editProfilePreferences(userid: string, preferences: Object): Promise<IRestMessage> {
     const res = this._httpClient.put<IRestMessage>(`http://localhost:3000/api/Profile/${userid}/preferences`, preferences);
     return lastValueFrom(res);
   }
@@ -127,7 +130,7 @@ export class RestnodeService {
     return lastValueFrom(res);
   }
 
-  public getPlaceDetails (cityid : string) : Promise<IRestMessage>{
+  public getPlaceDetails(cityid: string): Promise<IRestMessage> {
     const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Account/places/${cityid}`);
     return lastValueFrom(res);
   }
@@ -183,7 +186,7 @@ export class RestnodeService {
     return lastValueFrom(res);
   }
 
-  public unMatch(userid : string , matchuserid : string): Promise<IRestMessage>{
+  public unMatch(userid: string, matchuserid: string): Promise<IRestMessage> {
     const res = this._httpClient.delete<IRestMessage>(`http://localhost:3000/api/Match/${userid}/match/${matchuserid}`);
     return lastValueFrom(res);
   }
@@ -191,9 +194,9 @@ export class RestnodeService {
   //#endregion
 
   //#region -------------------------------- CHAT ---------------------------------
-  public getMyChats( userid: string, linxuserid: string | null): Promise<IRestMessage> {
-    
-    const  res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Account/${userid}/chat/${linxuserid}`);
+  public getMyChats(userid: string, linxuserid: string | null): Promise<IRestMessage> {
+
+    const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Account/${userid}/chat/${linxuserid}`);
     return lastValueFrom(res);
   }
 

@@ -76,7 +76,6 @@ export class UserhomeComponent implements OnInit, AfterViewInit , OnDestroy{
       if (event instanceof NavigationStart || event instanceof NavigationEnd) {
         let signalcandidate = this.signalStoreSvc.RetrieveCandidateData()();
         if(signalcandidate !== null){
-          this.loadingArts.set(true);
           this.candidateData = this.signalStoreSvc.RetrieveCandidateData()()!;
           this.isCandidate.set(true);
           this.cadidateAttributes = this.utilsvc.mapCandidateProfileDataToLegible(this.candidateData);
@@ -399,8 +398,7 @@ export class UserhomeComponent implements OnInit, AfterViewInit , OnDestroy{
     }
   }
 
-  ngAfterViewInit(): void {
-    initTooltips();
+  loadProfileArticles (){
 
     let sortedArticles : IArticle []= [];
     this.articles = [];
@@ -408,8 +406,6 @@ export class UserhomeComponent implements OnInit, AfterViewInit , OnDestroy{
     if(this.isCandidate()){
       sortedArticles = this.utilsvc.sortArticlesDateDESC(this.candidateData.account.articles !== undefined ? this.candidateData.account.articles! : [])
       console.log('AFTER VIEW INIT CANDI ARTICLES : ', this.articles)
-      this.ref.detectChanges();
-      this.loadingArts.set(false);
     }else{
       if(this.isUser()){
       sortedArticles = this.utilsvc.sortArticlesDateDESC(this.userdata?.account.articles !== undefined ? this.userdata?.account.articles : [] )
@@ -422,6 +418,14 @@ export class UserhomeComponent implements OnInit, AfterViewInit , OnDestroy{
 
     this.articles = sortedArticles;
   }
+  ngAfterViewInit(): void {
+    initTooltips();
+    this.loadingArts.set(true);
+    this.loadProfileArticles()
+    this.ref.detectChanges();
+    this.loadingArts.set(false);
+  }
+
 
   ngOnDestroy(): void {
     this.signalStoreSvc.StoreCandidateData(null);

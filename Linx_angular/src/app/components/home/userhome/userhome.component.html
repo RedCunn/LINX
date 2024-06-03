@@ -215,7 +215,7 @@
     }@else {
         @for(art of this.articles; track $index){
           <article class="article">
-            <h1>{{art.title}}</h1>
+            <h1 class="break-words">{{art.title}}</h1>
             <p style="color: gray;"><small>{{this.formatDate(art.postedOn)}}</small></p>
             <p class="break-words">{{art.body}}</p>
             <div class="artimg">

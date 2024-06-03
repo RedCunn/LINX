@@ -23,6 +23,7 @@ export class ArticlemodalformComponent {
   @Input() articles! : IArticle[];
 
   private formData : FormData = new FormData();
+  private artFile: File | null = null; 
   public currentDate : Date = new Date();
 
   generateArticleId() {
@@ -41,46 +42,70 @@ export class ArticlemodalformComponent {
     if(artForm.form.invalid){
       return;
     }
-
+    this.formData = new FormData();
     this.formData.append('title', artForm.form.get('title')?.value)
     this.formData.append('body', artForm.form.get('bodycontent')?.value)
     this.formData.append('useAsProfilePic', artForm.form.get('useAsUserPic')?.value)
-    this.formData.append('postedOn', this.currentDate.toISOString())
     
-
+    if(this.artFile !== null){
+      this.formData.append("file", this.artFile);
+    }
     if (this.article.articleid !== undefined) {
-      
-      try {
-        console.log('THIS ARTICLE ON ARTMODAL : ', this.article)
-        const response = await this.restSvc.editArticle(this.userdata!.userid,this.article.articleid, this.formData);
-        if (response.code === 0) {
-          console.log('Article uploaded : ', response.message)
-          this.articles.unshift(this.article);
-          this.articleChange.emit(this.articles);
-          this.isOpen.set(false);
-        } else {
-          console.log('Error en AWAIT editArticle : ',response.error)
-        } 
-      } catch (error) {
-        console.log('Error en AWAIT editArticle : ',error)
+      if(artForm.dirty){
+        this.formData.append('postedOn', this.article.postedOn)
+        this.uploadArticleChanges();   
       }
-
+      this.isOpen.set(false);
     } else {
-      const _artid = this.generateArticleId();
-      this.formData.append('articleid', _artid.toString());
-      try {
-        const response = await this.restSvc.newArticle(this.userdata!.userid, this.formData);
-        if (response.code === 0) {
-          console.log('Article uploaded : ', response.message)
-          this.articles.unshift(this.article);
+      this.formData.append('postedOn', this.currentDate.toISOString())
+      this.uploadNewArticle()
+      this.isOpen.set(false);
+    }
+  }
+
+  async uploadArticleChanges(){
+    try {
+      
+      const response = await this.restSvc.editArticle(this.userdata!.userid,this.article.articleid!, this.formData);
+      if (response.code === 0) {
+        console.log('RESPONSE OTHERS ON UPLOADING ART CHANGES : ', response.others)
+        if(response.others !== ''){
+          this.article.img = response.others;
+        }
+        const artIndex = this.articles.findIndex(art => art.articleid === this.article.articleid)
+        if(artIndex !== -1){
+          this.articles[artIndex] = this.article;
           this.articleChange.emit(this.articles);
-          this.isOpen.set(false);
-        } else {
-          console.log('Error en AWAIT newArticle : ',response.error)
-        }  
-      } catch (error) {
-        console.log('Error en AWAIT newArticle : ',error)
-      }
+        }
+        this.isOpen.set(false);
+      } else {
+        console.log('Error en AWAIT editArticle : ',response.error)
+      } 
+    } catch (error) {
+      console.log('Error en AWAIT editArticle : ',error)
+    }
+  }
+
+  async uploadNewArticle(){
+    const _artid = this.generateArticleId().toString();
+    this.formData.append('articleid', _artid);
+    this.formData.forEach((value, key) => {
+      console.log(key + ': ' + value);
+  });
+    try {
+      const response = await this.restSvc.newArticle(this.userdata!.userid, this.formData);
+      console.log('RESPONSE NEW ARTICLE ARTMODAL : ', response)
+      if (response.code === 0) {
+        this.article.postedOn = new Date().toISOString();
+        this.article.img = response.others;
+        this.articles.unshift(this.article);
+        this.articleChange.emit(this.articles);
+        this.isOpen.set(false);
+      } else {
+        console.log('Error en AWAIT newArticle : ',response.error)
+      }  
+    } catch (error) {
+      console.log('Error en AWAIT newArticle : ',error)
     }
   }
 
@@ -89,14 +114,22 @@ export class ArticlemodalformComponent {
     if (file) {
     this.article.img = file.name;
     const newFileName = this.generateFileName(file.name);
-    this.formData.append("file", file, newFileName);
+    const newFile = new File([file], newFileName, { type: file.type });
+    this.artFile = newFile;
     }
   }
 
   async deleteArticle() {
     try {
-      const res = await this.restSvc.deleteArticle(this.userdata?.userid!, this.article.articleid!);
+      const res = await this.restSvc.deleteArticle(this.userdata?.userid!, this.article.articleid!, this.article.img);
+      console.log('RESPONSE ON DELETE ARTMODAL : ', res)
       if (res.code === 0) {
+        const index = this.articles.findIndex(art => art.articleid === this.article.articleid!);
+        if (index !== -1) {
+          this.articles.splice(index, 1);
+        }
+        this.articleChange.emit(this.articles);
+        this.isOpen.set(false);
         console.log('Removed article on artmodal : ', res.message)
       } else {
         console.log('Couldnt delete article on artmodal....', res.error);

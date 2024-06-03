@@ -18,12 +18,17 @@
             </button>
         </div>
         <!-- Modal body -->
+        @if(this.article.articleid !== undefined ){
+            <div class="flex flex-row justify-between w-full px-3">
+                <div class="flex flex-row items-center" style="color: gray;">
+                    <span class="material-symbols-outlined">inventory_2</span>
+                    <button (click)="archiveArticle()">Archivar artículo</button>
+                </div>
+                <button (click)="deleteArticle()" style="color: red; text-decoration: underline;">Eliminar artículo</button>
+            </div>
+        }
         <form #artForm="ngForm" (ngSubmit)="uploadArticle(artForm)" class="p-4 md:p-5" enctype="multipart/form-data">
             <div class="grid gap-4 mb-4 grid-cols-2">
-                @if(this.article.articleid !== undefined ){
-                    <div class="col-span-2 flex flex-row justify-end"><button (click)="deleteArticle()" style="color: red; text-decoration: underline;">Eliminar artículo</button></div>
-                    <div class="col-span-2 flex flex-row justify-end"><button (click)="archiveArticle()" style="color: blue; text-decoration: underline;">Archivar artículo</button></div>
-                }
                 <div class="col-span-2">
                     <label for="name"
                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Título</label>
@@ -55,9 +60,14 @@
                 </div>
                 <div class="col-span-2">
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="img">Foto</label>
-                    <input class="block w-full mb-5 text-xs text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-                        id="small_size" type="file" name="img" accept="image/*" [(ngModel)]="article.img" #img="ngModel"
-                    (change)="onFileSelected($event)">
+                    @if(this.article.articleid === undefined){
+                        <input class="block w-full mb-5 text-xs text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                        id="small_size" type="file" name="img" accept="image/*" (change)="onFileSelected($event)">
+                    }@else {
+
+                        <input class="block w-full mb-5 text-xs text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                        id="small_size" type="file" name="img" accept="image/*" [(ngModel)]="article.img" #img="ngModel" (change)="onFileSelected($event)">
+                    }
                 </div>
                 <div class="col-span-2">
                     <input type="checkbox" name="useAsUserPic" [(ngModel)]="article.useAsProfilePic"
@@ -71,7 +81,7 @@
                     }
                 </div>
                 <div class="col-span-2 flex justify-end">
-                    <button type="submit" (click)="uploadArticle(artForm)"
+                    <button type="submit"
                         class="text-white inline-flex items-center bg-orange-500 hover:bg-orange-400 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                         Guardar
                     </button>
