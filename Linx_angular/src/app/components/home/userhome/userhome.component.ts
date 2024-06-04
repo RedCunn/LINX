@@ -18,6 +18,7 @@ import { WebsocketService } from '../../../services/websocket.service';
 import { MyChainComponent } from '../../mychain/mychain.component';
 import { UtilsService } from '../../../services/utils.service';
 import * as CryptoJS from 'crypto-js';
+import { IMessage } from '../../../models/chat/IMessage';
 
 @Component({
   selector: 'app-userhome',
@@ -145,17 +146,17 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.roomkey = this.setRoomKey();
     console.log('chat setting roomkey : ', this.roomkey)
     this.chat = { conversationname: this.linxdata?.linxname!, participants: { userid_a: this.userdata?.userid!, userid_b: this.linxdata?.userid! }, roomkey: this.roomkey, messages: [] }
-    console.log('chat setting chat at home : ', this.chat)
     try {
       const res = await this.restSvc.getMyChats(this.userdata?.userid!, this.linxdata?.userid!);
-      console.log('GET MY CHATS RESPONSE on setchat userhome: ', res)
       if (res.code === 0) {
         const _resMess: IChat[] = res.others;
-        let chatSearch = _resMess.find(chat => (chat.participants.userid_a === this.linxdata?.userid! || chat.participants.userid_b === this.linxdata?.userid!));
         this.chat.messages = [];
-        if (chatSearch) {
-          chatSearch?.messages.forEach(m => { this.chat.messages.push(m) });
-        }
+        _resMess.forEach(chat => {
+          chat.messages.forEach(mess => {
+            this.chat.messages.push(mess)
+          })
+        })
+        console.log('RES OTHERS ON SET CHAT GET MY CHATS home: ', res.others)
       } else {
         console.log('error recuperando chat...', res.message)
       }

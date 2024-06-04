@@ -53,13 +53,11 @@ module.exports = {
             }
 
             linxAccount.myChain.forEach(l => {
-                const _roomkey = uuidv4();
-                userAccount.extendedChain.push({mylinxuserid : linxid, userid : l.userid, roomkey : _roomkey})
+                userAccount.extendedChain.push({mylinxuserid : linxid, userid : l.userid})
             })
 
             userAccount.myChain.forEach(l => {
-                const _roomkey = uuidv4();
-                userAccount.extendedChain.push({mylinxuserid : userid, userid : l.userid, roomkey : _roomkey})
+                userAccount.extendedChain.push({mylinxuserid : userid, userid : l.userid})
             })
 
             let insertOnUserChain = await Account.updateOne({ userid: userid },

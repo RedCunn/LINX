@@ -46,40 +46,6 @@ module.exports = {
             })
         }
     },
-    getExtendedChainRoomKeys : async (req, res, next) => {
-        try {
-            const _userid = req.params.userid;
-            const _mylinx = req.params.linxuserid;
-            
-            let _userAccount = await Account.findOne({ userid: _userid });
-            let roomkeys = new Set();    
-            _userAccount.extendedChain.forEach(linx => {
-                if(linx.mylinxuserid === _mylinx){
-                    roomkeys.add(linx.roomkey)
-                }
-            })
-
-            const roomkeysToArray = Array.from(roomkeys);
-
-            res.status(200).send({
-                code: 0,
-                error: null,
-                message: 'Llaves de cadena extendida recuperada',
-                token: null,
-                userdata: roomkeysToArray,
-                others: _userAccount.extendedChain
-            })
-        } catch (error) {
-            res.status(400).send({
-                code: 1,
-                error: error.message,
-                message: 'Error al recuperar Llaves de cadena extendida...',
-                token: null,
-                userdata: null,
-                others: null
-            })
-        }
-    },
     doChain: async (req, res, next) => {
         try {
             const userid = req.params.userid;

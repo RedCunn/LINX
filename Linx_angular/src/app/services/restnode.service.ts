@@ -148,12 +148,6 @@ export class RestnodeService {
     const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Chain/${userid}`);
     return lastValueFrom(res);
   }
-
-  public getExtendedChain(userid: string, mylinxuserid: string): Promise<IRestMessage> {
-    const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Chain/${userid}/extendedchain/${mylinxuserid}`);
-    return lastValueFrom(res);
-  }
-
   public requestJoinChain(userid: string, linxuserid: string): Promise<IRestMessage> {
     const res = this._httpClient.post<IRestMessage>(`http://localhost:3000/api/Chain/${userid}/${linxuserid}`,
       {

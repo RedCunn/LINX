@@ -182,44 +182,123 @@ export class UtilsService {
       dateObj.getMonth() === this.currentDate.getMonth() &&
       dateObj.getDate() === this.currentDate.getDate()) {
       return 'Hoy';
-    }else{
+    } else {
       const yesterday = new Date(this.currentDate);
       yesterday.setDate(this.currentDate.getDate() - 1);
-      
+
       if (dateObj.getFullYear() === yesterday.getFullYear() &&
-          dateObj.getMonth() === yesterday.getMonth() &&
-          dateObj.getDate() === yesterday.getDate()) {
-          return 'Ayer';
+        dateObj.getMonth() === yesterday.getMonth() &&
+        dateObj.getDate() === yesterday.getDate()) {
+        return 'Ayer';
       }
     }
 
-    legibleDate = dateObj.getDate().toString() + ' del ' + (dateObj.getMonth() + 1).toString() +' de '+dateObj.getFullYear().toString()
+    legibleDate = dateObj.getDate().toString() + ' del ' + (dateObj.getMonth() + 1).toString() + ' de ' + dateObj.getFullYear().toString()
 
     return legibleDate;
   }
 
-  findUserIndexOnChain(user : IUser,  id : string) : number{
-    if(user.account.myChain !== undefined && user.account.myChain !== null){
+  dateAndHoursISOStringToLegible(date: string) {
+    let legibleDate = '';
+    let todayYestarday = false;
+    const dateObj = new Date(date);
+    const dateMonth = dateObj.getMonth();
+    const dateYear = dateObj.getFullYear();
+    const dateDate = dateObj.getDate();
+    const dateDay = dateObj.getDay();
+
+    const weekdays: string[] = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
+    const months : string[] = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio','julio','agosto','septiembre','octubre','noviembre','diciembre']
+
+    if (dateYear === this.currentDate.getFullYear() &&
+      dateMonth === this.currentDate.getMonth() &&
+      dateDate === this.currentDate.getDate()) {
+      legibleDate = 'Hoy a las ';
+      todayYestarday = true;
+    }
+    const yesterday = new Date(this.currentDate);
+    yesterday.setDate(this.currentDate.getDate() - 1);
+
+    if (dateYear === yesterday.getFullYear() &&
+      dateMonth === yesterday.getMonth() &&
+      dateDate === yesterday.getDate()) {
+      legibleDate = 'Ayer a las ';
+      todayYestarday = true;
+    }
+
+    const isThisWeek = this.isSameWeek(dateObj)
+
+    if(isThisWeek){
+      legibleDate = weekdays[dateDay] + ' a las '
+      todayYestarday = true;
+    }
+    
+    if(!todayYestarday){
+      let dateString = dateDate.toString()
+        let monthString = months[dateMonth]
+        if(dateDate < 10){
+          dateString = '0'+dateString
+        }
+      if (this.currentDate.getFullYear() > dateYear) {
+        legibleDate = dateString + ' de ' + monthString +' de '+ dateYear.toString() + ' a las '
+      } else {
+        legibleDate = dateString + ' de ' + monthString + ' a las ' 
+      }
+    }
+
+    let hour = dateObj.getHours()
+    let hourString = hour.toString();
+    let minutes = dateObj.getMinutes()
+    let minutesString = minutes.toString()
+    if (minutes < 10) {
+      minutesString = ':0' + minutesString
+    } else {
+      minutesString = ':' + minutesString
+    }
+
+    legibleDate = legibleDate + hourString + minutesString
+
+    return legibleDate;
+  }
+
+  isSameWeek(date: Date) {
+    const startOfWeek = (date: Date) => {
+      const day = date.getDay();
+      const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+      const start  = new Date(date.setDate(diff));
+      start.setHours(0, 0, 0, 0); 
+      return start;
+    };
+
+    const startOfThisWeek = startOfWeek(new Date(this.currentDate.getTime()));
+    const dateStartOfWeek = startOfWeek(new Date(date.getTime()));
+
+    return startOfThisWeek.getFullYear() === dateStartOfWeek.getFullYear() &&
+      startOfThisWeek.getMonth() === dateStartOfWeek.getMonth() &&
+      startOfThisWeek.getDate() === dateStartOfWeek.getDate();
+  }
+
+  findUserIndexOnChain(user: IUser, id: string): number {
+    if (user.account.myChain !== undefined && user.account.myChain !== null) {
       const index = user.account.myChain.findIndex(l => l.userid === id)
       return index;
     }
     return -1;
   }
 
-  findUserIndexOnExtendedChain(extent : IAccount[], id : string) : number{
-    if(extent !== undefined){
-      const index = extent.findIndex( l => l.userid === id);
+  findUserIndexOnExtendedChain(extent: IAccount[], id: string): number {
+    if (extent !== undefined) {
+      const index = extent.findIndex(l => l.userid === id);
       return index;
     }
     return -1;
   }
 
-  findUserIndexOnMatches(matches : IMatch[] | null, userid : string , id : string) : number{
-    if(matches !== null){
+  findUserIndexOnMatches(matches: IMatch[] | null, userid: string, id: string): number {
+    if (matches !== null) {
       const index = matches.findIndex(m => (m.userid_a === userid && m.userid_b === id) || (m.userid_a === id && m.userid_b === userid))
       return index;
     }
     return -1;
   }
-
 }

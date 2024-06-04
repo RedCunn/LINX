@@ -365,7 +365,7 @@ module.exports = {
         try {
             const _userid = req.params.userid;
             const _linxuserid = req.params.linxuserid;
-
+ 
             let _chats;
 
             if (_linxuserid === 'null') {
@@ -376,23 +376,14 @@ module.exports = {
                     ]
                 });
             } else {
-                _chats = await Chat.findOne({
+                _chats = await Chat.find({
                     $or: [
-                        { $and: [{ 'participants.userid_a': _userid, 'participants.userid_b': _linxuserid }] },
-                        { $and: [{ 'participants.userid_a': _linxuserid, 'participants.userid_b': _userid }] }
+                        { $and: [{ 'participants.userid_a': _userid},{'participants.userid_b': _linxuserid }] },
+                        { $and: [{ 'participants.userid_a': _linxuserid},{'participants.userid_b': _userid }] }
                     ]
                 });
-                _chats = _chats ? [_chats] : []
+                _chats = _chats.length > 0 ? _chats : []
             }
-
-            await Promise.all(_chats.map(async (chat) => {
-                let linxid = chat.participants.userid_a === _userid ? chat.participants.userid_b : chat.participants.userid_a;
-                let linxaccount = await Account.findOne({ userid: linxid });
-                chat.conversationname = linxaccount ? linxaccount.linxname : 'Unknown';
-            }));
-
-            console.log('CHATTISSS : : : : : : :', _chats)
-
             res.status(200).send({
                 code: 0,
                 error: null,

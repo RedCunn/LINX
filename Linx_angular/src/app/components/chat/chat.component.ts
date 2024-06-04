@@ -8,6 +8,7 @@ import { IUser } from '../../models/userprofile/IUser';
 import { RestnodeService } from '../../services/restnode.service';
 import { Subject, takeUntil } from 'rxjs';
 import { initDropdowns} from 'flowbite';
+import { UtilsService } from '../../services/utils.service';
 
 @Component({
   selector: 'app-chat',
@@ -28,6 +29,7 @@ export class ChatComponent implements OnInit, OnDestroy , AfterContentInit{
   private signalStorageSvc = inject(SignalStorageService);
   private restSvc = inject(RestnodeService);
   private socketSvc = inject(WebsocketService);
+  private utilsvc = inject(UtilsService);
 
   public chat: IChat = {conversationname:'', participants: { userid_a: '', userid_b: '' }, messages: [], roomkey: '' };
   public message: IMessage = { text: '', timestamp: '', sender: { userid: '', linxname: '' } };
@@ -55,6 +57,10 @@ export class ChatComponent implements OnInit, OnDestroy , AfterContentInit{
   setMessage(event: any) {
     this.message.text = event.target.value;
     this.message.timestamp = new Date().toISOString();
+  }
+
+  formateDate (date : string) : string{
+    return this.utilsvc.dateAndHoursISOStringToLegible(date)
   }
 
   async sendMessage() {
