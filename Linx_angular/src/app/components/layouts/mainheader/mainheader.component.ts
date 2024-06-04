@@ -35,6 +35,9 @@ export class MainheaderComponent{
     this.router.navigateByUrl('/Linx/Login');
   }
 
+  goToWelcome(){
+    this.router.navigateByUrl('/Linx');
+  }
 
 
 }

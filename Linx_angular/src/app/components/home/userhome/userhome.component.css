@@ -78,11 +78,14 @@
 .extentchain {
     display: flex;
     flex-direction: row;
+    opacity: 0.7;
 }
 
 .extentchain:hover{
-    opacity: 0.6;
+    opacity: 1;
 }
+
+
 
 /*MOBILES -------------------------*/
 
@@ -439,10 +442,6 @@ article h1 {
         margin-left: 20px;
         width: 100%;
     }
-
-    .extentchain {
-        display: none;
-    }    
     .extentchainmobile{
         display: inline-block;
         margin-left: 10px;
@@ -455,5 +454,10 @@ article h1 {
         margin-top: 10px;
         width: 100%;
         justify-self: baseline;
+        grid-row: 1;
+    }
+
+    .linxchain{
+        grid-row : 2;
     }
 }
