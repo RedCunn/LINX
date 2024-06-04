@@ -26,15 +26,15 @@ import * as CryptoJS from 'crypto-js';
   templateUrl: './userhome.component.html',
   styleUrl: './userhome.component.css'
 })
-export class UserhomeComponent implements OnInit, AfterViewInit , OnDestroy{
+export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  private socketsvc : WebsocketService = inject(WebsocketService);
+  private socketsvc: WebsocketService = inject(WebsocketService);
   private signalStoreSvc: SignalStorageService = inject(SignalStorageService);
   private restSvc: RestnodeService = inject(RestnodeService);
-  private utilsvc : UtilsService = inject(UtilsService);
-  
-  @ViewChild('chatcompoContainer', {read : ViewContainerRef, static : true}) 
-  public chatcompoContainer! : ViewContainerRef;
+  private utilsvc: UtilsService = inject(UtilsService);
+
+  @ViewChild('chatcompoContainer', { read: ViewContainerRef, static: true })
+  public chatcompoContainer!: ViewContainerRef;
 
   public isChatOpen = signal(false);
   public isArtFormOpen = signal(false);
@@ -54,33 +54,33 @@ export class UserhomeComponent implements OnInit, AfterViewInit , OnDestroy{
 
   public loadingArts = signal(false);
 
-  public currentDate : Date = new Date();
+  public currentDate: Date = new Date();
   public userdata!: IUser | null;
   public linxdata!: IAccount | null;
-  public candidateData! : IUser;
-  public cadidateAttributes : Map<string,string>  = new Map<string,string>();
-  public candidateResidency : string = '';
+  public candidateData!: IUser;
+  public cadidateAttributes: Map<string, string> = new Map<string, string>();
+  public candidateResidency: string = '';
   public chat!: IChat;
-  public articles : IArticle[] = [];
-  public article: IArticle = {articleid : '', title: '', body: '', img: '', postedOn: '', useAsProfilePic: false }
-  public extendedChain! : IAccount[];
-  public extendedChainKeys : {mylinxuserid : string, userid : string , roomkey : string}[] = [];
-  private roomkey! : string;
+  public articles: IArticle[] = [];
+  public article: IArticle = { articleid: '', title: '', body: '', img: '', postedOn: '', useAsProfilePic: false }
+  public extendedChain!: IAccount[];
+  public extendedChainKeys: { mylinxuserid: string, userid: string, roomkey: string }[] = [];
+  private roomkey!: string;
 
   public routePattern: RegExp = new RegExp("/Linx/Profile/[^/]+", "g");
-  
+
   constructor(@Inject(PLATFORM_ID) private platformId: Object, private router: Router, private ref: ChangeDetectorRef) {
-    this.userdata  = this.signalStoreSvc.RetrieveUserData()();
+    this.userdata = this.signalStoreSvc.RetrieveUserData()();
     const routePatternMatch$ = new BehaviorSubject<string | null>(null);
     this.router.events.subscribe((event: Event) => {
       if (event instanceof NavigationStart || event instanceof NavigationEnd) {
         let signalcandidate = this.signalStoreSvc.RetrieveCandidateData()();
-        if(signalcandidate !== null){
+        if (signalcandidate !== null) {
           this.candidateData = this.signalStoreSvc.RetrieveCandidateData()()!;
           this.isCandidate.set(true);
           this.cadidateAttributes = this.utilsvc.mapCandidateProfileDataToLegible(this.candidateData);
           this.getPlaceDetail()
-        }else{
+        } else {
           this.isCandidate.set(false);
           this.articles = [];
           this.linxdata = this.signalStoreSvc.RetrieveLinxData()();
@@ -91,39 +91,39 @@ export class UserhomeComponent implements OnInit, AfterViewInit , OnDestroy{
           routePatternMatch$.next(event.url);
         } else {
           routePatternMatch$.next(null);
-        } 
+        }
       }
     })
 
     routePatternMatch$
-    .pipe(distinctUntilChanged())
-    .subscribe((url) => {
-      if (url) {
-        this.showAlert('all', false);
-        this.isUser.set(false);
-        this.isChained.set(this.isLinx());
-        this.loadChatComponent();
-        if(this.isLinx()){
-          this.getExtendedChain(this.linxdata!);
-          this.isMyChain.set(false);
-        }else{
-          this.isMyChain.set(true);
+      .pipe(distinctUntilChanged())
+      .subscribe((url) => {
+        if (url) {
+          this.showAlert('all', false);
+          this.isUser.set(false);
+          this.isChained.set(this.isLinx());
+          this.loadChatComponent();
+          if (this.isLinx()) {
+            this.getExtendedChain(this.linxdata!);
+            this.isMyChain.set(false);
+          } else {
+            this.isMyChain.set(true);
+          }
+        } else {
+          this.isUser.set(true);
         }
-      } else {
-        this.isUser.set(true);
-      }
-    });
+      });
 
   }
   //#region ----------------- SET UP ----------------------------------------
 
-  async getPlaceDetail (){
+  async getPlaceDetail() {
     try {
       const res = await this.restSvc.getPlaceDetails(this.candidateData.geolocation.city_id);
-      if(res.code === 0){
+      if (res.code === 0) {
         const addrComponents = res.others.address_components;
-        this.candidateResidency = addrComponents[1].long_name+' , ' + addrComponents[2].long_name;
-      }else{
+        this.candidateResidency = addrComponents[1].long_name + ' , ' + addrComponents[2].long_name;
+      } else {
         console.log('RES DE GOOGLE : ', res.error)
       }
     } catch (error) {
@@ -131,7 +131,7 @@ export class UserhomeComponent implements OnInit, AfterViewInit , OnDestroy{
     }
   }
 
-  async loadChatComponent () {
+  async loadChatComponent() {
     const viewContainerRef = this.chatcompoContainer;
     viewContainerRef.clear();
     await this.setChat();
@@ -140,21 +140,22 @@ export class UserhomeComponent implements OnInit, AfterViewInit , OnDestroy{
     comporef.setInput('chatRef', this.chat);
   }
 
-  async setChat(){
+  async setChat() {
     this.roomkey = this.setRoomKey();
     console.log('chat setting roomkey : ', this.roomkey)
-    this.chat = {conversationname:this.linxdata?.linxname!, participants : {userid_a : this.userdata?.userid! , userid_b : this.linxdata?.userid!}, roomkey : this.roomkey, messages : []}
+    this.chat = { conversationname: this.linxdata?.linxname!, participants: { userid_a: this.userdata?.userid!, userid_b: this.linxdata?.userid! }, roomkey: this.roomkey, messages: [] }
+    console.log('chat setting chat at home : ', this.chat)
     try {
-      const res = await this.restSvc.getMyChats( this.userdata?.userid!, this.linxdata?.userid!);
+      const res = await this.restSvc.getMyChats(this.userdata?.userid!, this.linxdata?.userid!);
       console.log('GET MY CHATS RESPONSE on setchat userhome: ', res)
-      if(res.code === 0){
-        const _resMess : IChat[] = res.others ; 
-        let chatSearch = _resMess.find( chat =>( chat.participants.userid_a === this.linxdata?.userid! || chat.participants.userid_b === this.linxdata?.userid!));
+      if (res.code === 0) {
+        const _resMess: IChat[] = res.others;
+        let chatSearch = _resMess.find(chat => (chat.participants.userid_a === this.linxdata?.userid! || chat.participants.userid_b === this.linxdata?.userid!));
         this.chat.messages = [];
-        if(chatSearch){
-          chatSearch?.messages.forEach( m => {this.chat.messages.push(m)});
+        if (chatSearch) {
+          chatSearch?.messages.forEach(m => { this.chat.messages.push(m) });
         }
-      }else{
+      } else {
         console.log('error recuperando chat...', res.message)
       }
     } catch (error) {
@@ -162,40 +163,46 @@ export class UserhomeComponent implements OnInit, AfterViewInit , OnDestroy{
     }
   }
 
-  setRoomKey() : string {
+  setRoomKey(): string {
     let _roomkey = '';
     const storedrooms = this.signalStoreSvc.RetrieveRoomKeys()();
     let searchIndex;
     console.log('LINUSERID SETROOMKEY-home : ', this.linxdata?.userid)
 
-    searchIndex = this.userdata?.account.myChain?.findIndex(l => l.userid === this.linxdata?.userid)
+    /* SEARCH ON MY CHAIN*/
+    searchIndex = this.utilsvc.findUserIndexOnChain(this.userdata!, this.linxdata?.userid!);
     console.log('1º index : ', searchIndex)
-    if(searchIndex !== -1 ){
+    if (searchIndex !== -1) {
       _roomkey = this.userdata?.account.myChain?.at(searchIndex!)?.roomkey!
-    }else{
-      searchIndex = this.extendedChain.findIndex( l => l.userid === this.linxdata?.userid);
-      console.log('2º index : ', searchIndex)
-      if(searchIndex !== -1){
-        if(storedrooms.get(this.linxdata?.userid!) === undefined){
-          console.log('NO HAY LLAVE EN SETROOMKEY HOME ')
-          _roomkey = this.generateTempRoomkey();
-          const room = new Map<string,string>();
-          room.set(this.linxdata?.userid!, _roomkey);
-          this.utilsvc.joinRooms(room);
-          this.socketsvc.requestInitChat(this.linxdata?.userid!, this.userdata?.userid!, _roomkey);
-        }else{
-          _roomkey = storedrooms.get(this.linxdata?.userid!)!;
-          console.log('>>>>> HAY LLAVE EN SETROOMKEY HOME ', _roomkey)
-        }
-        
-      }else{
-        let _matches = this.signalStoreSvc.RetrieveMatches();
-        searchIndex = _matches().findIndex(m => (m.userid_a === this.userdata?.userid && m.userid_b === this.linxdata?.userid) || (m.userid_a === this.linxdata?.userid && m.userid_b === this.userdata?.userid))
-        _roomkey = _matches().at(searchIndex)?.roomkey!;
-      }
+      return _roomkey;
     }
+    /* SEARCH ON MY MATCHES*/
+    let _matches = this.signalStoreSvc.RetrieveMatches();
+    searchIndex = this.utilsvc.findUserIndexOnMatches(_matches(), this.userdata?.userid!, this.linxdata?.userid!)
+    console.log('2º index : ', searchIndex)
+    if(searchIndex !== -1){
+      _roomkey = _matches().at(searchIndex)?.roomkey!;
+      return _roomkey;
+    }
+    /* SEARCH ON MY EXTENDED CHAIN*/
+    searchIndex = this.utilsvc.findUserIndexOnExtendedChain(this.extendedChain, this.linxdata?.userid!)
+    console.log('3º index : ', searchIndex)
+    if (searchIndex !== -1) {
 
-    return _roomkey; 
+      /* CHECK IF THERE'S ONE KEY ALREADY STORED*/
+      if (storedrooms.get(this.linxdata?.userid!) === undefined) {
+        console.log('>>>>> NO HAY LLAVE EN SETROOMKEY HOME ')
+        _roomkey = this.generateTempRoomkey();
+        const room = new Map<string, string>();
+        room.set(this.linxdata?.userid!, _roomkey);
+        this.utilsvc.joinRooms(room);
+        this.socketsvc.requestInitChat(this.linxdata?.userid!, this.userdata?.userid!, _roomkey);
+      } else {
+        _roomkey = storedrooms.get(this.linxdata?.userid!)!;
+        console.log('>>>>> HAY LLAVE EN SETROOMKEY HOME ', _roomkey)
+      }
+    } 
+    return _roomkey;
   }
   generateTempRoomkey() {
     const randomBytes = CryptoJS.lib.WordArray.random(8);
@@ -207,12 +214,12 @@ export class UserhomeComponent implements OnInit, AfterViewInit , OnDestroy{
     return onChain !== undefined;
   }
 
-  async getExtendedChain(linxdata : IAccount) {
+  async getExtendedChain(linxdata: IAccount) {
     try {
       const res = await this.restSvc.getMyChain(linxdata.userid);
       if (res.code === 0) {
-        const extaccounts : IAccount[] = res.others as IAccount[];
-        const extarticles : IArticle[] = res.userdata as IArticle[];
+        const extaccounts: IAccount[] = res.others as IAccount[];
+        const extarticles: IArticle[] = res.userdata as IArticle[];
         const extAccountsButMe = extaccounts.filter(acc => acc.userid !== this.userdata?.userid)
         this.extendedChain = this.utilsvc.putArticleObjectsIntoAccounts(extAccountsButMe, extarticles);
         console.log('EXTENDED CHAIN --------------userhome : ', this.extendedChain);
@@ -240,30 +247,30 @@ export class UserhomeComponent implements OnInit, AfterViewInit , OnDestroy{
     }
   }
 
-//#endregion -----------------------------------------------------------------
-  
+  //#endregion -----------------------------------------------------------------
+
   toggleChatModal() {
     this.isChatOpen.update(v => !v);
   }
 
-  toggleArtFormModal(article : IArticle | null) {
-    if(article !== null){
+  toggleArtFormModal(article: IArticle | null) {
+    if (article !== null) {
       this.article = article
-    }else{
-      this.article = {title: '', body: '', img: '', postedOn: '', useAsProfilePic: false }
+    } else {
+      this.article = { title: '', body: '', img: '', postedOn: '', useAsProfilePic: false }
     }
     this.isArtFormOpen.update(v => !v);
   }
 
-  toggleChainModal(){
+  toggleChainModal() {
     this.isMyChain.set(false);
     this.isChainOpen.update(v => !v);
   }
 
-  showAlert(alert : string, isOpen : boolean) {
+  showAlert(alert: string, isOpen: boolean) {
     switch (alert) {
       case "breakchain":
-        this.showBreakChainAlert.set(isOpen);   
+        this.showBreakChainAlert.set(isOpen);
         break;
       case "requestchain":
         this.showJoinChainRequested.set(isOpen);
@@ -274,29 +281,29 @@ export class UserhomeComponent implements OnInit, AfterViewInit , OnDestroy{
       case "all":
         this.showChainBeingRequested.set(false);
         this.showJoinChainRequested.set(false);
-        this.showBreakChainAlert.set(false);  
+        this.showBreakChainAlert.set(false);
         this.isChainBeingRequested.set(false);
-        this.isChainRequested.set(false); 
+        this.isChainRequested.set(false);
         break;
       default:
         break;
     }
   }
-  
+
   async requestJoinChain() {
     try {
       const res = await this.restSvc.requestJoinChain(this.userdata!.userid!, this.linxdata!.userid!)
       if (res.code === 0) {
-        if(res.message === 'REQUESTING'){
+        if (res.message === 'REQUESTING') {
           this.showJoinChainRequested.set(false);
           this.isChainRequested.set(true);
           this.isChained.set(false);
-        }else{
+        } else {
           this.showAlert('all', false);
           this.isChained.set(true);
           this.socketsvc.linxchain(this.linxdata?.userid!, this.userdata?.userid!, this.userdata?.account!, this.linxdata!)
           const res = await this.getMyChain(this.userdata!)
-          
+
         }
       } else {
         console.log(`${this.userdata?.account.linxname} and ${this.linxdata?.linxname} couldnt chain...`)
@@ -306,16 +313,16 @@ export class UserhomeComponent implements OnInit, AfterViewInit , OnDestroy{
     }
   }
 
-  async rejectJoinReq(){
+  async rejectJoinReq() {
     try {
       const res = await this.restSvc.rejectJoinChainRequest(this.userdata?.userid!, this.linxdata?.userid!)
-      if(res.code === 0){
+      if (res.code === 0) {
         this.isChainBeingRequested.set(false);
-      }else{
+      } else {
         console.log('Error rejecting join request....', res.message)
       }
     } catch (error) {
-      console.log('Error rejecting join request....',error)    
+      console.log('Error rejecting join request....', error)
     }
   }
 
@@ -332,7 +339,7 @@ export class UserhomeComponent implements OnInit, AfterViewInit , OnDestroy{
     }
   }
 
-  onArticleChange(newArts : IArticle[]){
+  onArticleChange(newArts: IArticle[]) {
     console.log('NEW ARTsss ON HOME : ', newArts)
     this.loadingArts.set(true);
     this.articles = newArts;
@@ -340,7 +347,7 @@ export class UserhomeComponent implements OnInit, AfterViewInit , OnDestroy{
     this.loadingArts.set(false);
   }
 
-  formatDate(postedon : string) : string{
+  formatDate(postedon: string): string {
     return this.utilsvc.formatDateISOStringToLegible(postedon)
   }
 
@@ -348,34 +355,34 @@ export class UserhomeComponent implements OnInit, AfterViewInit , OnDestroy{
     if (isPlatformBrowser(this.platformId)) {
       initFlowbite();
     }
-    
+
     try {
       //aquí me interesan las accounts a las que yo se lo he pedido
       const res = await this.restSvc.getJoinChainRequests(this.userdata!.userid);
       if (res.code === 0) {
-        const joinRequests : {requestingUserid : string , requestedUserid : string , requestedAt : Date}[]= res.userdata.reqs;
-        const joinRequestings : {requestingUserid : string , requestedUserid : string , requestedAt : Date}[]= res.others.reqs;
+        const joinRequests: { requestingUserid: string, requestedUserid: string, requestedAt: Date }[] = res.userdata.reqs;
+        const joinRequestings: { requestingUserid: string, requestedUserid: string, requestedAt: Date }[] = res.others.reqs;
 
-        if(joinRequests.length > 0){
+        if (joinRequests.length > 0) {
           let reqIndex = joinRequests.findIndex(req => req.requestedUserid === this.linxdata?.userid)
-          if(reqIndex !== -1){
+          if (reqIndex !== -1) {
             this.isChainRequested.set(true)
-          }else{
+          } else {
             this.isChainRequested.set(false)
           }
 
-        }else{
+        } else {
           this.isChainRequested.set(false)
         }
 
-        if(joinRequestings.length > 0){
+        if (joinRequestings.length > 0) {
           let reqIndex = joinRequestings.findIndex(req => req.requestedUserid === this.userdata?.userid)
-          if(reqIndex !== -1){
+          if (reqIndex !== -1) {
             this.isChainBeingRequested.set(true)
-          }else{
+          } else {
             this.isChainBeingRequested.set(false)
           }
-        }else{
+        } else {
           this.isChainBeingRequested.set(false)
         }
 
@@ -387,19 +394,19 @@ export class UserhomeComponent implements OnInit, AfterViewInit , OnDestroy{
     }
   }
 
-  loadProfileArticles (){
+  loadProfileArticles() {
 
-    let sortedArticles : IArticle []= [];
+    let sortedArticles: IArticle[] = [];
     this.articles = [];
 
-    if(this.isCandidate()){
+    if (this.isCandidate()) {
       sortedArticles = this.utilsvc.sortArticlesDateDESC(this.candidateData.account.articles !== undefined ? this.candidateData.account.articles! : [])
       console.log('AFTER VIEW INIT CANDI ARTICLES : ', this.articles)
-    }else{
-      if(this.isUser()){
-      sortedArticles = this.utilsvc.sortArticlesDateDESC(this.userdata?.account.articles !== undefined ? this.userdata?.account.articles : [] )
-      console.log('AFTER VIEW INIT USER ARTICLES : ', this.articles)
-      }else{
+    } else {
+      if (this.isUser()) {
+        sortedArticles = this.utilsvc.sortArticlesDateDESC(this.userdata?.account.articles !== undefined ? this.userdata?.account.articles : [])
+        console.log('AFTER VIEW INIT USER ARTICLES : ', this.articles)
+      } else {
         sortedArticles = this.utilsvc.sortArticlesDateDESC(this.linxdata?.articles !== undefined ? this.linxdata.articles! : [])
         console.log('AFTER VIEW INIT LINX/MATCH ARTICLES : ', this.articles)
       }

@@ -4,6 +4,7 @@ import { IArticle } from '../models/useraccount/IArticle';
 import { WebsocketService } from './websocket.service';
 import { SignalStorageService } from './signal-storage.service';
 import { IUser } from '../models/userprofile/IUser';
+import { IMatch } from '../models/userprofile/IMatch';
 
 @Injectable({
   providedIn: 'root'
@@ -196,4 +197,29 @@ export class UtilsService {
 
     return legibleDate;
   }
+
+  findUserIndexOnChain(user : IUser,  id : string) : number{
+    if(user.account.myChain !== undefined){
+      const index = user.account.myChain.findIndex(l => l.userid === id)
+      return index;
+    }
+    return -1;
+  }
+
+  findUserIndexOnExtendedChain(extent : IAccount[], id : string) : number{
+    if(extent !== undefined){
+      const index = extent.findIndex( l => l.userid === id);
+      return index;
+    }
+    return -1;
+  }
+
+  findUserIndexOnMatches(matches : IMatch[] , userid : string , id : string) : number{
+    if(matches !== undefined){
+      const index = matches.findIndex(m => (m.userid_a === userid && m.userid_b === id) || (m.userid_a === id && m.userid_b === userid))
+      return index;
+    }
+    return -1;
+  }
+
 }
