@@ -28,7 +28,8 @@ export interface IStorageService {
     StoreMatchesAccounts (matches : IAccount[] | null) : void;
     RetrieveMatchesAccounts () : WritableSignal<IAccount[] | null>;
 
-    StoreRoomKeys (userRoom : {userid : string , roomkey : string}) : void;
+    StoreRoomKeys (rooms : Map<string,string>) : void ;
+    StoreRoomKey (userRoom : {userid : string , roomkey : string}) : void;
     RetrieveRoomKeys () : WritableSignal<Map<string,string> | null>;
 
     StoreCandidateIndex (index : number) : void;

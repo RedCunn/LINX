@@ -48,9 +48,8 @@ export class AppComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe(data => {
       console.log('chat requests on app compo : ', data)
-      const room = new Map<string,string>();
-      room.set(data.userid , data.roomkey)
-      this.utilsvc.joinRooms(room);
+      const room = {userid : data.userid , roomkey : data.roomkey};
+      this.utilsvc.joinRoom(room);
     });
   }
 

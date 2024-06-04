@@ -108,7 +108,9 @@ module.exports = {
             })
             let _requestedAccounts = await Account.find({ userid: { $in: _requestedIDs } });
 
-            let requestingAccounts = {accounts : _requestingAccounts, reqs : _chainReqsUserRequested};
+            let _requestingAccountsArticles = await Article.find({userid : {$in : _requestingIDs} })
+
+            let requestingAccounts = {accounts : _requestingAccounts, reqs : _chainReqsUserRequested, articles : _requestingAccountsArticles};
             let requestedAccounts = {accounts : _requestedAccounts, reqs: _chainReqsUserRequesting};
 
             res.status(200).send({

@@ -19,7 +19,6 @@
 </div>
 <div class="homecontainer">
 
-  <!--PERFIL | AVISOS | REPORTES || CHAT | LINX'S CHAIN-->
   @if(isUser()){
   <div class="leftSideLinks">
     <div>
@@ -84,7 +83,7 @@
         </button>
         <div id="tooltip-animation-2" role="tooltip"
           class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-extralight text-fuchsia-600 transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip ">
-          {{ (isChainRequested() || isChainBeingRequested()) ? "" : "Unir a tu cadena"}}
+           Unir a tu cadena
         </div>
       </div>
       }
@@ -166,7 +165,7 @@
         </div>
       </div>
       }
-      @if(isChainRequested()){
+      @if(isChainRequested() && !isUser()){
       <div class="joinalert">
         <h3>Hemos enviado tu solicitud a {{this.linxdata?.linxname}} ... 🤞</h3>
       </div>

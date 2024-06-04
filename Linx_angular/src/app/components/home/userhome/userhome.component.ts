@@ -144,10 +144,10 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async setChat() {
     this.roomkey = this.setRoomKey();
-    console.log('chat setting roomkey : ', this.roomkey)
     this.chat = { conversationname: this.linxdata?.linxname!, participants: { userid_a: this.userdata?.userid!, userid_b: this.linxdata?.userid! }, roomkey: this.roomkey, messages: [] }
     try {
       const res = await this.restSvc.getMyChats(this.userdata?.userid!, this.linxdata?.userid!);
+      console.log('RESPONSE GETTING CHATS HOME : ', res)
       if (res.code === 0) {
         const _resMess: IChat[] = res.others;
         this.chat.messages = [];
@@ -195,9 +195,8 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy {
       if (storedrooms!.get(this.linxdata?.userid!) === undefined) {
         console.log('>>>>> NO HAY LLAVE EN SETROOMKEY HOME ')
         _roomkey = this.generateTempRoomkey();
-        const room = new Map<string, string>();
-        room.set(this.linxdata?.userid!, _roomkey);
-        this.utilsvc.joinRooms(room);
+        const room = {userid : this.linxdata?.userid!, roomkey : _roomkey}
+        this.utilsvc.joinRoom(room);
         this.socketsvc.requestInitChat(this.linxdata?.userid!, this.userdata?.userid!, _roomkey);
       } else {
         _roomkey = storedrooms!.get(this.linxdata?.userid!)!;

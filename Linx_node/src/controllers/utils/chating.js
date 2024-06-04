@@ -1,4 +1,3 @@
-const mongoose = require('mongoose');
 const Chat = require('../../schemas/Chat');
 
 module.exports = {

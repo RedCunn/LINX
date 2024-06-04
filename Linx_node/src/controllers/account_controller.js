@@ -365,8 +365,7 @@ module.exports = {
         try {
             const _userid = req.params.userid;
             const _linxuserid = req.params.linxuserid;
- 
-            let _chats;
+            let _chats = [];
 
             if (_linxuserid === 'null') {
                 _chats = await Chat.find({
@@ -382,7 +381,6 @@ module.exports = {
                         { $and: [{ 'participants.userid_a': _linxuserid},{'participants.userid_b': _userid }] }
                     ]
                 });
-                _chats = _chats.length > 0 ? _chats : []
             }
             res.status(200).send({
                 code: 0,

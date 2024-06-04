@@ -9,6 +9,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { IInteraction } from '../../models/userprofile/IInteraction';
 import { IEvent } from '../../models/useraccount/IEvent';
 import { IArticle } from '../../models/useraccount/IArticle';
+import { UtilsService } from '../../services/utils.service';
 
 @Component({
   selector: 'app-interactions',
@@ -28,6 +29,7 @@ export class InteractionsComponent implements OnInit, OnDestroy {
   private restSvc = inject(RestnodeService);
   private signalStorageSvc = inject(SignalStorageService);
   private websocketsvc = inject(WebsocketService);
+  private utilsvc = inject(UtilsService);
   private router = inject(Router);
 
   private _user!: IUser | null;
@@ -124,8 +126,9 @@ export class InteractionsComponent implements OnInit, OnDestroy {
       if(res.code === 0){
         const requestingaccounts = res.others.accounts;
         const chainreques = res.others.reqs;
+        const articles = res.others.articles;
         console.log('JOIN REQS : ', res.userdata)
-        return {accounts : requestingaccounts , requests : chainreques};
+        return {accounts : requestingaccounts , requests : chainreques , articles : articles};
       }else{
         console.log('interactions JOINCHAIN REQS never found...', res.message)
         return null;
@@ -162,10 +165,15 @@ export class InteractionsComponent implements OnInit, OnDestroy {
         this.interactions.matchingAccount!.push(element);
       });
     }
+
     const joinchainreq = await this.getJoinChainRequests();
     const reqaccounts : IAccount[]= joinchainreq?.accounts!;
+    const accountsarticles : IArticle[] = joinchainreq?.articles;
+    const wholeRequestingAccounts = this.utilsvc.putArticleObjectsIntoAccounts(reqaccounts , accountsarticles)
+    
     this.joinChainReqs = joinchainreq?.requests;
-    reqaccounts.forEach(element => {
+
+    wholeRequestingAccounts.forEach(element => {
       let dateOfReq = this.joinChainReqs
         .filter(r => r.requestingUserid === element.userid)
         .map(r => r.requestedAt)[0]; 

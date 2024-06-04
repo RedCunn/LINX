@@ -5,6 +5,7 @@ import { WebsocketService } from './websocket.service';
 import { SignalStorageService } from './signal-storage.service';
 import { IUser } from '../models/userprofile/IUser';
 import { IMatch } from '../models/userprofile/IMatch';
+import { IInteraction } from '../models/userprofile/IInteraction';
 
 @Injectable({
   providedIn: 'root'
@@ -43,19 +44,17 @@ export class UtilsService {
     return wholeAccounts;
   }
 
-  public joinRooms(userRooms: Map<string, string>): void {
+  public joinRoom (room :{userid : string , roomkey : string}){
     const storedkeys = new Map<string, string>(this.signalSvc.RetrieveRoomKeys()());
-    const roomkeysToJoin = new Map<string, string>();
+    storedkeys.set(room.userid , room.roomkey);
+    this.signalSvc.StoreRoomKey(room)
+  }
 
+  public joinRooms(userRooms: Map<string, string>): void {
     for (const [key, value] of userRooms) {
-      if (storedkeys.get(key) === undefined) {
-        roomkeysToJoin.set(key, value);
-        this.signalSvc.StoreRoomKeys({ userid: key, roomkey: value })
-      }
-    }
-    for (const [key, value] of roomkeysToJoin) {
       this.socketSvc.initChat(value);
     }
+    this.signalSvc.StoreRoomKeys(userRooms);
   }
 
   public integrateAccountsIntoUsers(accounts: IAccount[], users: IUser[]): IUser[] {
@@ -173,6 +172,10 @@ export class UtilsService {
     return sortedArticles;
   }
 
+  sortInteractionsDateDESC(interactions : IInteraction[]){
+    
+  }
+
   formatDateISOStringToLegible(date: string) {
 
     let legibleDate = '';
@@ -228,12 +231,11 @@ export class UtilsService {
 
     const isThisWeek = this.isSameWeek(dateObj)
 
-    if(isThisWeek){
+    if(isThisWeek && !todayYestarday){
       legibleDate = weekdays[dateDay] + ' a las '
-      todayYestarday = true;
     }
     
-    if(!todayYestarday){
+    if(!todayYestarday && !isThisWeek){
       let dateString = dateDate.toString()
         let monthString = months[dateMonth]
         if(dateDate < 10){

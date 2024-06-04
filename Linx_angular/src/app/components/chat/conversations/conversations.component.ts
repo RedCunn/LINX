@@ -35,20 +35,22 @@ export class ConversationsComponent implements OnInit{
   loadChat(){
     console.log('hola 👹')
   }
-
-  async ngOnInit(): Promise<void> {
-
-   try {
-    this._user = this.signalStorageSvc.RetrieveUserData()()!;
-    const res = await this.restSvc.getMyChats( this._user?.userid!, null);
-    if(res.code === 0){
-      this.chats = res.others as IChat[]; 
-      console.log('CHATS RECUPERADOS EN CONVERSACIONES ....', this.chats)
-    }else{
-      console.log('ERROR ON RETRIEVING CHATS ON CONVERCOMPO ; ', res.error)
-    }
-   } catch (error) {
-    console.log('ERROR ON RETRIEVING CHATS ON CONVERCOMPO ; ', error)
-   } 
+  ngOnInit(){
+    
   }
+  // async ngOnInit(): Promise<void> {
+
+  //  try {
+  //   this._user = this.signalStorageSvc.RetrieveUserData()()!;
+  //   const res = await this.restSvc.getMyChats( this._user?.userid!, null);
+  //   if(res.code === 0){
+  //     this.chats = res.others as IChat[]; 
+  //     console.log('CHATS RECUPERADOS EN CONVERSACIONES ....', this.chats)
+  //   }else{
+  //     console.log('ERROR ON RETRIEVING CHATS ON CONVERCOMPO ; ', res.error)
+  //   }
+  //  } catch (error) {
+  //   console.log('ERROR ON RETRIEVING CHATS ON CONVERCOMPO ; ', error)
+  //  } 
+  // }
 }

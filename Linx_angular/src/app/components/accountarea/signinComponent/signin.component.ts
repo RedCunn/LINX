@@ -88,20 +88,6 @@ export class SigninComponent {
 
   async Signin(loginForm: NgForm) {
 
-    // if (loginForm.control.get('emailorlinxname')?.status !== 'VALID') {
-    //   this.renderer.setAttribute(this.emailorlinxname.nativeElement, 'style', 'background-color: pink');
-    //   return;
-    // } else {
-    //   this.renderer.setAttribute(this.emailorlinxname.nativeElement, 'style', 'background-color : lightblue');
-    // }
-
-    // if (loginForm.control.get('password')?.status !== 'VALID') {
-    //   this.renderer.setAttribute(this.password.nativeElement, 'style', 'background-color: pink');
-    //   return;
-    // } else {
-    //   this.renderer.setAttribute(this.password.nativeElement, 'style', 'background-color: lightblue');
-    // }
-
     const _response: IRestMessage = await this.restSvc.signin({ emailorlinxname: loginForm.control.get('emailorlinxname')?.value, password: loginForm.control.get('password')?.value });
 
     if (_response.code === 0) {

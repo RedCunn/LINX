@@ -37,7 +37,11 @@ export class SignalStorageService implements IStorageService{
   RetrieveCandidateData(): WritableSignal<IUser | null> {
     return this._candidatesignal;
   }
-  StoreRoomKeys(userRoom : {userid : string , roomkey : string}): void {
+  StoreRoomKeys (rooms : Map<string,string>): void {
+    this._roomkeyssignal.set(rooms);
+  }
+
+  StoreRoomKey(userRoom : {userid : string , roomkey : string}): void {
     let keymap = this._roomkeyssignal();
     if(keymap === null){
       keymap = new Map<string,string>();
