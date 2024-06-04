@@ -54,29 +54,29 @@ module.exports = {
             })
         }
     },
-    getPlaceDetails : async (req, res, next) => {
+    getPlaceDetails: async (req, res, next) => {
         try {
-          const city_id = req.params.cityid;  
-          const addrComponents = await places.placeDetails(city_id);
+            const city_id = req.params.cityid;
+            const addrComponents = await places.placeDetails(city_id);
 
-          res.status(200).send({
-            code: 0,
-            error: null,
-            message: 'Trackeada localizacion user por Google Places',
-            token: null,
-            userData: null,
-            others: addrComponents
-        })
+            res.status(200).send({
+                code: 0,
+                error: null,
+                message: 'Trackeada localizacion user por Google Places',
+                token: null,
+                userData: null,
+                others: addrComponents
+            })
         } catch (error) {
-         
-         res.status(400).send({
-            code: 1,
-            error: error.message,
-            message: 'error al trackear localizacion por Google Places',
-            token: null,
-            userData: null,
-            others: null
-        })
+
+            res.status(400).send({
+                code: 1,
+                error: error.message,
+                message: 'error al trackear localizacion por Google Places',
+                token: null,
+                userData: null,
+                others: null
+            })
         }
     },
     signup: async (req, res, next) => {
@@ -211,7 +211,7 @@ module.exports = {
                 let _userProfQuery = await User.findOne({ userid: _account.userid });
                 let _userProf = _userProfQuery.toObject();
                 let userData = { ..._userProf, accountid: _account._id, account: _account };
-                let accountArticles = await Article.find({userid : _account.userid})
+                let accountArticles = await Article.find({ userid: _account.userid })
 
                 let _jwt = jwt.sign(
                     {
@@ -249,12 +249,12 @@ module.exports = {
             })
         }
     },
-    authenticate : async (req, res, next) => {
+    authenticate: async (req, res, next) => {
         try {
             const userid = req.params
             const { password } = req.body;
 
-            let _account = await Account.findOne({ userid : userid})
+            let _account = await Account.findOne({ userid: userid })
             if (bcrypt.compareSync(password, _account.password)) {
                 res.status(200).send({
                     code: 0,
@@ -264,7 +264,7 @@ module.exports = {
                     userdata: null,
                     others: null
                 })
-            }else{
+            } else {
                 res.status(200).send({
                     code: 1,
                     error: null,
@@ -289,9 +289,9 @@ module.exports = {
         try {
             const userid = req.params
             const { password } = req.body;
-            let _account = await Account.updateOne({ userid : userid},{password : bcrypt.hashSync(password, 10)});
+            let _account = await Account.updateOne({ userid: userid }, { password: bcrypt.hashSync(password, 10) });
 
-            console.log('UPDATE ACCOUNT result changing PWD : ',_account)
+            console.log('UPDATE ACCOUNT result changing PWD : ', _account)
 
             res.status(200).send({
                 code: 0,
@@ -323,21 +323,24 @@ module.exports = {
         try {
             const userid = req.params
             const currentDate = new Date();
-            let account = await Account.findOne({userid : userid})
+            let account = await Account.findOne({ userid: userid })
             account.active = false;
             account.save();
 
-            let insertJob = await Job.create({refid : userid, 
-                                              task : "delete_account", 
-                                              status : "pending", 
-                                              createdAt : currentDate.toISOString(),
-                                              payload : {refid: userid , 
-                                                         subject : "Cuenta LINX", 
-                                                         address : account.email, 
-                                                         message : `${account.linxname} tu cuenta y todos tus datos han sido eliminados definitivamente de las bases de datos de LINX. Gracias por los momentos compartidos...lo hemos pasado bien juntxs.`}
-                                            })
+            let insertJob = await Job.create({
+                refid: userid,
+                task: "delete_account",
+                status: "pending",
+                createdAt: currentDate.toISOString(),
+                payload: {
+                    refid: userid,
+                    subject: "Cuenta LINX",
+                    address: account.email,
+                    message: `${account.linxname} tu cuenta y todos tus datos han sido eliminados definitivamente de las bases de datos de LINX. Gracias por los momentos compartidos...lo hemos pasado bien juntxs.`
+                }
+            })
 
-            console.log('JOB INSERT RESULT : ',insertJob)
+            console.log('JOB INSERT RESULT : ', insertJob)
 
             res.status(200).send({
                 code: 0,
@@ -362,7 +365,7 @@ module.exports = {
         try {
             const _userid = req.params.userid;
             const _linxuserid = req.params.linxuserid;
-            
+
             let _chats;
 
             if (_linxuserid === 'null') {
@@ -373,12 +376,12 @@ module.exports = {
                     ]
                 });
             } else {
-                _chats = await Chat.findOne({ 
-                    $or : [
-                            {$and : [{'participants.userid_a': _userid, 'participants.userid_b': _linxuserid }]},
-                            {$and : [{'participants.userid_a': _linxuserid , 'participants.userid_b':  _userid}]}
+                _chats = await Chat.findOne({
+                    $or: [
+                        { $and: [{ 'participants.userid_a': _userid, 'participants.userid_b': _linxuserid }] },
+                        { $and: [{ 'participants.userid_a': _linxuserid, 'participants.userid_b': _userid }] }
                     ]
-                 });
+                });
                 _chats = _chats ? [_chats] : []
             }
 
@@ -387,7 +390,7 @@ module.exports = {
                 let linxaccount = await Account.findOne({ userid: linxid });
                 chat.conversationname = linxaccount ? linxaccount.linxname : 'Unknown';
             }));
-        
+
             console.log('CHATTISSS : : : : : : :', _chats)
 
             res.status(200).send({
@@ -437,19 +440,19 @@ module.exports = {
     newArticle: async (req, res, next) => {
         try {
             const _userid = req.params.userid;
-            const { title, body, postedOn, useAsProfilePic, articleid} = req.body;
-            let insertArticle; 
+            const { title, body, postedOn, useAsProfilePic, articleid } = req.body;
+            let insertArticle;
             let filePath = '';
             console.log('VALOR DE REQ BODY NEW ART-------', req.body)
             if (req.file) {
                 console.log('REQ FILE entry: ', req.file)
-                filePath = _userid+'/'+req.file.originalname;
+                filePath = _userid + '/' + req.file.originalname;
                 console.log('VALOR DE REQ FILE ORIGINALNAME-------', req.file.originalname)
-                insertArticle = await Article.create({userid : _userid, articleid , postedOn, useAsProfilePic, title , body, img : filePath})
+                insertArticle = await Article.create({ userid: _userid, articleid, postedOn, useAsProfilePic, title, body, img: filePath })
             } else {
-                insertArticle = await Article.create({userid : _userid, articleid , postedOn, useAsProfilePic, title , body})
+                insertArticle = await Article.create({ userid: _userid, articleid, postedOn, useAsProfilePic, title, body })
             }
-            let insertArticleRef = await Account.updateOne({userid : _userid},{$push : {articles : insertArticle.articleid}})
+            let insertArticleRef = await Account.updateOne({ userid: _userid }, { $push: { articles: insertArticle.articleid } })
 
             console.log('INSERT RESULT ', insertArticle);
             console.log('INSERT REF ART ON ACC ', insertArticleRef);
@@ -479,16 +482,21 @@ module.exports = {
             const _userid = req.params.userid;
             const _artid = req.params.artid;
             const { title, body, postedOn, useAsProfilePic } = req.body;
+            console.log('BODY EN EDIT ART : ', req.body)
             let updateArticle;
             let filePath = '';
-            if(req.file){
-                filePath = _userid+'/'+req.file.originalname;
+            if (req.file) {
+                filePath = _userid + '/' + req.file.originalname;
                 updateArticle = await Article.updateOne({ userid: _userid, articleid: _artid }, { title, body, postedOn, useAsProfilePic, img: filePath })
-            }else{
-                updateArticle = await Article.updateOne({ userid: _userid, articleid: _artid }, { title, body, postedOn, useAsProfilePic})
+            } else {
+                updateArticle = await Article.updateOne({ userid: _userid, articleid: _artid }, { title, body, postedOn, useAsProfilePic })
             }
 
-            console.log('UPDATE ART RESULT : ', updateArticle)
+            if(useAsProfilePic === 'true'){
+                updateArticleUseAsProfPic = await Article.updateMany({ $and : [{userid: _userid,  articleid:{ $ne : _artid}}] }, { useAsProfilePic : false}) 
+            }
+
+            console.log('UPDATE ART RESULT : ', updateArticleUseAsProfPic)
 
             res.status(200).send({
                 code: 0,
@@ -533,6 +541,32 @@ module.exports = {
                 others: null
             })
         }
+    },
+    deleteArticleImage : async(req, res, next)=> {
+        const _userid = req.params.userid;
+        const _artid = req.params.artid;
+        let update = await Article.updateOne({ userid: _userid, articleid: _artid },{img : ''});
+
+        console.log('UPDATE RESULT DELETING ARTIMG : ', update)
+    try {
+        res.status(200).send({
+            code: 0,
+            error: null,
+            message: 'Deleted Article IMG',
+            token: null,
+            userdata: null,
+            others: null
+        })
+    } catch (error) {
+        res.status(400).send({
+            code: 1,
+            error: error.message,
+            message: 'Error deleting Article IMG',
+            token: null,
+            userdata: null,
+            others: null
+        })
     }
+}
 
 }

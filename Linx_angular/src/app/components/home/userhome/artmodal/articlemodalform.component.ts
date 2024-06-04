@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, computed, inject, signal } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, SimpleChanges, computed, inject, signal } from '@angular/core';
 import { NgForm, FormsModule } from '@angular/forms';
 import { IArticle } from '../../../../models/useraccount/IArticle';
 import { RestnodeService } from '../../../../services/restnode.service';
@@ -12,19 +12,38 @@ import * as CryptoJS from 'crypto-js';
   templateUrl: './articlemodalform.component.html',
   styleUrl: './articlemodalform.component.css'
 })
-export class ArticlemodalformComponent {
+export class ArticlemodalformComponent implements OnChanges{
 
   private restSvc: RestnodeService = inject(RestnodeService);
 
   @Input() isOpen = signal(false);
   @Input() userdata!: IUser | null;
-  @Input() article!: IArticle;
+  @Input()
+  set article(value: IArticle) {
+    console.log(value);
+    this.articleCopy = {articleid : value.articleid, 
+                        title: value.title, 
+                        body: value.body, 
+                        img: value.img, 
+                        postedOn: value.postedOn, 
+                        useAsProfilePic: value.useAsProfilePic};
+  }
   @Input() articleChange = new EventEmitter<IArticle[]>();
   @Input() articles! : IArticle[];
 
   private formData : FormData = new FormData();
   private artFile: File | null = null; 
   public currentDate : Date = new Date();
+  public articleCopy : IArticle = {articleid : '', title: '', body: '', img: '', postedOn: '', useAsProfilePic: false };
+
+
+  constructor(){
+    console.log('ARTCILE INPUT : ', this.article)
+    console.log('ART COPI : ', this.articleCopy)
+  }
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log('ch ch ch ch changeeeees ',changes)
+  }
 
   generateArticleId() {
     const randomBytes = CryptoJS.lib.WordArray.random(8);
@@ -50,9 +69,9 @@ export class ArticlemodalformComponent {
     if(this.artFile !== null){
       this.formData.append("file", this.artFile);
     }
-    if (this.article.articleid !== undefined) {
+    if (this.articleCopy.articleid !== undefined) {
       if(artForm.dirty){
-        this.formData.append('postedOn', this.article.postedOn)
+        this.formData.append('postedOn', this.articleCopy.postedOn)
         this.uploadArticleChanges();   
       }
       this.isOpen.set(false);
@@ -66,15 +85,22 @@ export class ArticlemodalformComponent {
   async uploadArticleChanges(){
     try {
       
-      const response = await this.restSvc.editArticle(this.userdata!.userid,this.article.articleid!, this.formData);
+      const response = await this.restSvc.editArticle(this.userdata!.userid,this.articleCopy.articleid!, this.formData);
       if (response.code === 0) {
         console.log('RESPONSE OTHERS ON UPLOADING ART CHANGES : ', response.others)
         if(response.others !== ''){
-          this.article.img = response.others;
+          this.articleCopy.img = response.others;
         }
-        const artIndex = this.articles.findIndex(art => art.articleid === this.article.articleid)
+        const artIndex = this.articles.findIndex(art => art.articleid === this.articleCopy.articleid)
         if(artIndex !== -1){
-          this.articles[artIndex] = this.article;
+          this.articles[artIndex] = this.articleCopy;
+          if(this.articleCopy.useAsProfilePic){
+            this.articles.forEach(art => {
+              if(art.articleid !== this.articleCopy.articleid){
+                art.useAsProfilePic = false;
+              }
+            })
+          }
           this.articleChange.emit(this.articles);
         }
         this.isOpen.set(false);
@@ -88,6 +114,7 @@ export class ArticlemodalformComponent {
 
   async uploadNewArticle(){
     const _artid = this.generateArticleId().toString();
+    this.articleCopy.articleid = _artid;
     this.formData.append('articleid', _artid);
     this.formData.forEach((value, key) => {
       console.log(key + ': ' + value);
@@ -96,9 +123,9 @@ export class ArticlemodalformComponent {
       const response = await this.restSvc.newArticle(this.userdata!.userid, this.formData);
       console.log('RESPONSE NEW ARTICLE ARTMODAL : ', response)
       if (response.code === 0) {
-        this.article.postedOn = new Date().toISOString();
-        this.article.img = response.others;
-        this.articles.unshift(this.article);
+        this.articleCopy.postedOn = new Date().toISOString();
+        this.articleCopy.img = response.others;
+        this.articles.unshift(this.articleCopy);
         this.articleChange.emit(this.articles);
         this.isOpen.set(false);
       } else {
@@ -112,7 +139,6 @@ export class ArticlemodalformComponent {
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
-    this.article.img = file.name;
     const newFileName = this.generateFileName(file.name);
     const newFile = new File([file], newFileName, { type: file.type });
     this.artFile = newFile;
@@ -121,10 +147,11 @@ export class ArticlemodalformComponent {
 
   async deleteArticle() {
     try {
-      const res = await this.restSvc.deleteArticle(this.userdata?.userid!, this.article.articleid!, this.article.img);
+      const filename = this.articleCopy.img.split('/')[1];
+      const res = await this.restSvc.deleteArticle(this.userdata?.userid!, this.articleCopy.articleid!, filename);
       console.log('RESPONSE ON DELETE ARTMODAL : ', res)
       if (res.code === 0) {
-        const index = this.articles.findIndex(art => art.articleid === this.article.articleid!);
+        const index = this.articles.findIndex(art => art.articleid === this.articleCopy.articleid!);
         if (index !== -1) {
           this.articles.splice(index, 1);
         }
@@ -139,9 +166,30 @@ export class ArticlemodalformComponent {
     }
   }
   
+  async deleteArticleImg (){
+    try {
+      const filename = this.articleCopy.img.split('/')[1];
+      const res = await this.restSvc.deleteArticleImg(this.userdata?.userid!, this.articleCopy.articleid!, filename);
+      console.log('RESPONSE ON DELETE ARTIMG ARTMODAL : ', res)
+      if(res.code === 0 ){
+        console.log('Removed image from article on artmodal : ', res.message)
+        const index = this.articles.findIndex(art => art.articleid === this.articleCopy.articleid!);
+        if (index !== -1) {
+          this.articles[index].img = '';
+        }
+        this.articleChange.emit(this.articles);
+      }else{
+        console.log('Couldnt delete image from article on artmodal....', res.error);
+      }
+    } catch (error) {
+      console.log('Couldnt delete image from article on artmodal....', error);
+    }
+  }
+
+
   async archiveArticle() {
     try {
-      const res = await this.restSvc.archiveArticle(this.userdata?.userid!, this.article.articleid!, this.article);
+      const res = await this.restSvc.archiveArticle(this.userdata?.userid!, this.articleCopy.articleid!, this.articleCopy);
       if (res.code === 0) {
         console.log('Archived article on artmodal : ', res.message)
       } else {

@@ -27,6 +27,8 @@ export class LinxscarouselComponent implements OnInit {
   public userdata!: IUser | null;
   public candidateProfiles!: IUser[] | null;
 
+  public picArticle! : IArticle;
+
   public loading = signal(true);
   public currentIndex = signal(0);
 
@@ -52,6 +54,9 @@ export class LinxscarouselComponent implements OnInit {
         const wholeUsers : IUser[] = this.utilsvc.integrateAccountsIntoUsers(wholeAccounts , _users);
 
         this.candidateProfiles = wholeUsers;
+        if(this.candidateProfiles[this.currentIndex()].account.articles !== undefined && this.candidateProfiles[this.currentIndex()].account.articles!.length > 0){
+          this.setProfilePicArticle(this.candidateProfiles[this.currentIndex()])
+        }
         this.loading.set(false);
       } else {
         this.loading.set(false);
@@ -63,18 +68,31 @@ export class LinxscarouselComponent implements OnInit {
     }
   }
 
+  setProfilePicArticle(candidate : IUser){
+    let artindex = candidate.account.articles?.findIndex(art => art.useAsProfilePic === true)
+    if(artindex !== -1){
+      this.picArticle = candidate.account.articles![artindex!]
+    }else{
+      this.picArticle = candidate.account.articles!.at(0)!
+    }
+  }
+
   nextProfile() {
     if (this.currentIndex() < this.candidateProfiles?.length! - 1) {
+      this.setProfilePicArticle(this.candidateProfiles![this.currentIndex() + 1])
       this.currentIndex.update((i) => i + 1);
     } else {
+      this.setProfilePicArticle(this.candidateProfiles![0])
       this.currentIndex.set(0);
     }
 
   }
   previousProfile() {
     if (this.currentIndex() > 0) {
+      this.setProfilePicArticle(this.candidateProfiles![this.currentIndex() - 1])
       this.currentIndex.update((i) => i - 1);
     } else {
+      this.setProfilePicArticle(this.candidateProfiles![this.candidateProfiles?.length! - 1])
       this.currentIndex.set(this.candidateProfiles?.length! - 1);
     }
   }

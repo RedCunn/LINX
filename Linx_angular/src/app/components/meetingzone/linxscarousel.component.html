@@ -30,12 +30,14 @@
         this.candidateProfiles![currentIndex()].account.articles!.length > 0){
         <div class="overflowarticle">
             <article class="article">
-                <h1>{{this.candidateProfiles![currentIndex()].account.articles?.at(0)?.title}}</h1>
-                <p class="break-words">{{this.candidateProfiles![currentIndex()].account.articles?.at(0)?.body}}</p>
-                <div class="artimg">
-                    <img style="max-width: 100%; max-height: 100%;"
-                        [src]="'http://localhost:3000/api/Account/uploads/'+this.candidateProfiles![currentIndex()].account.articles?.at(0)?.img">
-                </div>
+                <h1>{{this.picArticle.title}}</h1>
+                <p class="break-words">{{this.picArticle.body}}</p>
+                @if(this.picArticle.img !== undefined && this.picArticle.img !== ''){
+                    <div class="artimg">
+                        <img style="max-width: 100%; max-height: 100%;"
+                            [src]="'http://localhost:3000/api/Account/uploads/'+this.picArticle.img">
+                    </div>
+                }
             </article>
         </div>
         <div class="linxnamecontainer">

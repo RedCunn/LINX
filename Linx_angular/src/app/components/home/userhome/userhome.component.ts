@@ -62,7 +62,7 @@ export class UserhomeComponent implements OnInit, AfterViewInit , OnDestroy{
   public candidateResidency : string = '';
   public chat!: IChat;
   public articles : IArticle[] = [];
-  public article: IArticle = {title: '', body: '', img: '', postedOn: '', useAsProfilePic: false }
+  public article: IArticle = {articleid : '', title: '', body: '', img: '', postedOn: '', useAsProfilePic: false }
   public extendedChain! : IAccount[];
   public extendedChainKeys : {mylinxuserid : string, userid : string , roomkey : string}[] = [];
   private roomkey! : string;
@@ -206,17 +206,6 @@ export class UserhomeComponent implements OnInit, AfterViewInit , OnDestroy{
     let onChain = this.userdata?.account.myChain?.find(l => l.userid === this.linxdata?.userid)
     return onChain !== undefined;
   }
-
-  // isCandidate() : boolean {
-  //   let onMatch = this.signalStoreSvc.RetrieveMatches()()!;
-  //   let index = onMatch.findIndex(match => match.userid_a === this.linxdata?.userid || match.userid_b === this.linxdata?.userid)
-
-  //   if(index !== -1){
-  //     return false;
-  //   }else{
-  //     return true;
-  //   }
-  // }
 
   async getExtendedChain(linxdata : IAccount) {
     try {

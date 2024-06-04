@@ -84,8 +84,14 @@ export class RestnodeService {
     return lastValueFrom(res);
   }
 
-  public deleteArticle(userid: string, artid: string, filepath : string): Promise<IRestMessage> {
-    let url = `http://localhost:3000/api/Account/${userid}/article/${artid}?img=${filepath}`
+  public deleteArticle(userid: string, artid: string, filename : string): Promise<IRestMessage> {
+    let url = `http://localhost:3000/api/Account/${userid}/article/${artid}?img=${filename}`
+    const res = this._httpClient.delete<IRestMessage>(url);
+    return lastValueFrom(res);
+  }
+  
+  public deleteArticleImg(userid: string, artid: string, filename : string): Promise<IRestMessage> {
+    let url = `http://localhost:3000/api/Account/${userid}/article/${artid}?img=${filename}`
     const res = this._httpClient.delete<IRestMessage>(url);
     return lastValueFrom(res);
   }

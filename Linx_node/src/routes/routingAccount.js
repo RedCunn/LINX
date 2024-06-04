@@ -94,7 +94,8 @@ const deleteFile = (req, res, next) => {
                         console.error('Error al eliminar el archivo:', err);
                         return res.status(500).json({ message: 'Error al eliminar el archivo' });
                     } else {
-                        return res.status(200).json({ message: 'Archivo eliminado exitosamente' });
+                        console.log('Archivo eliminado.');
+                        next();
                     }
                 });
             } else {
@@ -145,6 +146,7 @@ router.put('/chat/:roomkey', AccountController.storeChatMessage);
 router.post('/:userid/article',upload.single('file'), AccountController.newArticle);
 router.put('/:userid/article/:artid', upload.single('file'), AccountController.editArticle);
 router.delete('/:userid/article/:artid',deleteFile, AccountController.deleteArticle)
+router.delete('/:userid/article/:artid/img', deleteFile, AccountController.deleteArticleImage)
 router.get('/:userid/chat/:linxuserid', AccountController.getChats)
 router.get('/places/:cityid', AccountController.getPlaceDetails)
 module.exports = router;
