@@ -31,7 +31,7 @@ export class InteractionsComponent implements OnInit, OnDestroy {
   private router = inject(Router);
 
   private _user!: IUser | null;
-  public myMatches!: IAccount[];
+  public myMatches!: IAccount[] | null;
   public joinChainReqs : {requestingUserid : string , requestedUserid : string , requestedAt : Date} [] = []; 
 
   private destroy$ = new Subject<void>();
@@ -157,9 +157,11 @@ export class InteractionsComponent implements OnInit, OnDestroy {
 
   async getMyInteractions() {
     this.getMatches();
-    this.myMatches.forEach(element => {
-      this.interactions.matchingAccount!.push(element);
-    });
+    if(this.myMatches !== null){
+      this.myMatches.forEach(element => {
+        this.interactions.matchingAccount!.push(element);
+      });
+    }
     const joinchainreq = await this.getJoinChainRequests();
     const reqaccounts : IAccount[]= joinchainreq?.accounts!;
     this.joinChainReqs = joinchainreq?.requests;

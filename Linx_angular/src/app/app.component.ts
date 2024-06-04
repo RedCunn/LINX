@@ -21,7 +21,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private websocketsvc: WebsocketService = inject(WebsocketService);
   private utilsvc : UtilsService = inject(UtilsService);
-  public routePattern: RegExp = new RegExp("(/Linx/(Login|Registro|error|registrada|activa)|^/?$)", "g");
+  public routePattern: RegExp = new RegExp("(/Linx/(Login|Registro|error|registrada|activa)|/Linx$|^/?$)", "g");
   public showStickyFooter = signal(true);
 
   private vcr = inject(ViewContainerRef);

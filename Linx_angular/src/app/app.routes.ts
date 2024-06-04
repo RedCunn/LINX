@@ -3,6 +3,10 @@ import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
     {
+        path : 'Linx',
+        loadComponent: () => import('./components/welcome/welcome.component').then(c=>c.WelcomeComponent)
+    },
+    {
         path: 'Linx',
         children: 
         [
@@ -100,8 +104,7 @@ export const routes: Routes = [
                 path: 'Artistslib',
                 loadComponent : () => import ('./components/mediazone/musicComponents/artistslib/artistslib.component').then(m=>m.ArtistslibComponent)
             }
-        ]
-    
+        ] 
     },
     {
         path:'',

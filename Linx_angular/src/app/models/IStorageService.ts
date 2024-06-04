@@ -19,17 +19,17 @@ export interface IStorageService {
     StoreCandidateData (newstate : IUser | null) : void ;
     RetrieveCandidateData () : WritableSignal<IUser | null> ;
 
-    StoreMyChain (mychain : IAccount[]) : void;
-    RetrieveMyChain () : WritableSignal<IAccount[]>;
+    StoreMyChain (mychain : IAccount[] | null) : void;
+    RetrieveMyChain () : WritableSignal<IAccount[] | null>;
 
-    StoreMatches (matches : IMatch[]) : void;
-    RetrieveMatches () : WritableSignal<IMatch[]>;
+    StoreMatches (matches : IMatch[] | null) : void;
+    RetrieveMatches () : WritableSignal<IMatch[] | null>;
 
-    StoreMatchesAccounts (matches : IAccount[]) : void;
-    RetrieveMatchesAccounts () : WritableSignal<IAccount[]>;
+    StoreMatchesAccounts (matches : IAccount[] | null) : void;
+    RetrieveMatchesAccounts () : WritableSignal<IAccount[] | null>;
 
     StoreRoomKeys (userRoom : {userid : string , roomkey : string}) : void;
-    RetrieveRoomKeys () : WritableSignal<Map<string,string>>;
+    RetrieveRoomKeys () : WritableSignal<Map<string,string> | null>;
 
     StoreCandidateIndex (index : number) : void;
     RetrieveCandidateIndex() : WritableSignal<number>;

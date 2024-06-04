@@ -14,10 +14,10 @@ export class SignalStorageService implements IStorageService{
   private _candidatesignal : WritableSignal<IUser | null> = signal<IUser | null>(null);
   private _jwtsignal : WritableSignal<string | null> = signal<string | null>('');
   private _linxstatesignal : WritableSignal<IAccount | null> = signal<IAccount | null>(null);
-  private _mychainsignal : WritableSignal<IAccount[]> = signal<IAccount[]>([]);
-  private _matchesaccountsignal : WritableSignal<IAccount[]> = signal<IAccount[]>([]);
-  private _matchessignal : WritableSignal<IMatch[]> = signal<IMatch[]>([]);
-  private _roomkeyssignal : WritableSignal<Map<string,string>> = signal<Map<string,string>>(new Map<string,string>());
+  private _mychainsignal : WritableSignal<IAccount[] | null> = signal<IAccount[] | null>([]);
+  private _matchesaccountsignal : WritableSignal<IAccount[] | null> = signal<IAccount[] | null>([]);
+  private _matchessignal : WritableSignal<IMatch[] | null> = signal<IMatch[]| null>([]);
+  private _roomkeyssignal : WritableSignal<Map<string,string> | null> = signal<Map<string,string> | null>(new Map<string,string>());
   private _candidateindex : WritableSignal<number> = signal<number>(0);
   constructor() { }
 
@@ -38,43 +38,51 @@ export class SignalStorageService implements IStorageService{
     return this._candidatesignal;
   }
   StoreRoomKeys(userRoom : {userid : string , roomkey : string}): void {
-    const newmap = this._roomkeyssignal();
-    newmap.set(userRoom.userid , userRoom.roomkey)
-    this._roomkeyssignal.set(newmap)
+    let keymap = this._roomkeyssignal();
+    if(keymap === null){
+      keymap = new Map<string,string>();
+      keymap.set(userRoom.userid , userRoom.roomkey)
+    }else{
+      keymap.set(userRoom.userid , userRoom.roomkey)
+    }
+    this._roomkeyssignal.set(keymap)
   }
-  RetrieveRoomKeys(): WritableSignal<Map<string, string>> {
+  RemoveRoomKeys() : void {
+    this._roomkeyssignal.set(null);
+  }
+  RetrieveRoomKeys(): WritableSignal<Map<string, string> | null> {
     console.log('RETRIEVE ROOMKEYS SIGNAL SVC : ', this._roomkeyssignal())
     return this._roomkeyssignal;
   }
-  StoreMatches(matches: IMatch[]): void {
+  StoreMatches(matches: IMatch[] | null): void {
     if(matches !== null){
       this._matchessignal.update((currentstate) => ([...matches]))
     }else{
       this._matchessignal.set([]);
     }
   }
-  RetrieveMatches(): WritableSignal<IMatch[]> {
+  RetrieveMatches(): WritableSignal<IMatch[] | null> {
     return this._matchessignal;
   }
-  StoreMatchesAccounts(matches: IAccount[]): void {
+  StoreMatchesAccounts(matches: IAccount[] | null): void {
     if(matches !== null){
       this._matchesaccountsignal.update((currentstate) => ([...matches]))
     }else{
       this._matchesaccountsignal.set([]);
     }
   }
-  RetrieveMatchesAccounts(): WritableSignal<IAccount[]> {
+  RetrieveMatchesAccounts(): WritableSignal<IAccount[] | null> {
     return this._matchesaccountsignal;
   }
   
-  StoreMyChain(mychain: IAccount[]): void {
+  StoreMyChain(mychain: IAccount[] | null): void {
     if(mychain !== null){
       this._mychainsignal.update((currentstate) => ([...mychain]))
     }else{
       this._mychainsignal.set([]);
     }
   }
-  RetrieveMyChain(): WritableSignal<IAccount[]> {
+  RetrieveMyChain(): WritableSignal<IAccount[] | null> {
     return this._mychainsignal;
   }
 

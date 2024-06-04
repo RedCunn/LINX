@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { SignalStorageService } from '../../../services/signal-storage.service';
 import { IAccount } from '../../../models/useraccount/IAccount';
 import { Router } from '@angular/router';
@@ -11,20 +11,20 @@ import {MyChainComponent} from '../../mychain/mychain.component'
   templateUrl: './loggedheader.component.html',
   styleUrl: './loggedheader.component.css'
 })
-export class LoggedheaderComponent implements OnInit {
+export class LoggedheaderComponent implements OnInit{
   
   private signalStoreSvc : SignalStorageService = inject(SignalStorageService);
 
   public isMyChainOpen = signal(false);
   public isMyChain = signal(true);
-  public myChain! : IAccount[];
+  public myChain! : IAccount[] | null;
 
   constructor(private router : Router){
     let _userdata = this.signalStoreSvc.RetrieveUserData();
   }
 
   ngOnInit(): void {
-    this.myChain = this.signalStoreSvc.RetrieveMyChain()();
+    this.myChain = this.signalStoreSvc.RetrieveMyChain()() !== null ? this.signalStoreSvc.RetrieveMyChain()() : [];
     this.isMyChain.set(true);
   }
 

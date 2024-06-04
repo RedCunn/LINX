@@ -15,7 +15,7 @@ export class MyChainComponent implements OnInit{
 
   @Input() isOpen = signal(false);
   @Input() isMyChain! : Signal<boolean>;
-  @Input() myChain? : IAccount[]
+  @Input() myChain? : IAccount[] | null
   @Input() extendedChain ? : IAccount[];
 
   closeModal() {

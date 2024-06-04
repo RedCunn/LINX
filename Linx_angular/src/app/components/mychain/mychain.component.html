@@ -30,7 +30,7 @@
                 <!-- Modal body -->
                 <div class="p-4 md:p-5" style="height: auto; max-height: 30dvh; overflow-y: auto;">
                     <ul class="my-4 space-y-3">
-                        @if(isMyChain()){
+                        @if(isMyChain() && this.myChain !== null){
                             @for(linx of this.myChain; track linx._id){
                             <li>
                                 <button (click)="this.goToLinxProfile(linx)"

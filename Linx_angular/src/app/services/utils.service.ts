@@ -199,7 +199,7 @@ export class UtilsService {
   }
 
   findUserIndexOnChain(user : IUser,  id : string) : number{
-    if(user.account.myChain !== undefined){
+    if(user.account.myChain !== undefined && user.account.myChain !== null){
       const index = user.account.myChain.findIndex(l => l.userid === id)
       return index;
     }
@@ -214,8 +214,8 @@ export class UtilsService {
     return -1;
   }
 
-  findUserIndexOnMatches(matches : IMatch[] , userid : string , id : string) : number{
-    if(matches !== undefined){
+  findUserIndexOnMatches(matches : IMatch[] | null, userid : string , id : string) : number{
+    if(matches !== null){
       const index = matches.findIndex(m => (m.userid_a === userid && m.userid_b === id) || (m.userid_a === id && m.userid_b === userid))
       return index;
     }

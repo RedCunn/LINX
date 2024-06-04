@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Jacquard+12&family=Jacquarda+Bastarda+9+Charted&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Lexend+Tera:wght@100..900&family=Noto+Sans+Duployan:wght@400;700&family=Noto+Sans+Hanunoo&family=Noto+Sans+Mono:wght@100..900&family=Oswald:wght@200..700&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Varela+Round&family=Yarndings+20&display=swap');
+
 /*CONTAINERS----------------------------*/
 .profilename {
     font-family: "Ubuntu Mono", monospace;
@@ -73,7 +75,21 @@
     justify-content: end;
 }
 
+.extentchain {
+    display: flex;
+    flex-direction: row;
+}
+
+.extentchain:hover{
+    opacity: 0.6;
+}
+
 /*MOBILES -------------------------*/
+
+.extentchainmobile{
+    display: none;
+}
+
 .asidemobile {
     display: none;
 }
@@ -95,14 +111,13 @@
 /*PIECES---------------------------*/
 
 .wordchain {
-    font-family: "Lexend Tera", sans-serif;
-    font-optical-sizing: auto;
+    font-family: "Jacquarda Bastarda 9 Charted", serif;
     font-style: normal;
-    font-weight: 600;
-    font-size:large;
+    font-weight: 400;
+    font-size:2rem;
     padding-left: 0.5rem;
     padding-top: 0.25rem;
-    letter-spacing: 15px;
+    color: gray;
 }
 .footart {
     position: absolute;
@@ -423,5 +438,22 @@ article h1 {
         grid-column: span 2 / span 2;
         margin-left: 20px;
         width: 100%;
+    }
+
+    .extentchain {
+        display: none;
+    }    
+    .extentchainmobile{
+        display: inline-block;
+        margin-left: 10px;
+        opacity: 0.6;
+    }
+    .extentchainmobile:active{
+        opacity: 1;
+    }
+    .chainbutt {
+        margin-top: 10px;
+        width: 100%;
+        justify-self: baseline;
     }
 }
