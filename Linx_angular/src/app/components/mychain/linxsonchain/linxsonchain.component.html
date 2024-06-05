@@ -31,33 +31,40 @@
                 <div class="p-4 md:p-5" style="height: auto; max-height: 30dvh; overflow-y: auto;">
                     <ul class="my-4 space-y-3">
                         @if(isMyChain()){
-                        @for(chain of this.myChains; track chain.chainid){
+                        @for(linx of chain.linxs ; track linx.userid){
                         <li>
-                            <button (click)="this.showLinxsOnChain(chain)"
+                            <button (click)="this.goToLinxProfile(linx)"
                                 class="flex items-center w-full p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 dark:bg-gray-600 dark:text-white">
                                 <p style="color: green;" class="px-2 pt-2">
+                                    <span class="material-symbols-outlined">
+                                        account_circle
+                                    </span>
                                 </p>
-                                <p style="color: green;">{{chain.chainname}}</p>
+                                <p style="color: green;">{{linx.linxname}}</p>
                             </button>
                         </li>
                         }@empty {
                         <li>
-                            <p style="color: green;">Todavía no has hecho cadena...</p>
+                            <p style="color: green;">No hay linxs en esta cadena...</p>
                         </li>
                         }
                         }@else{
-                        @for(chain of this.sharedChains; track chain.chainid){
+                        @for(linx of chain.linxs ; track linx.userid){
                         <li>
-                            <button (click)="this.showLinxsOnChain(chain)"
+                            <button (click)="this.goToLinxProfile(linx)"
                                 class="flex items-center w-full p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 dark:bg-gray-600 dark:text-white">
-                                <p style="color: purple;" class="px-2 pt-2">
+                                <p class="px-2 pt-2" style="color: purple;">
+                                    <span class="material-symbols-outlined">
+                                        account_circle
+                                    </span>
                                 </p>
-                                <p style="color: purple;">{{chain.chainname}}</p>
+                                <p style="color: purple;">{{linx.linxname}}</p>
                             </button>
                         </li>
                         }@empty{
                         <li>
-                            <p style="color: purple; font-style: italic;">No hay cadenas en común por el momento...</p>
+                            <p style="color: purple; font-style: italic;">No hay linxs que compartir por el momento...
+                            </p>
                         </li>
                         }
                         }
@@ -69,6 +76,3 @@
     </div>
 </div>
 }
-
-<app-linxsonchain [isMyChain]="this.isMyChain" [chain]="this.chain"
-    [isOpen]="this.isLinxsOnChainOpen"></app-linxsonchain>

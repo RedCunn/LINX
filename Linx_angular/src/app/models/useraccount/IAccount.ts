@@ -30,8 +30,9 @@ export interface IAccount {
         }
         games : Array<IGame>;
     },
-    myChain ?: Array<{userid : string, roomkey : string, chainedAt : string}>;
-    extendedChain? : Array<{mylinxuserid : string , userid : string , roomkey : string}>;
+    myChains ?: Array<{chainid : string, chainname : string, createdAt : string}>;
+    myLinxs ? : Array<{chainid : string, userid : string, roomkey : string, chainedAt : string}>;
+    linxExtents? : Array<{mylinxuserid : string , userid : string , roomkey : string}>;
     agenda ? : Array<IEvent>;
     exchanger ?: Array<IExItem>;
 }

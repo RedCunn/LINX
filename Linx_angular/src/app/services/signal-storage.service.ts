@@ -14,12 +14,39 @@ export class SignalStorageService implements IStorageService{
   private _candidatesignal : WritableSignal<IUser | null> = signal<IUser | null>(null);
   private _jwtsignal : WritableSignal<string | null> = signal<string | null>('');
   private _linxstatesignal : WritableSignal<IAccount | null> = signal<IAccount | null>(null);
-  private _mychainsignal : WritableSignal<IAccount[] | null> = signal<IAccount[] | null>([]);
   private _matchesaccountsignal : WritableSignal<IAccount[] | null> = signal<IAccount[] | null>([]);
   private _matchessignal : WritableSignal<IMatch[] | null> = signal<IMatch[]| null>([]);
   private _roomkeyssignal : WritableSignal<Map<string,string> | null> = signal<Map<string,string> | null>(new Map<string,string>());
   private _candidateindex : WritableSignal<number> = signal<number>(0);
+
+  //OLD : 
+  private _mychainsignal : WritableSignal<IAccount[] | null> = signal<IAccount[] | null>([]);
+  //NEW : 
+  private _mylinxssignal : WritableSignal<IAccount[] | null> = signal<IAccount[] | null>([]);
+
   constructor() { }
+  //OLD : 
+  StoreMyChain(mychain: IAccount[] | null): void {
+    if(mychain !== null){
+      this._mychainsignal.update((currentstate) => ([...mychain]))
+    }else{
+      this._mychainsignal.set([]);
+    }
+  }
+  RetrieveMyChain(): WritableSignal<IAccount[] | null> {
+    return this._mychainsignal;
+  }
+  //NEW : 
+  StoreMyLinxs(mylinxs: IAccount[] | null): void {
+    if(mylinxs !== null){
+      this._mylinxssignal.update((currentstate) => ([...mylinxs]))
+    }else{
+      this._mylinxssignal.set([]);
+    }
+  }
+  RetrieveMyLinxs(): WritableSignal<IAccount[] | null> {
+    throw new Error('Method not implemented.');
+  }
 
   StoreCandidateIndex(index: number): void {
     this._candidateindex.set(index);
@@ -79,16 +106,6 @@ export class SignalStorageService implements IStorageService{
     return this._matchesaccountsignal;
   }
   
-  StoreMyChain(mychain: IAccount[] | null): void {
-    if(mychain !== null){
-      this._mychainsignal.update((currentstate) => ([...mychain]))
-    }else{
-      this._mychainsignal.set([]);
-    }
-  }
-  RetrieveMyChain(): WritableSignal<IAccount[] | null> {
-    return this._mychainsignal;
-  }
 
   StoreLinxData(newstate: IAccount | null): void {
     if(newstate !== null){

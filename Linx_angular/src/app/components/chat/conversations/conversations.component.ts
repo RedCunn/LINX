@@ -58,9 +58,6 @@ export class ConversationsComponent implements OnDestroy{
       let chatuserid = chat.participants.userid_a === this._user.userid ? chat.participants.userid_b : chat.participants.userid_a;
       let roomkey = this.utilsvc.setRoomKey(this._user.userid , chatuserid);
       this.chatToOpen.roomkey = roomkey;
-      this.chatToOpen.messages.forEach(mess => {
-        
-      })
   }
 
   countMessagesUnread(messages : IMessage []) : number{
@@ -76,9 +73,6 @@ export class ConversationsComponent implements OnDestroy{
   }
 
   openChat(chat : IChat){
-    chat.messages.forEach(m =>  {
-      m.isRead = true;
-    })
     this.setChat(chat);
     this.loadChatComponent();
     this.isChatOpen.update(v => !v);

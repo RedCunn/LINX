@@ -1,43 +1,36 @@
 import { Component, Input, OnInit, Signal, inject, signal } from '@angular/core';
-import { SignalStorageService } from '../../services/signal-storage.service';
-import { IUser } from '../../models/userprofile/IUser';
 import { IAccount } from '../../models/useraccount/IAccount';
-import { Router } from '@angular/router';
+import { LinxsonchainComponent } from './linxsonchain/linxsonchain.component';
 
 @Component({
   selector: 'app-mychain',
   standalone: true,
-  imports: [],
+  imports: [LinxsonchainComponent],
   templateUrl: './mychain.component.html',
   styleUrl: './mychain.component.css'
 })
 export class MyChainComponent implements OnInit{
 
   @Input() isOpen = signal(false);
-  @Input() isMyChain! : Signal<boolean>;
-  @Input() myChain? : IAccount[] | null
-  @Input() extendedChain ? : IAccount[];
+  @Input() isMyChain = signal(false);
+  @Input() myChains? : Array<{chainid : string , chainname : string , linxs : IAccount[]}>;
+  @Input() sharedChains ? : Array<{chainid : string , chainname : string , linxs : IAccount[]}>;
+
+  public isLinxsOnChainOpen = signal(false);
+  public chain : {chainid : string , chainname : string , linxs : IAccount[]} = {chainid : '' , chainname : '' , linxs : []}
 
   closeModal() {
     this.isOpen.set(false);
   }
 
-  private signalStorageSvc = inject(SignalStorageService);
-  private router = inject(Router);
-  private _user! : IUser | null; 
-
-  goToLinxProfile(linx : IAccount){
-    this.isOpen.set(false);
-    this.signalStorageSvc.StoreCandidateData(null);
-    this.signalStorageSvc.StoreLinxData(linx);
-    this.router.navigateByUrl(`/Linx/Profile/${linx.linxname}`);
+  showLinxsOnChain(chain : {chainid : string , chainname : string , linxs : IAccount[]}){
+    this.chain = chain;
+    this.isLinxsOnChainOpen.set(true);
   }
 
   ngOnInit(): void {
-    this._user = this.signalStorageSvc.RetrieveUserData()();
-
-    console.log('EXTENT ON MY CHAIN COMPO : ', this.extendedChain)
-    console.log('chain ON MY CHAIN COMPO : ', this.myChain)
+    console.log('SHARED CHAINS ON MY CHAIN COMPO : ', this.sharedChains)
+    console.log('MY CHAINS ON CHAIN COMPO : ', this.myChains)
   }
 
 }

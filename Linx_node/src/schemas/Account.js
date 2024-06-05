@@ -36,13 +36,13 @@ let accountSchema = new mongoose.Schema({
     activeExpires: Date,
     exchanger: [{ exitemid: { type: mongoose.Schema.Types.ObjectId, ref: 'Exitem' } }],
     agenda: [{ eventid: { type: mongoose.Schema.Types.ObjectId, ref: 'Event' } }],
-    myChain: [{ userid : {type: String} , roomkey : {type: String}, chainedAt : {type : Date, default: Date.now} }],
-    extendedChain: [{mylinxuserid : { type: String }, userid : {type: String}}],
+    myChains : [{chainid : {type : String , unique : true}, chainname : {type : String}, createdAt : {type : Date, default: Date.now}}],
+    myLinxs: [{ chainid : {type : String}, userid : {type: String} , roomkey : {type: String}, chainedAt : {type : Date, default: Date.now} }],
     articles: {
         type: [{
             type: String
         }],
-        validate: [arrayLimit, '{PATH} exceeds the limit of 4'] 
+        validate: [arrayLimit, '{PATH} exceeds the limit of 6'] 
     }
 })
 

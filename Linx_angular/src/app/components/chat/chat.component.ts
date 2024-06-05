@@ -61,12 +61,30 @@ export class ChatComponent implements OnInit, OnDestroy , AfterContentInit{
     this.isOpen.set(false);
   }
 
-  markMessagesAsRead(){
+  async markMessagesAsRead(){
+    let readMessages : IMessage[] = [];
     this.messages.forEach(mess => {
       if(!mess.isRead && mess.sender.userid !== this.user.userid){
-        console.log('MENSAJES POR MARCAR en chat: ' , mess)
+        readMessages.push(mess)
       }
     })
+    console.log('messages to update read : ', readMessages)
+    try {
+      const res = await this.restSvc.markMessagesAsRead(readMessages , this.user.userid!);
+      if (res.code === 0) {
+        console.log('Messages marked at chatmodal : ', res.message);
+        this.messages.forEach(m =>  {
+          if(!m.isRead && m.sender.userid !== this.user.userid){
+            m.isRead = true;
+          }
+        })
+      } else {
+        console.log('Error marking messages at chatmodal :', res.error);
+      }
+    } catch (error) {
+      console.log('Error marking messages at chatmodal :', error);
+    }
+    
   }
 
   setMessage(event: any) {
@@ -98,7 +116,6 @@ export class ChatComponent implements OnInit, OnDestroy , AfterContentInit{
       const updatedChat : IChat = res.others as IChat;
       updatedChat.messages.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
       this.messID = updatedChat.messages[0]._id!;
-
     } catch (error) {
       console.log(error)
     }
@@ -127,6 +144,7 @@ export class ChatComponent implements OnInit, OnDestroy , AfterContentInit{
   ngOnInit(): void {
     initDropdowns();
     this.initializeChat();
+    this.markMessagesAsRead();
   }
   ngOnDestroy(): void {
     this.destroy$.next();

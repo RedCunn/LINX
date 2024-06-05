@@ -144,12 +144,26 @@ export class RestnodeService {
 
   //#region ----------------------------- MY CHAIN --------------------------------
 
-  public getMyChain(userid: string): Promise<IRestMessage> {
-    const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Chain/${userid}`);
+  //OLD : 
+  public getMyChain(userid: string , chainid : string | null): Promise<IRestMessage> {
+    const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Chain/${userid}/chain/${chainid}`);
     return lastValueFrom(res);
   }
-  public requestJoinChain(userid: string, linxuserid: string): Promise<IRestMessage> {
+
+  //NEW : 
+  public getMyLinxs(userid: string , chainid : string | null): Promise<IRestMessage> {
+    const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Chain/${userid}/chain/${chainid}`);
+    return lastValueFrom(res);
+  }
+  
+  public getMyChainExtents (userid: string , chainid : string | null) : Promise<IRestMessage> {
+    const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Chain/${userid}/extents/${chainid}`);
+    return lastValueFrom(res);
+  }
+
+  public requestJoinChain(userid: string, linxuserid: string, chainnames : string[]): Promise<IRestMessage> {
     const res = this._httpClient.post<IRestMessage>(`http://localhost:3000/api/Chain/${userid}/${linxuserid}`,
+    chainnames,
       {
         headers: new HttpHeaders({ 'Content-Type': 'application/json' })
       }
@@ -167,8 +181,14 @@ export class RestnodeService {
     return lastValueFrom(res);
   }
 
-  public rejectJoinChainRequest(userid: string, linxuserid: string) {
-    const res = this._httpClient.delete<IRestMessage>(`http://localhost:3000/api/Chain/${userid}/chainreq/${linxuserid}`);
+  public answerToJoinChainRequest(userid: string, linxuserid: string, acceptedChainReqs : Array<{chainid : string , accepted : boolean}>) {
+    const res = this._httpClient.post<IRestMessage>(`http://localhost:3000/api/Chain/${userid}/chainreq/${linxuserid}`,
+    { response : acceptedChainReqs},
+      {
+        headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+      }
+    );
+  
     return lastValueFrom(res);
   }
 
@@ -202,6 +222,16 @@ export class RestnodeService {
   public storeMessage(chat: { participants: { userid_a: string, userid_b: string }, message: IMessage }, roomkey: string): Promise<IRestMessage> {
     const res = this._httpClient.put<IRestMessage>(`http://localhost:3000/api/Account/chat/${roomkey}`,
       chat,
+      {
+        headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+      })
+
+    return lastValueFrom(res);
+  }
+
+  public markMessagesAsRead(messages : IMessage[], userid : string): Promise<IRestMessage> {
+    const res = this._httpClient.put<IRestMessage>(`http://localhost:3000/api/Account/${userid}/chat`,
+      messages,
       {
         headers: new HttpHeaders({ 'Content-Type': 'application/json' })
       })

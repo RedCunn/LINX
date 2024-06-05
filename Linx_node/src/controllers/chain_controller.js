@@ -4,17 +4,29 @@ const chaining = require('./utils/chaining');
 const Article = require('../schemas/Article');
 
 module.exports = {
-    getMyChain: async (req, res, next) => {
+    getMyLinxs: async (req, res, next) => {
         try {
             const _userid = req.params.userid;
+            const _chainid = req.params.chainid;
 
             let _userAccount = await Account.findOne({ userid: _userid });
-
-            const _myChainPromises = _userAccount.myChain.map(async (linx, i) => {
-                const account = await Account.findOne({ userid: linx.userid });
-                return account;
-            })
-            const accounts = await Promise.all(_myChainPromises);
+            
+            let  _myLinxPromises ; 
+            if(_chainid === 'null'){
+                _myLinxPromises  = _userAccount.myLinxs.map(async (linx, i) => {
+                    const account = await Account.findOne({ userid: linx.userid });
+                    return account;
+                })
+            }else{
+                 _myLinxPromises  = _userAccount.myLinxs.map(async (linx, i) => {
+                    if(linx.chainid === _chainid){
+                        const account = await Account.findOne({ userid: linx.userid });
+                        return account;
+                    }
+                })
+            }
+            
+            const accounts = await Promise.all(_myLinxPromises);            
 
             let artIDs = new Set();
             accounts.forEach(p => {
@@ -50,24 +62,24 @@ module.exports = {
         try {
             const userid = req.params.userid;
             const linxuserid = req.params.linxuserid;
+            const {chainnames} = req.body;
+
             let joinReqState = '';
 
             console.log('userid : ', userid)
             console.log('linxid :', linxuserid)
 
-            let requestState = await chaining.isJoinChainRequested(userid, linxuserid);
+            let requestStates = await chaining.isJoinChainRequested(userid, linxuserid, chainnames);
 
-            switch (requestState) {
-                case 'NONE':
-                    await chaining.doChainRequest(userid, linxuserid);
-                    joinReqState = 'REQUESTING'
-                    break;
-                case 'REQUESTED':
-                    await chaining.joinChains(userid, linxuserid);
-                    joinReqState = 'ACCEPTED'
-                    break;
-                default:
-                    break;
+            for (const [key , value] of requestStates) {
+                if(value === 'ACCEPTED'){
+                    await chaining.joinChains(userid, linxuserid, key);   
+                    joinReqState = joinReqState + ' / ACCEPTED : ' + key
+                }
+                if(value === 'REQUESTED'){
+                    await chaining.doChainRequest(userid, linxuserid, key);
+                    joinReqState = joinReqState + ' / REQUESTED : ' + key
+                }
             }
 
             res.status(200).send({
@@ -137,8 +149,9 @@ module.exports = {
         try {
             const userid = req.params.userid;
             const linxuserid = req.params.linxuserid;
+            const chainid = req.params.chainid;
 
-            await chaining.breakChain(userid, linxuserid);
+            await chaining.breakChain(userid, linxuserid, chainid);
 
             res.status(200).send({
                 code: 0,
@@ -159,7 +172,7 @@ module.exports = {
             })
         }
     },
-    rejectJoinChainRequest: async (req, res, next) => {
+    confirmJoinChainRequest: async (req, res, next) => {
         try {
 
             const userid = req.params.userid;

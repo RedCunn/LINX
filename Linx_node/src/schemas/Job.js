@@ -4,7 +4,7 @@ let JobSchema = new mongoose.Schema({
     refid : {type : String},
     task: {
         type: String,
-        enum: ["delete_account", "send_email"],
+        enum: ["delete_account", "send_email", "break_chain"],
         required: true
     },
     status : {type : String , required : true},

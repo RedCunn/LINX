@@ -10,6 +10,7 @@ import { IInteraction } from '../../models/userprofile/IInteraction';
 import { IEvent } from '../../models/useraccount/IEvent';
 import { IArticle } from '../../models/useraccount/IArticle';
 import { UtilsService } from '../../services/utils.service';
+import { IChainInvite } from '../../models/userprofile/IChainInvite';
 
 @Component({
   selector: 'app-interactions',
@@ -37,7 +38,7 @@ export class InteractionsComponent implements OnInit, OnDestroy {
   public joinChainReqs : {requestingUserid : string , requestedUserid : string , requestedAt : Date} [] = []; 
 
   private destroy$ = new Subject<void>();
-  public interactions: IInteraction = { matchingAccount: [], chainedAccount: [], newEvent: [], requestedChain: [] };
+  public interactions: IInteraction = { matchingAccounts: [], chainedAccounts: [], newEvents: [], chainInvitations: [] , brokenChains : []};
 
   public currentDate : Date = new Date();
 
@@ -52,8 +53,8 @@ export class InteractionsComponent implements OnInit, OnDestroy {
         case 'match':
           console.log('FULL MATCH :::::::::::::::::', data.interaction)
           let accountInteracting = data.interaction as IAccount
-          this.interactions.matchingAccount!.unshift(accountInteracting);
-          this.interactions.matchingAccount?.forEach(acc => {
+          this.interactions.matchingAccounts!.unshift(accountInteracting);
+          this.interactions.matchingAccounts?.forEach(acc => {
             if(!this.setUnMatchAlertOpen[acc.userid]){
               this.setUnMatchAlertOpen[acc.userid] = false
             }
@@ -63,16 +64,18 @@ export class InteractionsComponent implements OnInit, OnDestroy {
           break;
         case 'chain':
           console.log('CHAINED :::::::::::::::::', data.interaction)
-          this.interactions.chainedAccount!.unshift(data.interaction as IAccount);
+          this.interactions.chainedAccounts!.unshift(data.interaction as IAccount);
           this.ref.detectChanges();
           break;
         case 'reqchain':
           console.log('REQUESTED CHAIN :::::::::::::::::', data.interaction)
-          this.interactions.requestedChain!.unshift({account : data.interaction as IAccount, daysOfRequest : 0});
+
+          const newinvite = data.interaction as IChainInvite
+          this.interactions.chainInvitations!.unshift(newinvite);
           this.ref.detectChanges();
           break;
         case 'event':
-          this.interactions.newEvent!.unshift(data.interaction as IEvent);
+          this.interactions.newEvents!.unshift(data.interaction as IEvent);
           this.ref.detectChanges();
           break;
         default:
@@ -99,9 +102,9 @@ export class InteractionsComponent implements OnInit, OnDestroy {
       const res = await this.restSvc.unMatch(this._user?.userid! , matchuserid)
       if(res.code === 0){
        console.log('Undone Match : ', res.message)
-       const delindex = this.interactions.matchingAccount?.findIndex(acc => acc.userid === matchuserid)
+       const delindex = this.interactions.matchingAccounts?.findIndex(acc => acc.userid === matchuserid)
        if (delindex !== -1 && delindex !== undefined) {
-        this.interactions.matchingAccount?.splice(delindex, 1);
+        this.interactions.matchingAccounts?.splice(delindex, 1);
       }  
       }else{
         console.log('Error undoing match ....', res.error)
@@ -142,18 +145,18 @@ export class InteractionsComponent implements OnInit, OnDestroy {
   getNewOnChains (){
     const tenDaysAgo = new Date(this.currentDate);
     tenDaysAgo.setDate(this.currentDate.getDate() - 10);
-    const signalchain = this.signalStorageSvc.RetrieveMyChain()()!;
+    const myLinxs = this.signalStorageSvc.RetrieveMyLinxs()()!;
     
-    const linxson = this._user?.account.myChain;
+    const linxson = this._user?.account.myLinxs;
 
-    let filteredLinxsOn = linxson?.filter(c => {
+    let filteredLinxs = linxson?.filter(c => {
                           const date = new Date(c.chainedAt)
                           return date <= tenDaysAgo;
                         });
 
-    const linxsonUserIds = filteredLinxsOn?.map(c => c.userid);
+    const linxsUserIds = filteredLinxs?.map(c => c.userid);
 
-    const newOnChains = signalchain?.filter(acc => linxsonUserIds?.includes(acc.userid));
+    const newOnChains = myLinxs?.filter(acc => linxsUserIds?.includes(acc.userid));
 
     return newOnChains;    
   }
@@ -162,7 +165,7 @@ export class InteractionsComponent implements OnInit, OnDestroy {
     this.getMatches();
     if(this.myMatches !== null){
       this.myMatches.forEach(element => {
-        this.interactions.matchingAccount!.push(element);
+        this.interactions.matchingAccounts!.push(element);
       });
     }
 
@@ -180,11 +183,12 @@ export class InteractionsComponent implements OnInit, OnDestroy {
       const dateType = new Date(dateOfReq);
       const differenceInTime = this.currentDate.getTime() - dateType.getTime();
       const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24));
-      this.interactions.requestedChain!.push({ account: element,daysOfRequest : differenceInDays });
+      const invitation : IChainInvite = {fromaccount : element , touserid : this._user?.userid!, daysOfRequest : differenceInDays , chain : { chainid : '', chainname : ''}}
+      this.interactions.chainInvitations!.push();
     });
     const newOnChains = this.getNewOnChains()
     newOnChains?.forEach(element => {
-      this.interactions.chainedAccount?.push(element)
+      this.interactions.chainedAccounts?.push(element)
     })
   }
 

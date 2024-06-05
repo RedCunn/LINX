@@ -1,10 +1,11 @@
 import { IAccount } from "../useraccount/IAccount";
 import { IEvent } from "../useraccount/IEvent";
+import { IChainInvite } from "./IChainInvite";
 
 export interface IInteraction {
-    matchingAccount? : IAccount[];
-    chainedAccount? : IAccount[];
-    newEvent? : IEvent[];
-    requestedChain? : {account : IAccount, daysOfRequest :number}[];
-    brokenChain? : string;
+    matchingAccounts? : IAccount[];
+    chainedAccounts? : IAccount[];
+    newEvents? : IEvent[];
+    chainInvitations? : Array<IChainInvite>;
+    brokenChains? : Array<{user : string , chain : string}>;
 }

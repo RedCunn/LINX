@@ -19,9 +19,6 @@ export interface IStorageService {
     StoreCandidateData (newstate : IUser | null) : void ;
     RetrieveCandidateData () : WritableSignal<IUser | null> ;
 
-    StoreMyChain (mychain : IAccount[] | null) : void;
-    RetrieveMyChain () : WritableSignal<IAccount[] | null>;
-
     StoreMatches (matches : IMatch[] | null) : void;
     RetrieveMatches () : WritableSignal<IMatch[] | null>;
 
@@ -34,6 +31,20 @@ export interface IStorageService {
 
     StoreCandidateIndex (index : number) : void;
     RetrieveCandidateIndex() : WritableSignal<number>;
+
+    //#region ---------------NEW AND OLD ----------------
+
+    //OLD : 
+    StoreMyChain (mychain : IAccount[] | null) : void;
+    RetrieveMyChain () : WritableSignal<IAccount[] | null>;
+
+    //NEW : 
+
+    StoreMyLinxs ( mylinxs : IAccount[] | null) : void;
+    RetrieveMyLinxs () : WritableSignal<IAccount[] | null>;
+
+    //#endregion
+
     //#endregion
 
     //#region ---------------------------- [ ASYNC ] --------------------

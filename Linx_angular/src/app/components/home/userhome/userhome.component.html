@@ -75,20 +75,20 @@
       </div>
       }
       
-        <div class="joinchainbutt">
-          @if(!this.isCandidate() && !isUser() && !isChained()){
-          <button [disabled]="isChainRequested() || isChainBeingRequested()" (click)="showAlert('requestchain', true)"
-            data-tooltip-target="tooltip-animation-2" data-tooltip-placement="right" data-tooltip-style="light"
-            class="hover:bg-fuchsia-200 bg-fuchsia-100 border-fuchsia-400 p-3 rounded-md">
-            <img style="width: 60px; height: auto;" src="../../../../assets/imgs/logos/joinchainbutt.png">
-          </button>
-        }
-          <div id="tooltip-animation-2" role="tooltip"
-            class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-extralight text-fuchsia-600 transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip ">
-            Unir a tu cadena
-          </div>
+      <div class="joinchainbutt">
+        @if(!this.isCandidate() && !isUser() && !isChained()){
+        <button [disabled]="isChainRequested() || isChainBeingRequested()" (click)="togglePickChainModal()"
+          data-tooltip-target="tooltip-animation-2" data-tooltip-placement="right" data-tooltip-style="light"
+          class="hover:bg-fuchsia-200 bg-fuchsia-100 border-fuchsia-400 p-3 rounded-md">
+          <img style="width: 60px; height: auto;" src="../../../../assets/imgs/logos/joinchainbutt.png">
+        </button>
+      }
+        <div id="tooltip-animation-2" role="tooltip"
+          class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-extralight text-fuchsia-600 transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip ">
+          Unir a tu cadena
         </div>
-      
+      </div>
+    
       
     </div>
   </div>
@@ -152,43 +152,27 @@
   <div class="artsContainer">
     @if (!isCandidate()) {
     <div class="alertcontainer">
-      @if(showJoinChainRequested()){
-      <div class="joinalert">
-        <button type="button" class="text-end text-gray-300" (click)="showAlert('requestchain', false)">
-          <span class="material-symbols-outlined hover:text-gray-500 me-5">close</span>
-        </button>
-        <h3>¿ Quieres solicitar a {{this.linxdata?.linxname}} unir vuestras cadenas ?</h3>
-        <p>Al unir vuestras cadenas {{this.linxdata?.linxname}} tendrá acceso a todxs tus linxs y tú tendrás acceso a
-          todxs lxs linxs de {{this.linxdata?.linxname}}</p>
-        <div class="alertbuttcontainer">
-          <button type="button" (click)="requestJoinChain()"
-            class="alertbutt text-violet-400 bg-white border border-violet-300 hover:bg-violet-100 font-normal rounded-lg text-sm px-2 me-2 mb-2">
-            Unir
-          </button>
-        </div>
-      </div>
-      }
       @if(isChainRequested() && !isUser()){
       <div class="joinalert">
         <h3>Hemos enviado tu solicitud a {{this.linxdata?.linxname}} ... 🤞</h3>
       </div>
       }
-      @if(isChainBeingRequested() && !isUser()){
+      <!-- @if(isChainBeingRequested() && !isUser()){
       <div class="joinreqalert">
         <h4>¿ Aceptas la solicitud de {{this.linxdata?.linxname}} de unir vuestras cadenas ?</h4>
         <div class="flex flex-row justify-around">
-          <button type="button" (click)="rejectJoinReq()"
+          <button type="button" (click)="answerJoinReq()"
             class="alertbutt text-red-700 bg-white border border-red-600 hover:bg-red-100 font-normal rounded-lg text-sm px-2 me-2 mb-2 ">
             Rechazar
           </button>
-          <button type="button" (click)="requestJoinChain()"
+          <button type="button" (click)="acceptJoinChainRequest()"
             class="alertbutt text-violet-400 bg-white border border-violet-300 hover:bg-violet-100 font-normal rounded-lg text-sm px-2 me-2 mb-2">
             Unir cadenas
           </button>
         </div>
       </div>
-      }
-      @if (this.showBreakChainAlert()) {
+      } -->
+      <!-- @if (this.showBreakChainAlert()) {
       <div class="breakalert">
         <h4>Al romper cadena perderás a Calle y a todxs lxs linxs de su cadena , ¿estás segurx de querer continuar?</h4>
         <div class="alertbuttcontainer">
@@ -202,7 +186,7 @@
           </button>
         </div>
       </div>
-      }
+      } -->
     </div>
     }
 
@@ -307,6 +291,10 @@
 
 <app-articlemodalform [isOpen]="isArtFormOpen" [article]="article" [articles]="articles" [userdata]="userdata"
   (articleChange)="onArticleChange"></app-articlemodalform>
-<app-mychain [extendedChain]="this.extendedChain" [isOpen]="this.isChainOpen"
-  [isMyChain]="this.isMyChain"></app-mychain>
+
+<app-mychain [sharedChains]="this.sharedChains" [isOpen]="this.isChainOpen"
+  [myChains]="this.myChains"></app-mychain>
+
+<app-chainsmodal [isOpen]="isPickChainOpen" [userdata]="userdata" [linxdata]="linxdata!" (isChainedchange)="this.onIsChainedChange"
+(isChainRequestedchange)="this.onIsChainRequestedChange" (showAlertschange)="this.onShowAlertsChange"></app-chainsmodal>
 <ng-container #chatcompoContainer></ng-container>

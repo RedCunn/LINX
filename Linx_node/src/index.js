@@ -47,7 +47,7 @@ async function deleteUserDataFromDeletedAccounts (db){
         const Users = db.collection('Users');
         const Articles = db.collection('Articles');
         const Accounts = db.collection('Accounts');
-        const Chats = db.collection('Chats'); // -> enviar la transcripción de todos los chats al correo del user 
+        const Chats = db.collection('Chats'); 
 
     } catch (error) {
         

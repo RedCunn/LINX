@@ -2,24 +2,29 @@ const { v4: uuidv4 } = require('uuid');
 const ChainReq = require('../../schemas/ChainRequest');
 const Account = require('../../schemas/Account');
 const Match = require('../../schemas/Match');
+const LinxExtent = require('../../schemas/LinxExtent');
 
 module.exports = {
-    isJoinChainRequested: async (userid, linxid) => {
+    isJoinChainRequested: async (userid, linxid, chainnames) => {
         try {
-            let reqState = 'NONE';
-            let isRequested = await ChainReq.find({
-                $or:
-                    [
-                        { $and: [{ requestingUserid: userid }, { requestedUserid: linxid }] },
-                        { $and: [{ requestingUserid: linxid }, { requestedUserid: userid }] }
-                    ]
-            })
+            let reqStates = new Map();
 
-            if(isRequested.length > 0){
-                reqState = 'REQUESTED';
+            for (const name of chainnames) {
+                let isRequested = await ChainReq.find({
+                    $or: [
+                        { $and: [{ requestingUserid: userid }, { requestedUserid: linxid }, { chainName: name }] },
+                        { $and: [{ requestingUserid: linxid }, { requestedUserid: userid }, { chainName: name }] }
+                    ]
+                });
+        
+                if(isRequested.length > 0){
+                    reqStates.set(name , 'ACCEPTED')
+                }else{
+                    reqStates.set(name , 'REQUESTED')
+                }
             }
-            console.log('CHAIN REQ STATE...', reqState);
-            return reqState;
+
+            return reqStates;
         } catch (error) {
             console.log('error selecting isRequested...', error)
         }
@@ -33,7 +38,31 @@ module.exports = {
             console.log('result ERROR of insertion on ChainRequests: ', error)
         }
     },
-    joinChains: async (userid, linxid) => {
+    addingExtentToChain : async(userid, linxid , newlinxid, chainname) => {
+        const session = await Account.startSession();
+        session.startTransaction();
+        try {
+            let linxAccount = await Account.findOne({ userid: linxid })
+            let userAccount = await Account.findOne({ userid: userid })
+            let extentLinxid =  await Account.findOne({ userid: newlinxid })
+            if (!linxAccount || !userAccount || !extentLinxid) {
+                throw new Error('Account not found');
+            }
+
+            userAccount.myChain.forEach(chain => {
+                if(chain.chainname === chainname){
+                    extentLinxid.extendedChain.push({mylinxuserid : linxid, chainname : chainname, userid : chain.userid })
+                }
+            })
+
+        } catch (error) {
+            await session.abortTransaction();
+            console.error('Error durante la transacción ADDING EXTENT To CHAIN:', error);
+        }finally{
+            session.endSession();
+        }
+    },
+    joinChains: async (userid, linxid, chainname) => {
         const session = await Account.startSession();
         session.startTransaction();
         try {
@@ -63,50 +92,24 @@ module.exports = {
                 roomkey = uuidv4();
             }
 
-            // COMPROBAMOS SI ESTABAN INCLUIDOS EN EXTENDEDCHAIN            
-            let searchExtentOnLinx = linxAccount.extendedChain.findIndex(ext => ext.userid === userid)
-            if(searchExtentOnLinx !== -1){
-                await Account.updateOne(
-                    { userid: linxid },
-                    { $pull: { extendedChain: { userid: userid } } },
-                    { session }
-                );
-            }
-            let searchExtentOnUser = userAccount.extendedChain.findIndex(ext => ext.userid === linxid)
-            if(searchExtentOnUser !== -1){
-                await Account.updateOne(
-                    { userid: userid },
-                    { $pull: { extendedChain: { userid: linxid } } },
-                    { session }
-                );
-            }
-
-            // INCLUIMOS LA CHAIN DEL LINX EN LA EXTENDED CHAIN DEL USER
-            linxAccount.myChain.forEach(l => {
-                userAccount.extendedChain.push({mylinxuserid : linxid, userid : l.userid})
+            // INCLUIMOS LA CHAIN DEL USER EN LA EXTENDEDCHAIN DEL LINX
+        
+            userAccount.myChain.forEach(chain => {
+                if(chain.chainname === chainname){
+                    linxAccount.extendedChain.push({mylinxuserid : userid, chainname : chainname, userid : chain.userid })
+                }
             })
-            // INCLUIMOS LA CHAIN DEL USER EN LA EXTENDED CHAIN DEL LINX
-            userAccount.myChain.forEach(l => {
-                linxAccount.extendedChain.push({mylinxuserid : userid, userid : l.userid})
-            })
-
+            
             // INCLUIMOS AL LINX EN LA CHAIN DEL USER
             let insertOnUserChain = await Account.updateOne({ userid: userid },
-                { $push: { myChain: { userid: linxid, roomkey: roomkey } }}).session(session)
-
-            // INCLUIMOS AL USER EN LA CHAIN DEL LINX
-            let insertOnLinxChain = await Account.updateOne({ userid: linxid },
-                { $push: { myChain: { userid: userid, roomkey: roomkey } } }).session(session)
-
-            console.log('INSERT ON USER CHAIN : ', insertOnUserChain)
-            console.log('INSERT ON LINX CHAIN : ', insertOnLinxChain)
+                { $push: { myChain: { chainname : chainname , userid: linxid, roomkey: roomkey } }}).session(session)
 
             // BORRAMOS LA PETICION DE UNIR CADENAS
             let removeChainReq = await ChainReq.deleteOne({
                 $or:
                     [
-                        { $and: [{ requestingUserid: userid }, { requestedUserid: linxid }] },
-                        { $and: [{ requestingUserid: linxid }, { requestedUserid: userid }] }
+                        { $and: [{ requestingUserid: userid }, { requestedUserid: linxid },{chainName : chainname}] },
+                        { $and: [{ requestingUserid: linxid }, { requestedUserid: userid }, {chainName : chainname}] }
                     ]
             }).session(session)
 
@@ -133,31 +136,17 @@ module.exports = {
             session.endSession();
         }
     },
-    breakChain : async (userid , linxuserid)=> {
+    breakChain : async (userid , linxuserid, chainid)=> {
         const session = await Account.startSession();
         session.startTransaction();
         try {
-            await Account.updateOne(
-                { userid: userid },
-                { $pull: { "extendedChain": { mylinxuserid: linxuserid } } }
-              ).session(session);
-            await Account.updateOne(
-                { userid: linxuserid },
-                { $pull: { "extendedChain": { mylinxuserid: userid } } }
-              ).session(session);
-              
-            await Account.updateOne(
-            { "myChain.userid": linxuserid },
-            { $pull: { "myChain": { userid: linxuserid } } }
-            ).session(session);  
-            await Account.updateOne(
-            { "myChain.userid": userid },
-            { $pull: { "myChain": { userid: userid } } }
-            ).session(session);
+            
+            let deleteFromMyLinxs = await Account.findOneAndDelete({myLinxs : {userid : linxuserid , chainid : chainid}}).session(session)
+            let deleteLinxExtents = await LinxExtent.deleteMany({mylinxuserID : linxuserid , chainadminID : userid , chainID : chainid}).session(session)
 
             await session.commitTransaction();
 
-            console.log('SUCCESFULLY BROKEN CHAIN')
+            console.log('A BROKEN CHAIN IS NEVER HAPPY BUT DONE WITH SUCCESS')
 
         } catch (error) {
             await session.abortTransaction();

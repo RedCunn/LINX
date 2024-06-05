@@ -377,8 +377,8 @@ module.exports = {
             } else {
                 chats = await Chat.find({
                     $or: [
-                        { $and: [{ 'participants.userid_a': _userid},{'participants.userid_b': _linxuserid }] },
-                        { $and: [{ 'participants.userid_a': _linxuserid},{'participants.userid_b': _userid }] }
+                        { $and: [{ 'participants.userid_a': _userid }, { 'participants.userid_b': _linxuserid }] },
+                        { $and: [{ 'participants.userid_a': _linxuserid }, { 'participants.userid_b': _userid }] }
                     ]
                 });
             }
@@ -386,17 +386,17 @@ module.exports = {
             let convernamesUserids = new Set();
 
             chats.forEach(chat => {
-                if(chat.participants.userid_a !== _userid){
-                    convernamesUserids.add(chat.participants.userid_a )
+                if (chat.participants.userid_a !== _userid) {
+                    convernamesUserids.add(chat.participants.userid_a)
                 }
 
-                if(chat.participants.userid_b !== _userid){
-                    convernamesUserids.add(chat.participants.userid_b )
+                if (chat.participants.userid_b !== _userid) {
+                    convernamesUserids.add(chat.participants.userid_b)
                 }
 
             })
             let convernamesUseridsToArray = Array.from(convernamesUserids);
-            let accounts = await Account.find({userid : {$in : convernamesUseridsToArray}})
+            let accounts = await Account.find({ userid: { $in: convernamesUseridsToArray } })
 
             let mapnamesids = new Map();
             accounts.forEach(({ userid, linxname }) => {
@@ -457,6 +457,44 @@ module.exports = {
             })
         }
     },
+    markMessagesAsRead: async (req, res, next) => {
+        try {
+
+            let {messages} = req.body
+            let userid = req.params.userid
+
+
+            const updateOperations = messages.map((m) => ({
+                updateOne: {
+                    filter: { 'messages': { $elemMatch: { _id: m._id } } },
+                    update: { $set: { 'messages.$.isRead': true } }
+                }
+            }));
+            
+            let bulkresult = await Chat.bulkWrite(updateOperations);
+
+            console.log('BULKRESULT MARKING MESS : ', bulkresult)
+            
+
+            res.status(200).send({
+                code: 0,
+                error: null,
+                message: `MESSAGES UPDATED AS READ by ${userid}`,
+                token: null,
+                userdata: null,
+                others: null
+            })
+        } catch (error) {
+            res.status(400).send({
+                code: 1,
+                error: error.message,
+                message: `ERROR UPDATing AS READ `,
+                token: null,
+                userdata: null,
+                others: null
+            })
+        }
+    },
     newArticle: async (req, res, next) => {
         try {
             const _userid = req.params.userid;
@@ -496,7 +534,7 @@ module.exports = {
             const _userid = req.params.userid;
             const _artid = req.params.artid;
             const { title, body, postedOn, useAsProfilePic } = req.body;
-            
+
             let updateArticle;
             let filePath = '';
             if (req.file) {
@@ -506,8 +544,8 @@ module.exports = {
                 updateArticle = await Article.updateOne({ userid: _userid, articleid: _artid }, { title, body, postedOn, useAsProfilePic })
             }
 
-            if(useAsProfilePic === 'true'){
-                updateArticleUseAsProfPic = await Article.updateMany({ $and : [{userid: _userid,  articleid:{ $ne : _artid}}] }, { useAsProfilePic : false}) 
+            if (useAsProfilePic === 'true') {
+                updateArticleUseAsProfPic = await Article.updateMany({ $and: [{ userid: _userid, articleid: { $ne: _artid } }] }, { useAsProfilePic: false })
             }
 
             res.status(200).send({
@@ -554,30 +592,30 @@ module.exports = {
             })
         }
     },
-    deleteArticleImage : async(req, res, next)=> {
+    deleteArticleImage: async (req, res, next) => {
         const _userid = req.params.userid;
         const _artid = req.params.artid;
-        let update = await Article.updateOne({ userid: _userid, articleid: _artid },{img : ''});
+        let update = await Article.updateOne({ userid: _userid, articleid: _artid }, { img: '' });
 
-    try {
-        res.status(200).send({
-            code: 0,
-            error: null,
-            message: 'Deleted Article IMG',
-            token: null,
-            userdata: null,
-            others: null
-        })
-    } catch (error) {
-        res.status(400).send({
-            code: 1,
-            error: error.message,
-            message: 'Error deleting Article IMG',
-            token: null,
-            userdata: null,
-            others: null
-        })
+        try {
+            res.status(200).send({
+                code: 0,
+                error: null,
+                message: 'Deleted Article IMG',
+                token: null,
+                userdata: null,
+                others: null
+            })
+        } catch (error) {
+            res.status(400).send({
+                code: 1,
+                error: error.message,
+                message: 'Error deleting Article IMG',
+                token: null,
+                userdata: null,
+                others: null
+            })
+        }
     }
-}
 
 }

@@ -148,5 +148,6 @@ router.put('/:userid/article/:artid', upload.single('file'), AccountController.e
 router.delete('/:userid/article/:artid',deleteFile, AccountController.deleteArticle)
 router.delete('/:userid/article/:artid/img', deleteFile, AccountController.deleteArticleImage)
 router.get('/:userid/chat/:linxuserid', AccountController.getChats)
+router.put('/:userid/chat', AccountController.markMessagesAsRead)
 router.get('/places/:cityid', AccountController.getPlaceDetails)
 module.exports = router;

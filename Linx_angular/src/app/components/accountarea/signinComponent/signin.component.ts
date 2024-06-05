@@ -37,17 +37,17 @@ export class SigninComponent {
     this.router.navigateByUrl('/Linx/Registro');
   }
 
-  async getMyChain(user: IUser) {
+  async getFullChain(user: IUser) {
     try {
-      const res = await this.restSvc.getMyChain(user.userid);
+      const res = await this.restSvc.getMyLinxs(user.userid, null);
       if (res.code === 0) {
         let accounts: IAccount[] = res.others as IAccount[];
         const articles: IArticle[] = res.userdata as IArticle[];
-        user.account.myChain?.forEach(c => {
+        user.account.myLinxs?.forEach(c => {
           this.userRooms.set(c.userid, c.roomkey);
         })
         const wholeAccounts = this.utilsvc.putArticleObjectsIntoAccounts(accounts, articles);
-        this.signalstoresvc.StoreMyChain(wholeAccounts);
+        this.signalstoresvc.StoreMyLinxs(wholeAccounts);
       } else {
         console.log('mychain never found...')
       }
@@ -86,18 +86,33 @@ export class SigninComponent {
     }
   }
 
-  setExtendedChainKeys (user : IUser){
-  const extmap = new Map<string,string>();
+  async setExtendedChainKeys (user : IUser){
+    const extmap = new Map<string,string>();
 
-    user.account.extendedChain?.forEach(ext => {
-      const roomkey = this.utilsvc.generateRoomkey();
-      extmap.set(ext.userid , roomkey);
-    })
+    try {
+      const res = await this.restSvc.getMyChainExtents(user.userid , null)
 
-    for (const [key , value] of extmap) {
-      this.socketSvc.requestInitChat(key , user.userid, value)
+      if(res.code === 0){
+        const extents : IAccount[] = res.others.accounts as IAccount[]
+
+        extents.forEach(ext => {
+          const roomkey = this.utilsvc.generateRoomkey();
+          extmap.set(ext.userid , roomkey);
+        })
+
+        for (const [key , value] of extmap) {
+          this.socketSvc.requestInitChat(key , user.userid, value)
+        }
+        this.signalstoresvc.StoreRoomKeys(extmap);
+
+      }else{
+        console.log('ERROR AL RECUPERAR LINXEXTENTS EN SIGNIN : ', res.error)
+      }
+      
+      
+    } catch (error) {
+      console.log('ERROR AL RECUPERAR LINXEXTENTS EN SIGNIN : ', error)
     }
-    this.signalstoresvc.StoreRoomKeys(extmap);
   }
 
   async Signin(loginForm: NgForm) {
@@ -111,7 +126,7 @@ export class SigninComponent {
       this.signalstoresvc.StoreJWT(_response.token!);
       this.socketSvc.connect();
       this.socketSvc.initUserRoom(user.userid);
-      await this.getMyChain(user)
+      await this.getFullChain(user)
       await this.getMyMatches(user.userid)
       this.setExtendedChainKeys(user)
       this.socketSvc.userLogin(user.account._id!, user.account.linxname);

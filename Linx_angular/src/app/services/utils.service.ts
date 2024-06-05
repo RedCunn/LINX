@@ -283,22 +283,6 @@ export class UtilsService {
       startOfThisWeek.getDate() === dateStartOfWeek.getDate();
   }
 
-  findUserIndexOnChain(user: IUser, id: string): number {
-    if (user.account.myChain !== undefined && user.account.myChain !== null) {
-      const index = user.account.myChain.findIndex(l => l.userid === id)
-      return index;
-    }
-    return -1;
-  }
-
-  findUserIndexOnExtendedChain(extent: IAccount[], id: string): number {
-    if (extent !== undefined) {
-      const index = extent.findIndex(l => l.userid === id);
-      return index;
-    }
-    return -1;
-  }
-
   findUserIndexOnMatches(matches: IMatch[] | null, userid: string, id: string): number {
     if (matches !== null) {
       const index = matches.findIndex(m => (m.userid_a === userid && m.userid_b === id) || (m.userid_a === id && m.userid_b === userid))
@@ -327,23 +311,23 @@ export class UtilsService {
     }
   }
 
-  async getExtendedChainFromLinx (linxid : string, userid : string) : Promise<IAccount[]>{
+  async getChainExtents ( userid : string, chainid : string) : Promise<IAccount[]>{
 
-    let extendedchain : IAccount[] = [];
+    let extentsAccounts : IAccount[] = [];
     try {
-      const res = await this.restsvc.getMyChain(linxid);
+      const res = await this.restsvc.getMyChainExtents(userid , chainid);
       if (res.code === 0) {
         const extaccounts: IAccount[] = res.others as IAccount[];
         const extarticles: IArticle[] = res.userdata as IArticle[];
         const extAccountsButMe = extaccounts.filter(acc => acc.userid !== userid)
-        extendedchain = this.putArticleObjectsIntoAccounts(extAccountsButMe, extarticles);
+        extentsAccounts = this.putArticleObjectsIntoAccounts(extAccountsButMe, extarticles);
       } else {
         console.log('Error gettingExtendedChain utilsvc-userhome : ', res.error);
       }
     } catch (error) {
       console.log('Error gettingExtendedChain utilsvc-userhome :', error);
     }
-    return extendedchain;
+    return extentsAccounts;
   }
 
 }
