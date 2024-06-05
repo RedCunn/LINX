@@ -6,6 +6,8 @@ import { SignalStorageService } from './signal-storage.service';
 import { IUser } from '../models/userprofile/IUser';
 import { IMatch } from '../models/userprofile/IMatch';
 import { IInteraction } from '../models/userprofile/IInteraction';
+import * as CryptoJS from 'crypto-js';
+import { RestnodeService } from './restnode.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +16,7 @@ export class UtilsService {
 
   private socketSvc: WebsocketService = inject(WebsocketService);
   private signalSvc: SignalStorageService = inject(SignalStorageService);
-
+  private restsvc : RestnodeService = inject(RestnodeService);
   private currentDate: Date = new Date();
 
   constructor() { }
@@ -45,6 +47,7 @@ export class UtilsService {
   }
 
   public joinRoom (room :{userid : string , roomkey : string}){
+    this.socketSvc.initChat(room.roomkey);
     const storedkeys = new Map<string, string>(this.signalSvc.RetrieveRoomKeys()());
     storedkeys.set(room.userid , room.roomkey);
     this.signalSvc.StoreRoomKey(room)
@@ -303,4 +306,44 @@ export class UtilsService {
     }
     return -1;
   }
+
+  generateRoomkey () : string {
+    const randomBytes = CryptoJS.lib.WordArray.random(16);
+    const roomkey = CryptoJS.enc.Hex.stringify(randomBytes);
+    return roomkey;
+  }
+
+  setRoomKey(userid : string , id : string): string {
+    const storedrooms = this.signalSvc.RetrieveRoomKeys()() !== null ? this.signalSvc.RetrieveRoomKeys()() : new Map<string,string>();
+    
+    if(!storedrooms?.has(id)){
+      const roomkey =  this.generateRoomkey();
+      const room = {userid : id, roomkey : roomkey}
+      this.signalSvc.StoreRoomKey(room);
+      this.socketSvc.requestInitChat(id, userid, roomkey);
+      return roomkey;
+    }else{
+      return storedrooms.get(id)!; 
+    }
+  }
+
+  async getExtendedChainFromLinx (linxid : string, userid : string) : Promise<IAccount[]>{
+
+    let extendedchain : IAccount[] = [];
+    try {
+      const res = await this.restsvc.getMyChain(linxid);
+      if (res.code === 0) {
+        const extaccounts: IAccount[] = res.others as IAccount[];
+        const extarticles: IArticle[] = res.userdata as IArticle[];
+        const extAccountsButMe = extaccounts.filter(acc => acc.userid !== userid)
+        extendedchain = this.putArticleObjectsIntoAccounts(extAccountsButMe, extarticles);
+      } else {
+        console.log('Error gettingExtendedChain utilsvc-userhome : ', res.error);
+      }
+    } catch (error) {
+      console.log('Error gettingExtendedChain utilsvc-userhome :', error);
+    }
+    return extendedchain;
+  }
+
 }

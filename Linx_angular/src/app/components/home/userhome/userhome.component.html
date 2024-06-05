@@ -52,7 +52,7 @@
     <div>
       @if(isChained()){
       <div class="linxchain">
-        <button (click)="toggleChainModal()" class="extentchain" >
+        <button (click)="toggleChainModal()" class="extentchain">
           <div class="eslabon">
             <img style="width: 60px;" src="../../../../assets/imgs/logos/eslabon6.png">
           </div>
@@ -73,21 +73,23 @@
           Romper cadena
         </div>
       </div>
-      }@else {
-      @if(!this.isCandidate() && !isUser()){
-      <div class="joinchainbutt">
-        <button [disabled]="isChainRequested() || isChainBeingRequested()" (click)="showAlert('requestchain', true)"
-          data-tooltip-target="tooltip-animation-2" data-tooltip-placement="right" data-tooltip-style="light"
-          class="hover:bg-fuchsia-200 bg-fuchsia-100 border-fuchsia-400 p-3 rounded-md">
-          <img style="width: 60px; height: auto;" src="../../../../assets/imgs/logos/joinchainbutt.png">
-        </button>
-        <div id="tooltip-animation-2" role="tooltip"
-          class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-extralight text-fuchsia-600 transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip ">
-           Unir a tu cadena
+      }
+      
+        <div class="joinchainbutt">
+          @if(!this.isCandidate() && !isUser() && !isChained()){
+          <button [disabled]="isChainRequested() || isChainBeingRequested()" (click)="showAlert('requestchain', true)"
+            data-tooltip-target="tooltip-animation-2" data-tooltip-placement="right" data-tooltip-style="light"
+            class="hover:bg-fuchsia-200 bg-fuchsia-100 border-fuchsia-400 p-3 rounded-md">
+            <img style="width: 60px; height: auto;" src="../../../../assets/imgs/logos/joinchainbutt.png">
+          </button>
+        }
+          <div id="tooltip-animation-2" role="tooltip"
+            class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-extralight text-fuchsia-600 transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip ">
+            Unir a tu cadena
+          </div>
         </div>
-      </div>
-      }
-      }
+      
+      
     </div>
   </div>
   @if(isCandidate()){
@@ -110,7 +112,7 @@
       </li>
       <li>
         @if(this.candidateResidency){
-        <p>Distancia :</p>
+        <p>Vive en :</p>
         {{this.candidateResidency}}
         }@else {
         <div role="status">
@@ -148,6 +150,7 @@
   </div>
   <!--ARTICULOS-->
   <div class="artsContainer">
+    @if (!isCandidate()) {
     <div class="alertcontainer">
       @if(showJoinChainRequested()){
       <div class="joinalert">
@@ -201,6 +204,7 @@
       </div>
       }
     </div>
+    }
 
     @if(this.loadingArts()){
     <article role="status" class="animate-pulse">

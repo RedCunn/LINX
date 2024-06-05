@@ -17,8 +17,7 @@ import { BehaviorSubject, distinctUntilChanged } from 'rxjs';
 import { WebsocketService } from '../../../services/websocket.service';
 import { MyChainComponent } from '../../mychain/mychain.component';
 import { UtilsService } from '../../../services/utils.service';
-import * as CryptoJS from 'crypto-js';
-import { IMessage } from '../../../models/chat/IMessage';
+
 
 @Component({
   selector: 'app-userhome',
@@ -27,7 +26,7 @@ import { IMessage } from '../../../models/chat/IMessage';
   templateUrl: './userhome.component.html',
   styleUrl: './userhome.component.css'
 })
-export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy {
+export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy{
 
   private socketsvc: WebsocketService = inject(WebsocketService);
   private signalStoreSvc: SignalStorageService = inject(SignalStorageService);
@@ -104,7 +103,7 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy {
           this.isMatch.set(!this.isLinx());
           this.loadChatComponent();
           if (this.isLinx()) {
-            this.getExtendedChain(this.linxdata!);
+            this.getExtendedChain()
             this.isMyChain.set(false);
           } else {
             this.isMyChain.set(true);
@@ -115,9 +114,13 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.articles = []
         this.loadProfileArticles()
       });
-
   }
   //#region ----------------- SET UP ----------------------------------------
+
+  async getExtendedChain (){
+    const res = await this.utilsvc.getExtendedChainFromLinx(this.linxdata!.userid , this.userdata?.userid!)
+    this.extendedChain = res;
+  }
 
   async getPlaceDetail() {
     try {
@@ -143,7 +146,7 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async setChat() {
-    this.roomkey = this.setRoomKey();
+    this.roomkey = this.utilsvc.setRoomKey(this.userdata?.userid! ,this.linxdata?.userid!);
     this.chat = { conversationname: this.linxdata?.linxname!, participants: { userid_a: this.userdata?.userid!, userid_b: this.linxdata?.userid! }, roomkey: this.roomkey, messages: [] }
     try {
       const res = await this.restSvc.getMyChats(this.userdata?.userid!, this.linxdata?.userid!);
@@ -164,72 +167,10 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy {
       console.log('error recuperando chat...', error)
     }
   }
-
-  setRoomKey(): string {
-    let _roomkey = '';
-    const storedrooms = this.signalStoreSvc.RetrieveRoomKeys()() !== null ? this.signalStoreSvc.RetrieveRoomKeys()() : new Map<string,string>();
-    let searchIndex;
-    console.log('LINUSERID SETROOMKEY-home : ', this.linxdata?.userid)
-
-    /* SEARCH ON MY CHAIN*/
-    searchIndex = this.utilsvc.findUserIndexOnChain(this.userdata!, this.linxdata?.userid!);
-    console.log('1º index : ', searchIndex)
-    if (searchIndex !== -1) {
-      _roomkey = this.userdata?.account.myChain?.at(searchIndex!)?.roomkey!
-      return _roomkey;
-    }
-    /* SEARCH ON MY MATCHES*/
-    let _matches = this.signalStoreSvc.RetrieveMatches();
-    searchIndex = this.utilsvc.findUserIndexOnMatches(_matches(), this.userdata?.userid!, this.linxdata?.userid!)
-    console.log('2º index : ', searchIndex)
-    if(searchIndex !== -1){
-      _roomkey = _matches()!.at(searchIndex)?.roomkey!;
-      return _roomkey;
-    }
-    /* SEARCH ON MY EXTENDED CHAIN*/
-    searchIndex = this.utilsvc.findUserIndexOnExtendedChain(this.extendedChain, this.linxdata?.userid!)
-    console.log('3º index : ', searchIndex)
-    if (searchIndex !== -1) {
-
-      /* CHECK IF THERE'S ONE KEY ALREADY STORED*/
-      if (storedrooms!.get(this.linxdata?.userid!) === undefined) {
-        console.log('>>>>> NO HAY LLAVE EN SETROOMKEY HOME ')
-        _roomkey = this.generateTempRoomkey();
-        const room = {userid : this.linxdata?.userid!, roomkey : _roomkey}
-        this.utilsvc.joinRoom(room);
-        this.socketsvc.requestInitChat(this.linxdata?.userid!, this.userdata?.userid!, _roomkey);
-      } else {
-        _roomkey = storedrooms!.get(this.linxdata?.userid!)!;
-        console.log('>>>>> HAY LLAVE EN SETROOMKEY HOME ', _roomkey)
-      }
-    } 
-    return _roomkey;
-  }
-  generateTempRoomkey() {
-    const randomBytes = CryptoJS.lib.WordArray.random(8);
-    const roomkey = CryptoJS.enc.Hex.stringify(randomBytes);
-    return roomkey;
-  }
+  
   isLinx(): boolean {
     let onChain = this.userdata?.account.myChain?.find(l => l.userid === this.linxdata?.userid)
     return onChain !== undefined;
-  }
-
-  async getExtendedChain(linxdata: IAccount) {
-    try {
-      const res = await this.restSvc.getMyChain(linxdata.userid);
-      if (res.code === 0) {
-        const extaccounts: IAccount[] = res.others as IAccount[];
-        const extarticles: IArticle[] = res.userdata as IArticle[];
-        const extAccountsButMe = extaccounts.filter(acc => acc.userid !== this.userdata?.userid)
-        this.extendedChain = this.utilsvc.putArticleObjectsIntoAccounts(extAccountsButMe, extarticles);
-        console.log('EXTENDED CHAIN --------------userhome : ', this.extendedChain);
-      } else {
-        console.log('Error gettingExtendedChain userhome : ', res.error);
-      }
-    } catch (error) {
-      console.log('Error gettingExtendedChain userhome :', error);
-    }
   }
 
   async getMyChain(userdata: IUser) {

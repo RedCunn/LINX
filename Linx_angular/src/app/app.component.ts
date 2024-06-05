@@ -68,6 +68,8 @@ export class AppComponent implements OnInit, OnDestroy {
   }
   ngOnDestroy(): void {
     this.websocketsvc.disconnect()
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
 

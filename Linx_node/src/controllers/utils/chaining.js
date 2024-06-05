@@ -41,6 +41,15 @@ module.exports = {
             let linxAccount = await Account.findOne({ userid: linxid })
             let userAccount = await Account.findOne({ userid: userid })
 
+            if (!linxAccount || !userAccount) {
+                throw new Error('Account not found');
+            }
+
+            // vamos a tener que coger la llave del chat de su Match si son Match, y sino crear una 
+
+            let roomkey = '';            
+
+            // COMPROBAMOS SI ERAN MATCHES
             let match = await Match.findOne({
                 $or: [
                     { $and: [{ userid_a: userid }, { userid_b: linxid }] },
@@ -48,26 +57,51 @@ module.exports = {
                 ]
             })
 
-            if (!linxAccount || !userAccount || !match) {
-                throw new Error('Account or match not found');
+            if(match){
+                roomkey = match.roomkey;
+            }else{
+                roomkey = uuidv4();
             }
 
+            // COMPROBAMOS SI ESTABAN INCLUIDOS EN EXTENDEDCHAIN            
+            let searchExtentOnLinx = linxAccount.extendedChain.findIndex(ext => ext.userid === userid)
+            if(searchExtentOnLinx !== -1){
+                await Account.updateOne(
+                    { userid: linxid },
+                    { $pull: { extendedChain: { userid: userid } } },
+                    { session }
+                );
+            }
+            let searchExtentOnUser = userAccount.extendedChain.findIndex(ext => ext.userid === linxid)
+            if(searchExtentOnUser !== -1){
+                await Account.updateOne(
+                    { userid: userid },
+                    { $pull: { extendedChain: { userid: linxid } } },
+                    { session }
+                );
+            }
+
+            // INCLUIMOS LA CHAIN DEL LINX EN LA EXTENDED CHAIN DEL USER
             linxAccount.myChain.forEach(l => {
                 userAccount.extendedChain.push({mylinxuserid : linxid, userid : l.userid})
             })
-
+            // INCLUIMOS LA CHAIN DEL USER EN LA EXTENDED CHAIN DEL LINX
             userAccount.myChain.forEach(l => {
-                userAccount.extendedChain.push({mylinxuserid : userid, userid : l.userid})
+                linxAccount.extendedChain.push({mylinxuserid : userid, userid : l.userid})
             })
 
+            // INCLUIMOS AL LINX EN LA CHAIN DEL USER
             let insertOnUserChain = await Account.updateOne({ userid: userid },
-                { $push: { myChain: { userid: linxid, roomkey: match.roomkey } }}).session(session)
+                { $push: { myChain: { userid: linxid, roomkey: roomkey } }}).session(session)
+
+            // INCLUIMOS AL USER EN LA CHAIN DEL LINX
             let insertOnLinxChain = await Account.updateOne({ userid: linxid },
-                { $push: { myChain: { userid: userid, roomkey: match.roomkey } } }).session(session)
+                { $push: { myChain: { userid: userid, roomkey: roomkey } } }).session(session)
 
             console.log('INSERT ON USER CHAIN : ', insertOnUserChain)
             console.log('INSERT ON LINX CHAIN : ', insertOnLinxChain)
 
+            // BORRAMOS LA PETICION DE UNIR CADENAS
             let removeChainReq = await ChainReq.deleteOne({
                 $or:
                     [
@@ -76,12 +110,15 @@ module.exports = {
                     ]
             }).session(session)
 
-            let removeMatch = await Match.deleteOne({
-                $or: [
-                    { $and: [{ userid_a: userid }, { userid_b: linxid }] },
-                    { $and: [{ userid_a: linxid }, { userid_b: userid }] }
-                ]
-            }).session(session)
+            // SI FUERAN MATCHES BORRAMOS EL MATCH 
+            if(match){
+                let removeMatch = await Match.deleteOne({
+                    $or: [
+                        { $and: [{ userid_a: userid }, { userid_b: linxid }] },
+                        { $and: [{ userid_a: linxid }, { userid_b: userid }] }
+                    ]
+                }).session(session)
+            }
 
             await userAccount.save({ session: session });
             await linxAccount.save({ session: session });

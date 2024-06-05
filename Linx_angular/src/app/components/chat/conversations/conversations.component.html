@@ -27,13 +27,18 @@
                         @for(chat of this.chats; track $index){
                             <li>
                                 <button (click)="openChat(chat)"
-                                    class="flex items-center w-full p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 hover:bg-gray-100 group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white">
-                                    <p class="pe-2 pt-1">
-                                        <span class="material-symbols-outlined">
-                                            link
-                                        </span>
-                                    </p>
-                                    <p>{{chat.conversationname}}</p>
+                                    class="flex flex-row justify-between items-center w-full p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 hover:bg-gray-100 group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white">
+                                    <div class="flex flex-row items-center">
+                                        <p class="pe-2 pt-1">
+                                            <span class="material-symbols-outlined">
+                                                link
+                                            </span>
+                                        </p>
+                                        <p>{{chat.conversationname}}</p>
+                                    </div>
+                                    @if(this.countMessagesUnread(chat.messages) > 0){
+                                        <div class="notreadcount"><p>{{this.countMessagesUnread(chat.messages)}}</p></div>   
+                                    }
                                 </button>
                             </li>
                         }@empty {
@@ -46,6 +51,7 @@
             </div>
         </div>
     </div>
-    <app-chat [isOpen]="isChatOpen" [chatRef]="this.chatToOpen"></app-chat>
 </div>
 }
+
+<ng-container #chatcompoContainer></ng-container>

@@ -9,6 +9,7 @@ const chatSchema = new mongoose.Schema({
     roomkey : {type : String, unique : true},
     messages: [
         {
+            isRead : {type : Boolean , default : false},
             text: { type: String, maxLength: 300, minLength: 1 },
             timestamp: { type: Date },
             sender: { 

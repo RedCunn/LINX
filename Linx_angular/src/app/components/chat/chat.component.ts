@@ -32,18 +32,25 @@ export class ChatComponent implements OnInit, OnDestroy , AfterContentInit{
   private utilsvc = inject(UtilsService);
 
   public chat: IChat = {conversationname:'', participants: { userid_a: '', userid_b: '' }, messages: [], roomkey: '' };
-  public message: IMessage = { text: '', timestamp: '', sender: { userid: '', linxname: '' } };
+  public message: IMessage = { isRead : false, text: '', timestamp: '', sender: { userid: '', linxname: '' }};
   public user!: IUser;
-  public receiverAccount!: IAccount;
+  public receiveruserid: string = '';
 
   private destroy$ = new Subject<void>();
   public messages: IMessage[] = [];
+  private messID : string  = '';
 
   constructor(private ref: ChangeDetectorRef) {
     this.socketSvc.getMessages().pipe(
       takeUntil(this.destroy$)
     ).subscribe(data => {
       console.log('constr chat getMessages : ', data)
+      if(this.isOpen() && data.sender.userid !== this.user.userid){
+        data.isRead = true;
+        this.socketSvc.markMessageAsRead(data, this.user.userid, data.sender.userid);
+      }else{
+        data.isRead = false;
+      }
       this.messages.push(data);
       this.ref.detectChanges();
       this.scrollToBottom();
@@ -52,6 +59,14 @@ export class ChatComponent implements OnInit, OnDestroy , AfterContentInit{
   
   closeModal() {
     this.isOpen.set(false);
+  }
+
+  markMessagesAsRead(){
+    this.messages.forEach(mess => {
+      if(!mess.isRead && mess.sender.userid !== this.user.userid){
+        console.log('MENSAJES POR MARCAR en chat: ' , mess)
+      }
+    })
   }
 
   setMessage(event: any) {
@@ -65,17 +80,25 @@ export class ChatComponent implements OnInit, OnDestroy , AfterContentInit{
 
   async sendMessage() {
     if (this.message.text.trim() !== '') {
-      this.socketSvc.sendMessage( this.message, this.chatRef.roomkey);
+      console.log('ROOMKEY DEL CHAT : ', this.chatRef.roomkey)
       console.log('SENDING MESSAGE ------> ', this.message)
       this.messageTextarea.nativeElement.value = '';
       await this.storeMessage(this.message);
+      this.message._id = this.messID;
+      this.socketSvc.sendMessage( this.message, this.chatRef.roomkey);
     }
   }
 
   async storeMessage(message: IMessage) {
     try {
-      console.log('STORING MESSAGE ----> ', { chat: { participants: { userid_a: this.user.userid, userid_b: this.receiverAccount.userid }, message: message }, roomkey: this.chatRef.roomkey })
-      const res = await this.restSvc.storeMessage({ participants: { userid_a: this.user.userid, userid_b: this.receiverAccount.userid }, message: message }, this.chatRef.roomkey);
+      console.log('STORING MESSAGE ----> ', { chat: { participants: { userid_a: this.user.userid, userid_b: this.receiveruserid }, message: message }, roomkey: this.chatRef.roomkey })
+      const res = await this.restSvc.storeMessage({ participants: { userid_a: this.user.userid, userid_b: this.receiveruserid }, message: message }, this.chatRef.roomkey);
+      console.log('Storing message response : ',res.others)
+
+      const updatedChat : IChat = res.others as IChat;
+      updatedChat.messages.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+      this.messID = updatedChat.messages[0]._id!;
+
     } catch (error) {
       console.log(error)
     }
@@ -90,7 +113,7 @@ export class ChatComponent implements OnInit, OnDestroy , AfterContentInit{
 
   initializeChat() {
     this.user = this.signalStorageSvc.RetrieveUserData()()!;
-    this.receiverAccount = this.signalStorageSvc.RetrieveLinxData()()!;
+    this.receiveruserid = this.chatRef.participants.userid_a === this.user.userid ? this.chatRef.participants.userid_b : this.chatRef.participants.userid_a
     this.message.sender = { userid: this.user.userid, linxname: this.user.account.linxname }
     if (this.chatRef.messages !== null ) {
       this.messages = this.chatRef.messages;
@@ -103,7 +126,7 @@ export class ChatComponent implements OnInit, OnDestroy , AfterContentInit{
   }
   ngOnInit(): void {
     initDropdowns();
-    this.initializeChat()
+    this.initializeChat();
   }
   ngOnDestroy(): void {
     this.destroy$.next();

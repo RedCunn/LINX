@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Jacquard+12&family=Jacquarda+Bastarda+9+Charted&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Lexend+Tera:wght@100..900&family=Noto+Sans+Duployan:wght@400;700&family=Noto+Sans+Hanunoo&family=Noto+Sans+Mono:wght@100..900&family=Oswald:wght@200..700&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Varela+Round&family=Yarndings+20&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap');
 /*CONTAINERS----------------------------*/
 .profilename {
     font-family: "Ubuntu Mono", monospace;
@@ -164,6 +164,9 @@
     margin-bottom: 1rem;
 }
 .lidata li{
+    font-family: "Chakra Petch", sans-serif;
+    font-weight: 300;
+    font-style: normal;
     color: grey;
     margin-bottom: 5px;
     display: flex;
@@ -191,6 +194,7 @@
     grid-column: span 2 / span 2;
     height: 5rem;
     width: 100%;
+    margin-bottom: 1rem;
 }
 
 .breakalert {
@@ -424,9 +428,10 @@ article h1 {
 
     .joinalert {
         grid-column: span 1 / span 1;
-        padding-top: 2%;
-        padding-left: 1%;
-        padding-right: 1%;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        padding-left: 0.25rem;
+        padding-right: 0.25rem;
         height: 100%;
         width: 100%;
         display: flex;

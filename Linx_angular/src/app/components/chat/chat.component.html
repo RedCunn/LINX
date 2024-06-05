@@ -6,7 +6,7 @@
         <!-- Modal header -->
         <div class="flex justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 w-full">
             <h2 class="text-lg font-semibold text-purple-800">
-                {{receiverAccount.linxname}}
+                {{chatRef.conversationname}}
             </h2>
             <button type="button"
                 class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
@@ -26,7 +26,7 @@
 
             @for (item of messages; track $index) {
             <div class="flex items-start gap-3 mb-1">
-                @if(item.sender.userid === this.receiverAccount.userid){
+                @if(item.sender.userid === this.receiveruserid){
                 <button id="dropdownButton" data-dropdown-toggle="dropdown"
                     data-dropdown-placement="bottom-start"
                     class="inline-flex self-center items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none "
@@ -62,7 +62,7 @@
                 </div>
                 }
 
-                <div [class.linxmess]="item.sender.userid === this.receiverAccount.userid"
+                <div [class.linxmess]="item.sender.userid === this.receiveruserid"
                     [class.usermess]="item.sender.userid === this.user.userid ">
                     <div class="flex items-center space-x-2 rtl:space-x-reverse">
                         <span
@@ -73,7 +73,7 @@
                 </div>
             </div>
             }@empty {
-            <p class="font-extralight" style="font-style: italic; color: fuchsia;">Escribe tu primer mensaje a {{receiverAccount.linxname}}...</p>
+            <p class="font-extralight" style="font-style: italic; color: fuchsia;">Escribe tu primer mensaje a {{this.chatRef.conversationname}}...</p>
             }
 
         </div>

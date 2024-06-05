@@ -363,32 +363,63 @@ module.exports = {
     },
     getChats: async (req, res, next) => {
         try {
-            const _userid = req.params.userid;
-            const _linxuserid = req.params.linxuserid;
-            let _chats = [];
+            const { userid: _userid, linxuserid: _linxuserid } = req.params;
+
+            let chats = [];
 
             if (_linxuserid === 'null') {
-                _chats = await Chat.find({
+                chats = await Chat.find({
                     $or: [
                         { 'participants.userid_a': _userid },
                         { 'participants.userid_b': _userid }
                     ]
                 });
             } else {
-                _chats = await Chat.find({
+                chats = await Chat.find({
                     $or: [
                         { $and: [{ 'participants.userid_a': _userid},{'participants.userid_b': _linxuserid }] },
                         { $and: [{ 'participants.userid_a': _linxuserid},{'participants.userid_b': _userid }] }
                     ]
                 });
             }
+
+            let convernamesUserids = new Set();
+
+            chats.forEach(chat => {
+                if(chat.participants.userid_a !== _userid){
+                    convernamesUserids.add(chat.participants.userid_a )
+                }
+
+                if(chat.participants.userid_b !== _userid){
+                    convernamesUserids.add(chat.participants.userid_b )
+                }
+
+            })
+            let convernamesUseridsToArray = Array.from(convernamesUserids);
+            let accounts = await Account.find({userid : {$in : convernamesUseridsToArray}})
+
+            let mapnamesids = new Map();
+            accounts.forEach(({ userid, linxname }) => {
+                mapnamesids.set(userid, linxname);
+            });
+
+            chats.forEach(chat => {
+                const { participants } = chat;
+                if (mapnamesids.has(participants.userid_a)) {
+                    chat.conversationname = mapnamesids.get(participants.userid_a);
+                }
+                if (mapnamesids.has(participants.userid_b)) {
+                    chat.conversationname = mapnamesids.get(participants.userid_b);
+                }
+            });
+
             res.status(200).send({
                 code: 0,
                 error: null,
                 message: 'CHATS RECUPERADOS',
                 token: null,
                 userdata: null,
-                others: _chats
+                others: chats
             })
         } catch (error) {
             res.status(400).send({
@@ -413,7 +444,7 @@ module.exports = {
                 message: 'MESSAGE WAS STORED',
                 token: null,
                 userdata: null,
-                others: null
+                others: insertResult
             })
         } catch (error) {
             res.status(400).send({
@@ -432,19 +463,13 @@ module.exports = {
             const { title, body, postedOn, useAsProfilePic, articleid } = req.body;
             let insertArticle;
             let filePath = '';
-            console.log('VALOR DE REQ BODY NEW ART-------', req.body)
             if (req.file) {
-                console.log('REQ FILE entry: ', req.file)
                 filePath = _userid + '/' + req.file.originalname;
-                console.log('VALOR DE REQ FILE ORIGINALNAME-------', req.file.originalname)
                 insertArticle = await Article.create({ userid: _userid, articleid, postedOn, useAsProfilePic, title, body, img: filePath })
             } else {
                 insertArticle = await Article.create({ userid: _userid, articleid, postedOn, useAsProfilePic, title, body })
             }
             let insertArticleRef = await Account.updateOne({ userid: _userid }, { $push: { articles: insertArticle.articleid } })
-
-            console.log('INSERT RESULT ', insertArticle);
-            console.log('INSERT REF ART ON ACC ', insertArticleRef);
 
             res.status(200).send({
                 code: 0,
@@ -471,7 +496,7 @@ module.exports = {
             const _userid = req.params.userid;
             const _artid = req.params.artid;
             const { title, body, postedOn, useAsProfilePic } = req.body;
-            console.log('BODY EN EDIT ART : ', req.body)
+            
             let updateArticle;
             let filePath = '';
             if (req.file) {
@@ -484,8 +509,6 @@ module.exports = {
             if(useAsProfilePic === 'true'){
                 updateArticleUseAsProfPic = await Article.updateMany({ $and : [{userid: _userid,  articleid:{ $ne : _artid}}] }, { useAsProfilePic : false}) 
             }
-
-            console.log('UPDATE ART RESULT : ', updateArticleUseAsProfPic)
 
             res.status(200).send({
                 code: 0,
@@ -536,7 +559,6 @@ module.exports = {
         const _artid = req.params.artid;
         let update = await Article.updateOne({ userid: _userid, articleid: _artid },{img : ''});
 
-        console.log('UPDATE RESULT DELETING ARTIMG : ', update)
     try {
         res.status(200).send({
             code: 0,

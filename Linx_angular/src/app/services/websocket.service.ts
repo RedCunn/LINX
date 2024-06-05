@@ -87,6 +87,24 @@ export class WebsocketService {
     })  
   };
 
+  markMessageAsRead (message : IMessage , userid : string, senderid : string){
+    console.log('MESSAGE TO MARK : ', message)
+      socket.emit("messageRead", {message , userid, senderid}, (res: any) => {
+        console.log('RES OK : ', res.status)
+      }
+    )
+  }
+
+  getReadMessages(){
+    return new Observable<IMessage>(observer => {
+      const messageHandler = (data: IMessage) => {
+        console.log('socketsvc get_your_message_read: ', data);
+        observer.next(data);
+      };
+      socket.on('get_your_message_read', messageHandler);
+    })   
+  }
+
   getInteractions(){
     //Full Match , New Event , On Chain , Broken Chain
     let obs = new Observable<{type : string , interaction : Object}>(observer => {
@@ -123,7 +141,7 @@ export class WebsocketService {
       console.log('RES OK : ', res.status)
     })
   }
-  
+
   newEventOnChain() {
     socket.on('new_event', () => {
 

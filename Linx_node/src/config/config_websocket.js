@@ -1,4 +1,5 @@
 const socketio = require('socket.io');
+const Chat = require('../schemas/Chat');
 
 const ioFn = (httpServer) => {
 
@@ -25,6 +26,7 @@ const ioFn = (httpServer) => {
 
         socket.on('req_init_chat',(data) => {
             console.log('REQUESTING CHAT ........',data)
+            socket.join(data.roomkey);
             io.to(data.touserid).emit('chat_req', {userid : data.fromuserid ,roomkey : data.roomkey});
         })
 
@@ -32,6 +34,18 @@ const ioFn = (httpServer) => {
             console.log('config websocket chat_message : ', data)
             io.to(data.roomkey).emit('get_message',data.message)
         })
+
+        socket.on('messageRead' , async(data) => {
+            try {
+                console.log('MESSAGE ON SOCKET TO READ : ', data)
+                await Chat.updateOne({'messages._id' : data.message._id},{$set : {'messages.$.isRead' : true}})
+                console.log(`Message ${data.message._id} marked as read by user ${data.userid}`);
+                io.to(data.senderid).emit('get_your_message_read',{message : data.message})
+            } catch (error) {
+                console.error('Error updating message read status:', err);
+            }
+        })
+
         socket.on('full_match', (data)=> {
             console.log('SOCKET ON FULL MATCH................. ', data)
             io.to(data.from_userid).emit('get_interaction',{type : 'match', interaction: data.to_user})

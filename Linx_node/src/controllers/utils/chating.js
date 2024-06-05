@@ -6,7 +6,7 @@ module.exports = {
             let chatExists = await Chat.find({roomkey : roomkey})
             if (chatExists.length > 0) {
                 console.log('mess que entra : ', message);
-                let updateResult = await Chat.updateOne({roomkey : roomkey},{ $push: { messages: message  } })
+                let updateResult = await Chat.findOneAndUpdate({roomkey : roomkey},{ $push: { messages: message  } }, {new : true})
                 return updateResult;
             } else {
                 let insertResult = await Chat.create({
