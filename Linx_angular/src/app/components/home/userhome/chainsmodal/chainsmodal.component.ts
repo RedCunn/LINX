@@ -54,6 +54,20 @@ export class ChainsmodalComponent implements OnInit{
     }
   }
 
+  
+  async breakChain() {
+    try {
+      const res = await this.restSvc.breakChain(this.userdata?.userid!, this.linxdata?.userid!);
+      if (res.code === 0) {
+        
+      } else {
+        console.log('Error breaking chain.....', res.message);
+      }
+    } catch (error) {
+      console.log('Error breaking chain.....', error);
+    }
+  }
+
   async inviteToJoinChain() {
     try {
       if(this.newchainname !== null){

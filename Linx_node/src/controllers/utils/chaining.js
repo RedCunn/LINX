@@ -17,8 +17,8 @@ module.exports = {
                 }else{
                     let isRequested = await ChainReq.find({
                         $or: [
-                            { $and: [{ requestingUserid: userid }, { requestedUserid: linxid }, { 'chain.chainId': key}] },
-                            { $and: [{ requestingUserid: linxid }, { requestedUserid: userid }, {'chain.chainId': key }] }
+                            { $and: [{ requestingUserid: userid }, { requestedUserid: linxid }, { 'chain.chainid': key}] },
+                            { $and: [{ requestingUserid: linxid }, { requestedUserid: userid }, {'chain.chainid': key }] }
                         ]
                     });
 
@@ -104,10 +104,12 @@ module.exports = {
                     { userid: userid },
                     { $push: { myChains: { chainid: _chainid, chainname: chainname } } },
                     { new: true, upsert: true }
-                  );
+                  ).session(session);
             }else{
                 insertChain = userAccount.myChains[chainIndex];
             }
+
+            console.log('INSERT CHAIN RESULT chaining-joinChains : ', insertChain)
 
             // vamos a tener que coger la llave del chat de su Match si son Match, y sino crear una 
 
@@ -135,13 +137,15 @@ module.exports = {
             userAccount.myLinxs.push({chainid : chainid , userid : linxAccount.userid , roomkey : roomkey})
 
             // BORRAMOS LA PETICION DE UNIR CADENAS
-            let removeChainReq = await ChainReq.deleteOne({
+            let deleteChainReq = await ChainReq.deleteOne({
                 $or:
                     [
                         { $and: [{ requestingUserid: userid }, { requestedUserid: linxid },{chainid : chainid}] },
                         { $and: [{ requestingUserid: linxid }, { requestedUserid: userid }, {chainid : chainid}] }
                     ]
             }).session(session)
+
+            console.log('DELETE CHAINREQ RESULT chainig-joinChains : ', deleteChainReq)
 
             // SI FUERAN MATCHES BORRAMOS EL MATCH 
             if(match){

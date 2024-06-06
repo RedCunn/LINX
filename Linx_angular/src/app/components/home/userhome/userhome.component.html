@@ -56,9 +56,9 @@
           <div class="eslabon">
             <img style="width: 60px;" src="../../../../assets/imgs/logos/eslabon6.png">
           </div>
-          <p class="wordchain">CADENA</p>
+          <p class="wordchain">CADENAS</p>
           <div class="eslabon">
-            <img style="width: 60px;" src="../../../../assets/imgs/logos/eslabon6.png">
+            <img style="width: 60px; margin-left: 5px;" src="../../../../assets/imgs/logos/eslabon6.png">
           </div>
         </button>
       </div>
@@ -75,22 +75,22 @@
         </div>
       </div> -->
       }
-      
+
       <div class="joinchainbutt">
-        @if(!this.isCandidate() && !isUser() && !isChained()){
-        <button [disabled]="isChainRequested() || isChainBeingRequested()" (click)="togglePickChainModal()"
+        @if(!this.isCandidate() && !isUser()){
+        <button (click)="togglePickChainModal()"
           data-tooltip-target="tooltip-animation-2" data-tooltip-placement="right" data-tooltip-style="light"
           class="hover:bg-fuchsia-200 bg-fuchsia-100 border-fuchsia-400 p-3 rounded-md">
           <img style="width: 60px; height: auto;" src="../../../../assets/imgs/logos/joinchainbutt.png">
         </button>
-      }
+        }
         <div id="tooltip-animation-2" role="tooltip"
           class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-extralight text-fuchsia-600 transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip ">
           Unir a tu cadena
         </div>
       </div>
-    
-      
+
+
     </div>
   </div>
   @if(isCandidate()){
@@ -158,36 +158,19 @@
         <h3>Hemos enviado tu solicitud a {{this.linxdata?.linxname}} ... 🤞</h3>
       </div>
       }
-      <!-- @if(isChainBeingRequested() && !isUser()){
-      <div class="joinreqalert">
-        <h4>¿ Aceptas la solicitud de {{this.linxdata?.linxname}} de unir vuestras cadenas ?</h4>
-        <div class="flex flex-row justify-around">
-          <button type="button" (click)="answerJoinReq()"
-            class="alertbutt text-red-700 bg-white border border-red-600 hover:bg-red-100 font-normal rounded-lg text-sm px-2 me-2 mb-2 ">
-            Rechazar
-          </button>
-          <button type="button" (click)="acceptJoinChainRequest()"
-            class="alertbutt text-violet-400 bg-white border border-violet-300 hover:bg-violet-100 font-normal rounded-lg text-sm px-2 me-2 mb-2">
-            Unir cadenas
-          </button>
-        </div>
-      </div>
-      } -->
-      <!-- @if (this.showBreakChainAlert()) {
-      <div class="breakalert">
-        <h4>Al romper cadena perderás a Calle y a todxs lxs linxs de su cadena , ¿estás segurx de querer continuar?</h4>
-        <div class="alertbuttcontainer">
-          <button type="button" (click)="showAlert('breakchain', false)"
-            class="alertbutt text-violet-400 bg-white border border-violet-300 hover:bg-violet-100 font-normal rounded-lg text-sm px-2 me-2 mb-2">
-            Cancelar
-          </button>
-          <button type="button" (click)="breakChain()"
-            class="alertbutt text-red-700 bg-white border border-red-600 hover:bg-red-100 font-normal rounded-lg text-sm px-2 me-2 mb-2 ">
-            Romper cadena
+      @if(isUser()){
+        <div class="linxchain">
+          <button (click)="toggleChainModal()" class="extentchain">
+            <div class="eslabon">
+              <img style="width: 80px;" src="../../../../assets/imgs/logos/eslabon6.png">
+            </div>
+            <p class="wordchain">CADENAS</p>
+            <div class="eslabon">
+              <img style="width: 80px; margin-left: 5px;" src="../../../../assets/imgs/logos/eslabon6.png">
+            </div>
           </button>
         </div>
-      </div>
-      } -->
+      }
     </div>
     }
 
@@ -296,6 +279,7 @@
 <app-mychain [sharedChains]="this.sharedChains" [isOpen]="this.isChainOpen" [isMyChain]="this.isMyChain"
   [myChains]="this.myChains"></app-mychain>
 
-<app-chainsmodal [isOpen]="isPickChainOpen" [userdata]="userdata" [linxdata]="linxdata!" (isChainedchange)="this.onIsChainedChange"
-(isChainRequestedchange)="this. onJoinChainRequestedAlertChange" (chainRequestedAlert)="this.onJoinChainRequestedAlertChange"></app-chainsmodal>
+<app-chainsmodal [isOpen]="isPickChainOpen" [userdata]="userdata" [linxdata]="linxdata!"
+  (isChainedchange)="this.onIsChainedChange" (isChainRequestedchange)="this. onJoinChainRequestedAlertChange"
+  (chainRequestedAlert)="this.onJoinChainRequestedAlertChange"></app-chainsmodal>
 <ng-container #chatcompoContainer></ng-container>

@@ -334,8 +334,8 @@ module.exports = {
             let _userAccount = await Account.findOne({userid : user.userid});
             let excludedUserIds = new Set();
 
-            if(_userAccount.myChain.length > 0){
-                _userAccount.myChain.forEach(linx => {
+            if(_userAccount.myLinxs.length > 0){
+                _userAccount.myLinxs.forEach(linx => {
                     excludedUserIds.add(linx.userid)
                 })
             }
@@ -366,7 +366,7 @@ module.exports = {
             const halfMatches = await retrieveHalfMatches(user);
             
             let finalGroupUserIds = new Set(finalGroup.map(profile => profile.userid));
-            console.log('HALF MATCHES DE ASTE : ', halfMatches)
+            
             if (halfMatches.length > 0) {    
                 halfMatches.forEach(halfMatch => {
                     

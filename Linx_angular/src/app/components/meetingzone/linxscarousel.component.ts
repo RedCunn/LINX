@@ -4,7 +4,7 @@ import { RestnodeService } from '../../services/restnode.service';
 import { SignalStorageService } from '../../services/signal-storage.service';
 import { IUser } from '../../models/userprofile/IUser';
 import { IRestMessage } from '../../models/IRestMessage';
-import { ActivatedRoute, Event, NavigationEnd, NavigationStart, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { IAccount } from '../../models/useraccount/IAccount';
 import { WebsocketService } from '../../services/websocket.service';
 import { IArticle } from '../../models/useraccount/IArticle';
@@ -81,9 +81,11 @@ export class LinxscarouselComponent implements OnInit {
     if (this.currentIndex() < this.candidateProfiles?.length! - 1) {
       this.setProfilePicArticle(this.candidateProfiles![this.currentIndex() + 1])
       this.currentIndex.update((i) => i + 1);
+      this.signalStoreSvc.StoreCandidateIndex(this.currentIndex())
     } else {
       this.setProfilePicArticle(this.candidateProfiles![0])
       this.currentIndex.set(0);
+      this.signalStoreSvc.StoreCandidateIndex(this.currentIndex())
     }
 
   }
@@ -91,9 +93,11 @@ export class LinxscarouselComponent implements OnInit {
     if (this.currentIndex() > 0) {
       this.setProfilePicArticle(this.candidateProfiles![this.currentIndex() - 1])
       this.currentIndex.update((i) => i - 1);
+      this.signalStoreSvc.StoreCandidateIndex(this.currentIndex())
     } else {
       this.setProfilePicArticle(this.candidateProfiles![this.candidateProfiles?.length! - 1])
       this.currentIndex.set(this.candidateProfiles?.length! - 1);
+      this.signalStoreSvc.StoreCandidateIndex(this.currentIndex())
     }
   }
 

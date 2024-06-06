@@ -94,10 +94,10 @@
                         }
                         @for(item of interactions.chainedAccounts ; track item.account.userid){
                         <li>
-                            <div
-                                class="flex flex-row justify-between w-full p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 dark:bg-gray-600 dark:text-white">
+                            <div class="flex flex-col justify-start w-full p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 dark:bg-gray-600 dark:text-white">
                                 <p>⛓️ Te has unido a la cadena de <button (click)="this.goToProfile(item.account)"
                                         style="color: rgb(48, 247, 48);">{{item.account.linxname}}</button></p>
+                                <p>{{item.chain.chainname}}</p>
                             </div>
                         </li>
                         }

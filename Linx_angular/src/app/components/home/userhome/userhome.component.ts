@@ -94,6 +94,7 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy{
         } else {
           this.isCandidate.set(false);
           this.linxdata = this.signalStoreSvc.RetrieveLinxData()();
+          
         }
         if (event.url.match(this.routePattern)) {
           routePatternMatch$.next(event.url);
@@ -113,9 +114,12 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy{
           this.isMatch.set(!this.isLinx());
           this.loadChatComponent();
           if (this.isLinx()) {
+            this.groupLinxsOnSharedChains();
             this.getChainExtents(this.userdata?.userid! , this.linxdata?.userid!)
             this.isMyChain.set(false);
           } else {
+            this.groupMyLinxsOnChains();
+            this.getChainExtents(this.userdata?.userid! , null)
             this.isMyChain.set(true);
           }
         } else {
@@ -134,7 +138,7 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy{
     this.myChains = this.utilsvc.groupMyLinxsOnChains(this.userdata!);
   }
 
-  retrieveSharedChains (){
+  groupLinxsOnSharedChains (){
     this.sharedChains = this.utilsvc.groupLinxsInSharedChains(this.userdata! , this.linxdata!)
   }
 
@@ -248,40 +252,6 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy{
 
   showChainRequested( isOpen: boolean) {
     this.isChainRequested.set(isOpen);
-  }
-
-  async answerJoinReq() {
-    try {
-      const res = await this.restSvc.answerToJoinChainRequest(this.userdata?.userid!, this.linxdata?.userid!, this.acceptedChainsReq)
-      if (res.code === 0) {
-        this.isChainBeingRequested.set(false);
-      } else {
-        console.log('Error rejecting join request....', res.message)
-      }
-    } catch (error) {
-      console.log('Error rejecting join request....', error)
-    }
-  }
-
-  async acceptJoinChainRequest(){
-    try {
-      //const res = await this.restSvc.requestJoinChain(this.userdata!.userid!, this.linxdata!.userid!, this.chainsToAdd)
-    } catch (error) {
-      
-    }
-  }
-
-  async breakChain() {
-    try {
-      const res = await this.restSvc.breakChain(this.userdata?.userid!, this.linxdata?.userid!);
-      if (res.code === 0) {
-        this.router.navigateByUrl('/Linx/Inicio');
-      } else {
-        console.log('Error breaking chain.....', res.message);
-      }
-    } catch (error) {
-      console.log('Error breaking chain.....', error);
-    }
   }
 
   onArticleChange(newArts: IArticle[]) {

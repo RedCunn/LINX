@@ -112,7 +112,7 @@ export class InteractionsComponent implements OnInit, OnDestroy {
     try {
       const chainMap : Map<string,string> = new Map<string,string>();
       chainMap.set(chain.chainid , chain.chainname)
-      const res = await this.restSvc.requestJoinChain(this._user!.userid!, linx.userid, chainMap)
+      const res = await this.restSvc.requestJoinChain(linx.userid, this._user!.userid!, chainMap)
       if(res.code === 0){
         this.websocketsvc.linxchain(linx.userid,this._user?.userid! , this._user?.account!, linx , chain)
         console.log('ENCADENADXS !!! on acceptUnion - interactions ', res.message)

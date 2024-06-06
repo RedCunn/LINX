@@ -35,6 +35,8 @@ module.exports = {
 
             const accountsAndProfiles = {accounts : matchingProfiles, users : userProfiles}
 
+            console.log('COMPAT PROFILES : ', accountsAndProfiles)
+
             res.status(200).send({
                 code: 0,
                 error: null,

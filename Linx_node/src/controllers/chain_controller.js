@@ -66,11 +66,7 @@ module.exports = {
 
             const chainsMap = new Map(Object.entries(chains));
 
-            console.log('CHAINS : ', chainsMap)
             let joinReqState = '';
-
-            console.log('userid : ', userid)
-            console.log('linxid :', linxuserid)
 
             let requestStates = await chaining.isJoinChainRequested(userid, linxuserid, chainsMap);
 
