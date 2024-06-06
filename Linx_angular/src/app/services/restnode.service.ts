@@ -144,12 +144,6 @@ export class RestnodeService {
 
   //#region ----------------------------- MY CHAIN --------------------------------
 
-  //OLD : 
-  public getMyChain(userid: string , chainid : string | null): Promise<IRestMessage> {
-    const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Chain/${userid}/chain/${chainid}`);
-    return lastValueFrom(res);
-  }
-
   //NEW : 
   public getMyLinxs(userid: string , chainid : string | null): Promise<IRestMessage> {
     const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Chain/${userid}/chain/${chainid}`);
@@ -177,18 +171,13 @@ export class RestnodeService {
     return lastValueFrom(res);
   }
 
-  public breakChain(userid: string, linxuserid: string) {
-    const res = this._httpClient.delete<IRestMessage>(`http://localhost:3000/api/Chain/${userid}/mychain/${linxuserid}`);
+  public breakChain(userid: string, linxuserid: string , chainid : string) {
+    const res = this._httpClient.delete<IRestMessage>(`http://localhost:3000/api/Chain/${userid}/chain/${chainid}/linx/${linxuserid}`);
     return lastValueFrom(res);
   }
 
-  public answerToJoinChainRequest(userid: string, linxuserid: string, acceptedChainReqs : Array<{chainid : string , accepted : boolean}>) {
-    const res = this._httpClient.post<IRestMessage>(`http://localhost:3000/api/Chain/${userid}/chainreq/${linxuserid}`,
-    { response : acceptedChainReqs},
-      {
-        headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-      }
-    );
+  public rejectJoinChainRequest(userid: string, linxuserid: string, acceptedChainReqs : Array<{chainid : string , accepted : boolean}>) {
+    const res = this._httpClient.delete<IRestMessage>(`http://localhost:3000/api/Chain/${userid}/chainreq/${linxuserid}`);
   
     return lastValueFrom(res);
   }

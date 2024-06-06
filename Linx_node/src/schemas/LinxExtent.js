@@ -11,9 +11,7 @@ let linxExtentSchema = new mongoose.Schema({
     },
     mylinxuserID: {
         type: String,
-        required: [true, '* Nombre user requerido'],
-        maxLength: [20, '* Máx. número de caracteres 20'],
-        minLength: [3, '*Min. número de caracteres 3']
+        required: true
     },
     userid: {
         type: String,
@@ -21,7 +19,7 @@ let linxExtentSchema = new mongoose.Schema({
     },
     onChainSince: {
         type: Date,
-        required: [true],
+        required: true,
         default: Date.now
     }
 })

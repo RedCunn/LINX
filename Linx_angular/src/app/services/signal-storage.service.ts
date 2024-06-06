@@ -4,6 +4,7 @@ import { IUser } from '../models/userprofile/IUser';
 import { IAccount } from '../models/useraccount/IAccount';
 import { IMessage } from '../models/chat/IMessage';
 import { IMatch } from '../models/userprofile/IMatch';
+import { IChainGroup } from '../models/userprofile/IChainGroup';
 
 @Injectable({
   providedIn: 'root'
@@ -19,24 +20,24 @@ export class SignalStorageService implements IStorageService{
   private _roomkeyssignal : WritableSignal<Map<string,string> | null> = signal<Map<string,string> | null>(new Map<string,string>());
   private _candidateindex : WritableSignal<number> = signal<number>(0);
 
-  //OLD : 
-  private _mychainsignal : WritableSignal<IAccount[] | null> = signal<IAccount[] | null>([]);
   //NEW : 
   private _mylinxssignal : WritableSignal<IAccount[] | null> = signal<IAccount[] | null>([]);
-
+  private _groupedLinxs : WritableSignal<IChainGroup[] | null> = signal<IChainGroup[] | null>([]);
   constructor() { }
-  //OLD : 
-  StoreMyChain(mychain: IAccount[] | null): void {
-    if(mychain !== null){
-      this._mychainsignal.update((currentstate) => ([...mychain]))
+  
+  //NEW : 
+
+  StoreGroupedLinxs(chaingroups: IChainGroup[] | null): void {
+    if(chaingroups !== null){
+      this._groupedLinxs.update((currentstate) => ([...chaingroups]))
     }else{
-      this._mychainsignal.set([]);
+      this._groupedLinxs.set([]);
     }
   }
-  RetrieveMyChain(): WritableSignal<IAccount[] | null> {
-    return this._mychainsignal;
+  RetrieveGroupedLinxs(): WritableSignal<IChainGroup[] | null> {
+    return this._groupedLinxs;
   }
-  //NEW : 
+
   StoreMyLinxs(mylinxs: IAccount[] | null): void {
     if(mylinxs !== null){
       this._mylinxssignal.update((currentstate) => ([...mylinxs]))
@@ -47,7 +48,7 @@ export class SignalStorageService implements IStorageService{
   RetrieveMyLinxs(): WritableSignal<IAccount[] | null> {
    return this._mylinxssignal;
   }
-
+//-------------------------------------------------------------------
   StoreCandidateIndex(index: number): void {
     this._candidateindex.set(index);
   }
@@ -64,10 +65,19 @@ export class SignalStorageService implements IStorageService{
   RetrieveCandidateData(): WritableSignal<IUser | null> {
     return this._candidatesignal;
   }
-  StoreRoomKeys (rooms : Map<string,string>): void {
-    this._roomkeyssignal.set(rooms);
+  StoreRoomKeys (rooms : Map<string,string> | null): void {
+   
+    const currentRooms = this._roomkeyssignal() !== null ? this._roomkeyssignal() : new Map<string,string>();
+   
+    if(rooms !== null){
+      for (const [key , value] of rooms) {
+        currentRooms?.set(key , value);
+      }
+      this._roomkeyssignal.set(currentRooms);
+    }else{
+      this._roomkeyssignal.set(null);
+    }
   }
-
   StoreRoomKey(userRoom : {userid : string , roomkey : string}): void {
     let keymap = this._roomkeyssignal();
     if(keymap === null){
@@ -78,9 +88,7 @@ export class SignalStorageService implements IStorageService{
     }
     this._roomkeyssignal.set(keymap)
   }
-  RemoveRoomKeys() : void {
-    this._roomkeyssignal.set(null);
-  }
+
   RetrieveRoomKeys(): WritableSignal<Map<string, string> | null> {
     console.log('RETRIEVE ROOMKEYS SIGNAL SVC : ', this._roomkeyssignal())
     return this._roomkeyssignal;

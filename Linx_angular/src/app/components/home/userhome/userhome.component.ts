@@ -94,7 +94,6 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy{
         } else {
           this.isCandidate.set(false);
           this.linxdata = this.signalStoreSvc.RetrieveLinxData()();
-          
         }
         if (event.url.match(this.routePattern)) {
           routePatternMatch$.next(event.url);
@@ -111,21 +110,18 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy{
           this.showChainRequested(false);
           this.isUser.set(false);
           this.isChained.set(this.isLinx());
-          this.isMatch.set(!this.isLinx());
+          this.isMatch.set(this.isMyMatch());
           this.loadChatComponent();
-          if (this.isLinx()) {
-            this.groupLinxsOnSharedChains();
-            this.getChainExtents(this.userdata?.userid! , this.linxdata?.userid!)
-            this.isMyChain.set(false);
-          } else {
-            this.groupMyLinxsOnChains();
-            this.getChainExtents(this.userdata?.userid! , null)
-            this.isMyChain.set(true);
+          if(!this.isMatch() && this.isLinx()){
+              this.groupLinxsOnSharedChains();
+              this.isMyChain.set(false);
           }
         } else {
           this.isUser.set(true);
-          this.getChainExtents(this.userdata?.userid! , null)
+          this.getGroupedLinxsOnChain();
+          this.isMyChain.set(true);
         }
+
         this.articles = []
         this.loadProfileArticles()
       });
@@ -134,42 +130,16 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy{
   
   //_________ NEW BUILT :
 
-  groupMyLinxsOnChains (){
-    this.myChains = this.utilsvc.groupMyLinxsOnChains(this.userdata!);
+  getGroupedLinxsOnChain (){
+    if(this.signalStoreSvc.RetrieveGroupedLinxs()() !== null){
+      this.myChains = this.signalStoreSvc.RetrieveGroupedLinxs()()!;
+    }else{
+      this.myChains = []
+    }
   }
 
   groupLinxsOnSharedChains (){
     this.sharedChains = this.utilsvc.groupLinxsInSharedChains(this.userdata! , this.linxdata!)
-  }
-
-  async getChainExtents (userid : string , linxid : string | null){
-    
-    try {
-      const res = await this.restSvc.getMyChainExtents(userid , linxid);
-
-      if(res.code === 0){
-
-        this.chainExtents = linxid === null ? res.userdata : res.others;
-        console.log('CHAIN EXTENTS RETRIEVED AT HOME : ', this.chainExtents)
-        this.addExtentsToChain();
-      }else{
-        console.log('Error getting chain extents at home.....', res.error)
-      }
-
-    } catch (error) {
-      console.log('Error getting chain extents at home.....', error)
-    }
-  }
-
-  addExtentsToChain (){
-    this.myChains.forEach(chain => {
-      this.chainExtents.forEach(ext => {
-        if(ext.chainid === chain.chainid){
-          const index = this.myChains.findIndex(cha => cha.chainid === ext.chainid)
-          this.myChains[index].linxExtents.push(ext)
-        }
-      })
-    })
   }
 
 
@@ -224,6 +194,12 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy{
   isLinx(): boolean {
     let onChain = this.userdata?.account.myLinxs?.find(l => l.userid === this.linxdata?.userid)
     return onChain !== undefined;
+  }
+
+  isMyMatch() : boolean{
+    const matches = this.signalStoreSvc.RetrieveMatches()();
+    let match = matches?.find(m => m.userid_a === this.linxdata?.userid || m.userid_b === this.linxdata?.userid)
+    return match !== undefined;
   }
 
   //#endregion -----------------------------------------------------------------
@@ -314,13 +290,6 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy{
 
   }
 
-  ngOnInit(){
-    if (isPlatformBrowser(this.platformId)) {
-      initFlowbite();
-    }
-    this.retrieveAccountRequests();
-  }
-
   loadProfileArticles() {
 
     let sortedArticles: IArticle[] = [];
@@ -344,12 +313,20 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy{
 
   }
 
+  //#region ---------------------- COMPONET'S LIFECYCLE --------------------------------
   ngAfterViewInit(): void {
     initTooltips();
     this.loadingArts.set(true);
     this.loadProfileArticles()
     this.ref.detectChanges();
     this.loadingArts.set(false);
+  }
+  
+  ngOnInit(){
+    if (isPlatformBrowser(this.platformId)) {
+      initFlowbite();
+    }
+    this.retrieveAccountRequests();
   }
 
   ngOnDestroy(): void {
@@ -360,11 +337,15 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy{
   logout() {
     this.signalStoreSvc.StoreUserData(null);
     this.signalStoreSvc.StoreJWT(null);
-    this.signalStoreSvc.RemoveRoomKeys();
+    this.signalStoreSvc.StoreRoomKeys(null);
+    this.signalStoreSvc.StoreMatchesAccounts(null);
+    this.signalStoreSvc.StoreMyLinxs(null);
+    this.signalStoreSvc.StoreGroupedLinxs(null);
+    this.signalStoreSvc.StoreMatches(null);
     this.socketsvc.disconnect();
     this.router.navigateByUrl('/Linx/Login');
   }
 
-  
+  //#endregion
 
 }

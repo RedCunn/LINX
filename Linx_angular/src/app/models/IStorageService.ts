@@ -3,6 +3,7 @@ import { IUser } from "./userprofile/IUser";
 import { IAccount } from "./useraccount/IAccount";
 import { IMessage } from "./chat/IMessage";
 import { IMatch } from "./userprofile/IMatch";
+import { IChainGroup } from "./userprofile/IChainGroup";
 
 export interface IStorageService {
     //#region ---------------------------- [ SYNC ] --------------------
@@ -25,7 +26,7 @@ export interface IStorageService {
     StoreMatchesAccounts (matches : IAccount[] | null) : void;
     RetrieveMatchesAccounts () : WritableSignal<IAccount[] | null>;
 
-    StoreRoomKeys (rooms : Map<string,string>) : void ;
+    StoreRoomKeys (rooms : Map<string,string> | null) : void ;
     StoreRoomKey (userRoom : {userid : string , roomkey : string}) : void;
     RetrieveRoomKeys () : WritableSignal<Map<string,string> | null>;
 
@@ -34,11 +35,10 @@ export interface IStorageService {
 
     //#region ---------------NEW AND OLD ----------------
 
-    //OLD : 
-    StoreMyChain (mychain : IAccount[] | null) : void;
-    RetrieveMyChain () : WritableSignal<IAccount[] | null>;
-
     //NEW : 
+
+    StoreGroupedLinxs ( chaingroups : IChainGroup[] | null) : void;
+    RetrieveGroupedLinxs () : WritableSignal<IChainGroup[] | null>; 
 
     StoreMyLinxs ( mylinxs : IAccount[] | null) : void;
     RetrieveMyLinxs () : WritableSignal<IAccount[] | null>;

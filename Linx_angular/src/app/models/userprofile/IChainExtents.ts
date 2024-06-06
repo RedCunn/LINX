@@ -1,6 +1,7 @@
 import { IAccount } from "../useraccount/IAccount";
+import { ILinxExtent } from "./ILinxExtent";
 
 export interface IChainExtents {
-    chainid : string;
-    linxExtent : { myLinxUserid : string , account : IAccount};
+    linxExtent : ILinxExtent;
+    extentAccount : IAccount;
 }

@@ -62,19 +62,7 @@
           </div>
         </button>
       </div>
-      <!-- ESTO VA EN CHAINS MODAL 
-      <div class="chainbutt">
-        <button (click)="showAlert('breakchain', true)" data-tooltip-target="tooltip-animation"
-          data-tooltip-placement="right" data-tooltip-style="light"
-          class="flex flex-row hover:bg-slate-100 p-3 rounded-md">
-          <img style="width: 40px; height: auto;" src="../../../../assets/imgs/logos/breakchainbutt.png">
-        </button>
-        <div id="tooltip-animation" role="tooltip"
-          class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-extralight text-black transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip ">
-          Romper cadena
-        </div>
-      </div> -->
-      }
+    }
 
       <div class="joinchainbutt">
         @if(!this.isCandidate() && !isUser()){
@@ -166,7 +154,7 @@
             </div>
             <p class="wordchain">CADENAS</p>
             <div class="eslabon">
-              <img style="width: 80px; margin-left: 5px;" src="../../../../assets/imgs/logos/eslabon6.png">
+              <img style="width: 80px; margin-left: 10px;" src="../../../../assets/imgs/logos/eslabon6.png">
             </div>
           </button>
         </div>
@@ -200,6 +188,17 @@
       <div class="animateload w-2/3"></div>
     </article>
     }@else {
+      
+        @if(isUser()){
+          <div class="addart">
+          <button (click)="toggleArtFormModal(null)" type="button"
+              class="bg-orange-500 hover:bg-orange-400 flex flex-row p-3 rounded-lg">
+              <span class="material-symbols-outlined">
+              note_add
+              </span>
+          </button>
+        </div>
+        }
     @for(art of this.articles; track $index){
     <article class="article">
       <h1 class="break-words">{{art.title}}</h1>
@@ -243,17 +242,6 @@
     }
     }
     }
-
-    <div class="addart">
-      @if(isUser()){
-      <button (click)="toggleArtFormModal(null)" type="button"
-        class="bg-orange-500 hover:bg-orange-400 flex flex-row p-3 rounded-lg">
-        <span class="material-symbols-outlined">
-          note_add
-        </span>
-      </button>
-      }
-    </div>
   </div>
 
   <!--ASIDE mobile-->

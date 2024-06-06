@@ -3,6 +3,7 @@ const ChainReq = require('../../schemas/ChainRequest');
 const Account = require('../../schemas/Account');
 const Match = require('../../schemas/Match');
 const LinxExtent = require('../../schemas/LinxExtent');
+const ChainIndex = require('../../schemas/ChainIndex');
 
 module.exports = {
     isJoinChainRequested: async (userid, linxid, chains) => {
@@ -58,30 +59,6 @@ module.exports = {
             console.log('ERROR RECUPERANDO EXTENTS : ', error)
         }
     },
-    addingExtentToChain : async(userid, linxid , newlinxid, chainname) => {
-        const session = await Account.startSession();
-        session.startTransaction();
-        try {
-            let linxAccount = await Account.findOne({ userid: linxid })
-            let userAccount = await Account.findOne({ userid: userid })
-            let extentLinxid =  await Account.findOne({ userid: newlinxid })
-            if (!linxAccount || !userAccount || !extentLinxid) {
-                throw new Error('Account not found');
-            }
-
-            userAccount.myChain.forEach(chain => {
-                if(chain.chainname === chainname){
-                    extentLinxid.extendedChain.push({mylinxuserid : linxid, chainname : chainname, userid : chain.userid })
-                }
-            })
-
-        } catch (error) {
-            await session.abortTransaction();
-            console.error('Error durante la transacción ADDING EXTENT To CHAIN:', error);
-        }finally{
-            session.endSession();
-        }
-    },
     joinChains: async (userid, linxid, chainid, chainname) => {
         const session = await Account.startSession();
         session.startTransaction();
@@ -105,8 +82,10 @@ module.exports = {
                     { $push: { myChains: { chainid: _chainid, chainname: chainname } } },
                     { new: true, upsert: true }
                   ).session(session);
+                insertIndex = await ChainIndex.create({chainadminID : userid , chainID : _chainid , chainName : chainname, userIDs : [userid , linxid]})
             }else{
                 insertChain = userAccount.myChains[chainIndex];
+                insertIndex = await ChainIndex.updateOne({chainID : insertChain.chainid},   { $push: { userIDs: linxid } })
             }
 
             console.log('INSERT CHAIN RESULT chaining-joinChains : ', insertChain)
@@ -170,13 +149,111 @@ module.exports = {
             session.endSession();
         }
     },
+    addExtentToChain : async(chainAdminId, chainid , chainName , linxid , extentuserid) => {
+        const session = await Account.startSession();
+        session.startTransaction();
+        try {
+            
+            let insertLinxExtent = await LinxExtent
+                                        .create({chainadminID : chainAdminId , chainID : chainid , mylinxuserID : linxid , userid : extentuserid})
+                                        .session(session)
+            
+            let extentAccount = await Account
+                                    .findOneAndUpdate({userid : extentuserid},
+                                                    {extendedChains : {$push: { extendedChains : {chainadminid :  chainAdminId , chainid : chainid , chainname : chainName }}}})
+                                                    .session(session)
+
+            let updateIndex = await ChainIndex
+                                    .findOneAndUpdate({chainID : chainid},{$push:{userIDs : extentuserid}})
+
+        
+            await session.commitTransaction();
+
+            console.log('EXTENT ADDED TO CHAIN SUCCESSFULLY ')
+        } catch (error) {
+            await session.abortTransaction();
+            console.error('Error durante la transacción ADDEXTENT TO CHAIN :', error);
+        }finally{
+            session.endSession();
+        }
+    },
     breakChain : async (userid , linxuserid, chainid)=> {
         const session = await Account.startSession();
         session.startTransaction();
         try {
             
-            let deleteFromMyLinxs = await Account.findOneAndDelete({myLinxs : {userid : linxuserid , chainid : chainid}}).session(session)
-            let deleteLinxExtents = await LinxExtent.deleteMany({mylinxuserID : linxuserid , chainadminID : userid , chainID : chainid}).session(session)
+            // 1º ELIMINAMOS DE MYLINXS cuando linxeadxs por esa CHAINID
+            let userMyLinxs = await Account.findOneAndUpdate(
+                { userid: userid }, 
+                { 
+                    $pull: { 
+                        myLinxs: { 
+                            userid: linxuserid,
+                            chainid : chainid
+                        } 
+                    } 
+                },
+                { new: true } 
+            ).session(session);
+            
+            
+            let linxMyLinxs = await Account.findOneAndUpdate(
+                { userid: linxuserid }, 
+                { 
+                    $pull: { 
+                        myLinxs: { 
+                            userid: userid,
+                            chainid : chainid
+                        } 
+                    } 
+                },
+                { new: true } 
+            ).session(session);
+
+            // 2º ELIMINAMOS DE EXTENDEDCHAINS DEL EXLINX
+
+            let linxExtends = await Account.findOneAndUpdate(
+                { userid: linxuserid }, 
+                { 
+                    $pull: { 
+                        extendedChains: { 
+                            chainid : chainid
+                        } 
+                    } 
+                },
+                { new: true } 
+            ).session(session);
+
+            // 3º ELIMINAMOS LOS LINXEXTENTS QUE EL EXLINX HUBIESE AÑADIDO A LA CADENA
+            let extentsIds = new Set();
+            let extents =  await LinxExtent.find({chainID : chainid , mylinxuserID : linxuserid});
+            
+            extents.forEach(ext => {
+                extentsIds.add(ext.userid)
+            })
+
+            let deleteExtents = await LinxExtent.deleteMany({chainID : chainid , mylinxuserID : linxuserid}).session(session);
+
+            // 4º ELIMINAMOS CADENA DE LAS EXTENDEDCHAINS DE LOS LINXEXTENTS
+            
+            let extentsIdsArray = Array.from(extentsIds);
+
+            for (const id of extentsIdsArray) {
+                let deleteExtended = await Account.findOneAndUpdate({userid : id}, 
+                    { 
+                                $pull: { 
+                                    extendedChains: { 
+                                        chainid : chainid
+                                    } 
+                                } 
+                            }).session(session);
+            }
+            
+            // 5º ACTUALIZAMOS EL INDEX 
+            extentsIdsArray.push(linxuserid)
+
+            let updateIndex = await ChainIndex.findOneAndUpdate({chainID : chainid},
+                            {$pull : {userIDs : {$in : extentsIdsArray}}}).session(session);
 
             await session.commitTransaction();
 
@@ -189,4 +266,5 @@ module.exports = {
             session.endSession();
         }
     }
+    
 }

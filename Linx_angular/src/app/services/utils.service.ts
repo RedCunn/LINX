@@ -79,8 +79,8 @@ export class UtilsService {
 
   }
 
-  groupMyLinxsOnChains (userdata : IUser) :Array<IChainGroup>{
-    const myLinxs: IAccount[] = this.signalSvc.RetrieveMyLinxs()()!;
+  groupMyLinxsOnChains (userdata : IUser , myLinxs : IAccount[]) :Array<IChainGroup>{
+    
     const linxMap: Map<string, IAccount> = new Map();
   
     let myChainGroups : Array<IChainGroup> = [];

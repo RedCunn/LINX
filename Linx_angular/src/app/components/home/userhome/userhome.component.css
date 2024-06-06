@@ -69,10 +69,12 @@
     width: fit-content;
 }
 
-.addart {
+.addart{
     grid-column: span 2 / span 2;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
     width: 100%;
-    justify-content: end;
 }
 
 .extentchain {
@@ -138,14 +140,6 @@
 .editart:hover {
     --tw-text-opacity: 1;
     color: rgb(208 56 1 / var(--tw-text-opacity));
-}
-
-.addart {
-    grid-column: span 2 / span 2;
-    display: flex;
-    flex-direction: row;
-    justify-content: end;
-    margin-bottom: 20%;
 }
 
 .homefooter {
@@ -400,6 +394,7 @@ article h1 {
         justify-content: end;
         width: 100%;
     }
+
 
     .noalert {
         grid-column: 1;

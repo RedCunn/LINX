@@ -17,7 +17,6 @@ import { IUser } from '../../../models/userprofile/IUser';
 export class LoggedheaderComponent implements OnInit{
   
   private signalStoreSvc : SignalStorageService = inject(SignalStorageService);
-  private utilsvc : UtilsService = inject(UtilsService);
 
   public isMyChainOpen = signal(false);
   public isMyChain = signal(true);
@@ -29,7 +28,11 @@ export class LoggedheaderComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    this.myChains = this.utilsvc.groupMyLinxsOnChains(this.user)
+    if(this.signalStoreSvc.RetrieveGroupedLinxs()() !== null){
+      this.myChains = this.signalStoreSvc.RetrieveGroupedLinxs()()!
+    }else{
+      this.myChains = []
+    }
     this.isMyChain.set(true);
   }
 

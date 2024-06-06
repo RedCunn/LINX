@@ -1,8 +1,9 @@
-import {Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnInit, Output, PLATFORM_ID, signal } from '@angular/core';
 import { initDropdowns, initFlowbite} from 'flowbite';
 import { MatIcon } from '@angular/material/icon';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-userhomeaside',
@@ -13,6 +14,7 @@ import { Router } from '@angular/router';
 })
 export class UserhomeasideComponent implements OnInit{
   
+
   constructor(@Inject(PLATFORM_ID) private platformId: Object, private router : Router) { }
 
   ngOnInit(): void {
@@ -44,4 +46,5 @@ export class UserhomeasideComponent implements OnInit{
   goToArtistsLib(){
     this.router.navigateByUrl("/Linx/Artistslib");
   }
+
 }

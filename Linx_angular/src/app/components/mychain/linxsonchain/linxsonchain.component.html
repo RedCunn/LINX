@@ -43,16 +43,16 @@
                             </button>
                         </li>
                         }
-                        @for(linx of chain.linxExtents ; track linx.linxExtent.account.userid){
+                        @for(linx of chain.linxExtents ; track linx.linxExtent.userid){
                             <li>
-                                <button (click)="this.goToLinxProfile(linx.linxExtent.account)"
+                                <button (click)="this.goToLinxProfile(linx.extentAccount)"
                                     class="flex items-center w-full p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 dark:bg-gray-600 dark:text-white">
                                     <p style="color: green;" class="px-2 pt-2">
                                         <span class="material-symbols-outlined">
                                             account_circle
                                         </span>
                                     </p>
-                                    <p style="color: green;">{{linx.linxExtent.account.linxname}}</p>
+                                    <p style="color: green;">{{linx.extentAccount.linxname}}</p>
                                 </button>
                             </li>
                         }@empty {
