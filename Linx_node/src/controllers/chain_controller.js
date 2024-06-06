@@ -10,34 +10,34 @@ module.exports = {
             const _chainid = req.params.chainid;
 
             let _userAccount = await Account.findOne({ userid: _userid });
-            
-            let  _myLinxPromises ; 
-            if(_chainid === 'null'){
-                _myLinxPromises  = _userAccount.myLinxs.map(async (linx, i) => {
+
+            let _myLinxPromises;
+            if (_chainid === 'null') {
+                _myLinxPromises = _userAccount.myLinxs.map(async (linx, i) => {
                     const account = await Account.findOne({ userid: linx.userid });
                     return account;
                 })
-            }else{
-                 _myLinxPromises  = _userAccount.myLinxs.map(async (linx, i) => {
-                    if(linx.chainid === _chainid){
+            } else {
+                _myLinxPromises = _userAccount.myLinxs.map(async (linx, i) => {
+                    if (linx.chainid === _chainid) {
                         const account = await Account.findOne({ userid: linx.userid });
                         return account;
                     }
                 })
             }
-            
-            const accounts = await Promise.all(_myLinxPromises);            
+
+            const accounts = await Promise.all(_myLinxPromises);
 
             let artIDs = new Set();
             accounts.forEach(p => {
-                if(p.articles !== undefined && p.articles.length > 0){
-                    p.articles.forEach( artid => {
+                if (p.articles !== undefined && p.articles.length > 0) {
+                    p.articles.forEach(artid => {
                         artIDs.add(artid)
                     })
                 }
-            }) 
+            })
             let artIDsToArray = Array.from(artIDs);
-            let accountArticles = await Article.find({ articleid: { $in:  artIDsToArray} });
+            let accountArticles = await Article.find({ articleid: { $in: artIDsToArray } });
 
             res.status(200).send({
                 code: 0,
@@ -62,23 +62,26 @@ module.exports = {
         try {
             const userid = req.params.userid;
             const linxuserid = req.params.linxuserid;
-            const {chainnames} = req.body;
+            const chains  = req.body.chains;
 
+            const chainsMap = new Map(Object.entries(chains));
+
+            console.log('CHAINS : ', chainsMap)
             let joinReqState = '';
 
             console.log('userid : ', userid)
             console.log('linxid :', linxuserid)
 
-            let requestStates = await chaining.isJoinChainRequested(userid, linxuserid, chainnames);
+            let requestStates = await chaining.isJoinChainRequested(userid, linxuserid, chainsMap);
 
-            for (const [key , value] of requestStates) {
-                if(value === 'ACCEPTED'){
-                    await chaining.joinChains(userid, linxuserid, key);   
-                    joinReqState = joinReqState + ' / ACCEPTED : ' + key
+            for (const [key, value] of requestStates) {
+                if (value.state === 'ACCEPTED') {
+                    await chaining.joinChains(userid, linxuserid,  key, value.name);
+                    joinReqState = 'ACCEPTING'
                 }
-                if(value === 'REQUESTED'){
-                    await chaining.doChainRequest(userid, linxuserid, key);
-                    joinReqState = joinReqState + ' / REQUESTED : ' + key
+                if (value.state === 'REQUESTED') {
+                    await chaining.doChainRequest(userid, linxuserid, key, value.name);
+                    joinReqState = 'REQUESTING'
                 }
             }
 
@@ -120,10 +123,10 @@ module.exports = {
             })
             let _requestedAccounts = await Account.find({ userid: { $in: _requestedIDs } });
 
-            let _requestingAccountsArticles = await Article.find({userid : {$in : _requestingIDs} })
+            let _requestingAccountsArticles = await Article.find({ userid: { $in: _requestingIDs } })
 
-            let requestingAccounts = {accounts : _requestingAccounts, reqs : _chainReqsUserRequested, articles : _requestingAccountsArticles};
-            let requestedAccounts = {accounts : _requestedAccounts, reqs: _chainReqsUserRequesting};
+            let requestingAccounts = { accounts: _requestingAccounts, reqs: _chainReqsUserRequested, articles: _requestingAccountsArticles };
+            let requestedAccounts = { accounts: _requestedAccounts, reqs: _chainReqsUserRequesting };
 
             res.status(200).send({
                 code: 0,
@@ -195,6 +198,64 @@ module.exports = {
                 code: 1,
                 error: error.message,
                 message: 'Couldnt complete rejection of join chain request.....',
+                token: null,
+                userdata: null,
+                others: null
+            })
+        }
+    },
+    getChainLinxExtents: async (req, res, next) => {
+
+        let userid = req.params.userid;
+        let linxuserid  = req.params.linxuserid
+        
+        linxuserid = linxuserid === 'null' ? null : linxuserid
+
+        let linxExtents = chaining.retrieveChainLinxExtents( userid , linxuserid)
+
+        let accountArticles = [];
+        let extentsAccounts = [];
+        let extents = []
+
+        if(linxExtents.length > 0){
+            
+            extents = linxExtents;
+
+            let linxExtentsPromises = linxExtents.map(async (linx) => {
+                const account = await Account.findOne({ userid: linx.userid });
+                return account;
+            })
+
+            const accounts = await Promise.all(linxExtentsPromises);
+            extentsAccounts = accounts;
+            let artIDs = new Set();
+                accounts.forEach(p => {
+                    if (p.articles !== undefined && p.articles.length > 0) {
+                        p.articles.forEach(artid => {
+                            artIDs.add(artid)
+                        })
+                    }
+                })
+            let artIDsToArray = Array.from(artIDs);
+            accountArticles = await Article.find({ articleid: { $in: artIDsToArray } });
+        }
+
+        let accountsArts = {accounts : extentsAccounts , articles : accountArticles}
+
+        try {
+            res.status(200).send({
+                code: 0,
+                error: null,
+                message: 'EXTENTS RECUPERADOS',
+                token: null,
+                userdata: extents,
+                others: accountsArts
+            })
+        } catch (error) {
+            res.status(400).send({
+                code: 1,
+                error: error.message,
+                message: 'ERROR RECUPERANDO EXTENTS ',
                 token: null,
                 userdata: null,
                 others: null

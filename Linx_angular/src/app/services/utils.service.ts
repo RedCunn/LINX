@@ -8,6 +8,7 @@ import { IMatch } from '../models/userprofile/IMatch';
 import { IInteraction } from '../models/userprofile/IInteraction';
 import * as CryptoJS from 'crypto-js';
 import { RestnodeService } from './restnode.service';
+import { IChainGroup } from '../models/userprofile/IChainGroup';
 
 @Injectable({
   providedIn: 'root'
@@ -77,6 +78,76 @@ export class UtilsService {
     return Array.from(userMap.values());
 
   }
+
+  groupMyLinxsOnChains (userdata : IUser) :Array<IChainGroup>{
+    const myLinxs: IAccount[] = this.signalSvc.RetrieveMyLinxs()()!;
+    const linxMap: Map<string, IAccount> = new Map();
+  
+    let myChainGroups : Array<IChainGroup> = [];
+
+    // Inicializo las cadenas 
+    userdata.account.myChains?.forEach(chain => {
+      myChainGroups.push({ chainid: chain.chainid, chainname: chain.chainname, createdAt: chain.createdAt, linxsOnChain: [] , linxExtents : [] });
+    });
+  
+    myLinxs.forEach(linx => {
+      linxMap.set(linx.userid, linx);
+    });
+  
+    // Agrupo lxs linxs en las cadenas correspondientes
+    userdata.account.myLinxs?.forEach(linx => {
+      const chain = myChainGroups.find(chain => chain.chainid === linx.chainid);
+      const linxData = linxMap.get(linx.userid);
+  
+      if (chain && linxData) {
+        chain.linxsOnChain.push(linxData);
+      }
+    });
+
+    return myChainGroups;
+  }
+
+  groupLinxsInSharedChains (userdata : IUser , linxdata : IAccount) : Array<IChainGroup>{
+
+    let myLinxs : IAccount[] = this.signalSvc.RetrieveMyLinxs()()!;
+    let chainIDs : Set<string> = new Set<string>();
+    let linxMap :  Map<string, string> = new Map<string,string>();
+
+    let sharedChainsGroups : Array<IChainGroup> = [];
+
+    // Recojo los chainids que compartimos este Linx y yo
+    userdata.account.myLinxs?.forEach(li => {
+      if(li.userid === linxdata.userid){
+        chainIDs.add(li.chainid)
+      }
+    })
+
+    // Almaceno las cadenas compartidas 
+    sharedChainsGroups = userdata.account.myChains
+    ?.filter(chain => chainIDs.has(chain.chainid))
+    .map(chain => ({ chainid: chain.chainid, chainname: chain.chainname, linxsOnChain: [] , linxExtents : []})) || [];
+
+    // Mapeao cada linx con su chainid 
+    userdata.account.myLinxs?.forEach(linx => {
+      if (chainIDs.has(linx.chainid)) {
+        linxMap.set(linx.userid, linx.chainid);
+      }
+    });
+
+    //Añado las cuentas completas de les linxs a las cadenas compartidas
+    myLinxs.forEach(linx => {
+      const chainid = linxMap.get(linx.userid);
+      if (chainid) {
+        const index = sharedChainsGroups.findIndex(cha => cha.chainid === chainid);
+        if (index !== -1) {
+          sharedChainsGroups[index].linxsOnChain.push(linx);
+        }
+      }
+    });
+
+    return sharedChainsGroups;
+  }
+
 
   public mapCandidateProfileDataToLegible(profile: IUser): Map<string, string> {
     const attributesMap = new Map<string, string>();

@@ -3,6 +3,7 @@ import { IAccount } from '../../../models/useraccount/IAccount';
 import { Router } from '@angular/router';
 import { IUser } from '../../../models/userprofile/IUser';
 import { SignalStorageService } from '../../../services/signal-storage.service';
+import { IChainGroup } from '../../../models/userprofile/IChainGroup';
 
 @Component({
   selector: 'app-linxsonchain',
@@ -14,7 +15,7 @@ import { SignalStorageService } from '../../../services/signal-storage.service';
 export class LinxsonchainComponent {
 
   @Input() isMyChain = signal(false)
-  @Input() chain : {chainid : string , chainname : string , linxs : IAccount[]} = {chainid : '' , chainname : '' , linxs : []}
+  @Input() chain! : IChainGroup;
   @Input() isOpen = signal(false);
 
   private signalStorageSvc = inject(SignalStorageService);

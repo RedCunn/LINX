@@ -156,14 +156,15 @@ export class RestnodeService {
     return lastValueFrom(res);
   }
   
-  public getMyChainExtents (userid: string , chainid : string | null) : Promise<IRestMessage> {
-    const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Chain/${userid}/extents/${chainid}`);
+  public getMyChainExtents (userid: string , linxid : string | null) : Promise<IRestMessage> {
+    const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Chain/${userid}/extents/${linxid}`);
     return lastValueFrom(res);
   }
 
-  public requestJoinChain(userid: string, linxuserid: string, chainnames : string[]): Promise<IRestMessage> {
+  public requestJoinChain(userid: string, linxuserid: string, chains: Map<string,string>): Promise<IRestMessage> {
+    const chainsObject = Object.fromEntries(chains);
     const res = this._httpClient.post<IRestMessage>(`http://localhost:3000/api/Chain/${userid}/${linxuserid}`,
-    chainnames,
+    {chains : chainsObject},
       {
         headers: new HttpHeaders({ 'Content-Type': 'application/json' })
       }

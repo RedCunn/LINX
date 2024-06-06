@@ -53,29 +53,28 @@ const ioFn = (httpServer) => {
         })
         socket.on('on_req_chain', (data)=> {
             console.log('on REQ CHAIN :',data)
-            io.to(data.to_userid).emit('get_interaction',{type : 'reqchain', interaction: data.from_user})
+            const chainsMap = new Map(Object.entries(data.chains));
+            
+            for (const [key , value] of chainsMap) {
+                io.to(data.to_userid).emit('get_interaction',{type : 'reqchain', from: data.from_user , chain : {chainid : key , chainname : value}})       
+            }
         })
         socket.on('on_reject_req_chain', (data)=> {
             console.log('on REJECT REQ CHAIN :',data)
-            io.to(data.to_userid).emit('get_interaction',{type : 'rejreqchain', interaction: data.from_user})
+            io.to(data.to_userid).emit('get_interaction',{type : 'rejectchain', from: data.from_user , chain : data.chain})
         })
         socket.on('on_chain', (data)=> {
             console.log('on CHAIN :',data)
-            io.to(data.to_userid).emit('get_interaction',{type : 'chain', interaction: data.from_user})
+            io.to(data.to_userid).emit('get_interaction',{type : 'chain',from: data.from_user , chain : data.chain})
         })
         socket.on("broken_chain", (data) => {
-            io.to(data.to_userid).emit('get_interaction',{type : 'broken', interaction : data.from_user})
+            io.to(data.to_userid).emit('get_interaction',{type : 'broken', from: data.from_user , chain : data.chain})
         })
         socket.on('new_event', (data)=> {
             //tengo que tener una roomkey para todos los de la misma cadena
             io.to(data.to_userid).emit('get_interaction',{type : 'event', interaction: data.event})
         })
-
-        // socket.on("new_exitem" , (data) => {
-        //     socket.broadcast.emit('item_tags', data.exitem);
-        //--> el cliente solo lo pesca si está en sus alertas
-        // })
-
+        
         socket.on('disconnect', () => {
             console.log('User disconnected');
         });

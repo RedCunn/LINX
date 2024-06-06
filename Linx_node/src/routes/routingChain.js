@@ -8,5 +8,5 @@ router.get('/:userid/chainreqs', ChainController.getJoinChainRequests);
 router.post('/:userid/:linxuserid', ChainController.doChain);
 router.delete('/:userid/chain/:chainid/linx/:linxuserid', ChainController.breakChain);
 router.post('/:userid/chainreq/:linxuserid', ChainController.confirmJoinChainRequest)
-
+router.get('/:userid/extents/:linxuserid', ChainController.getChainLinxExtents)
 module.exports = router;

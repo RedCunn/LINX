@@ -18,6 +18,8 @@ import { WebsocketService } from '../../../services/websocket.service';
 import { MyChainComponent } from '../../mychain/mychain.component';
 import { UtilsService } from '../../../services/utils.service';
 import { ChainsmodalComponent } from './chainsmodal/chainsmodal.component';
+import { IChainGroup } from '../../../models/userprofile/IChainGroup';
+import { IChainExtents } from '../../../models/userprofile/IChainExtents';
 
 
 @Component({
@@ -62,21 +64,19 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy{
   private roomkey!: string;
 
   //__ REBUILT _
-  //OLD : 
-  public isMyChain = signal(false);
-  public extendedChain!: IAccount[];
-  public extendedChainKeys: { mylinxuserid: string, userid: string, roomkey: string }[] = [];
+  
   //OLD : va para interactions
   public isChainBeingRequested = signal(false);
   public showBreakChainAlert = signal(false);
   public showChainBeingRequested = signal(false);
   public isChainRequested = signal(false);
   //NEW : 
+  public isMyChain = signal(false);
   public areMyChains = signal(false);
-  public chainExtents : Array<{chainid : string , mylinxuserid : string, linxs : IAccount[]}> = [];
+  public chainExtents : Array<IChainExtents> = [];
   public acceptedChainsReq : Array<{chainid : string, accepted : boolean} > = [];
-  public sharedChains : Array<{chainid : string , chainname : string , linxs : IAccount[]}> = [];
-  public myChains : Array<{chainid : string , chainname : string , createdAt : string, linxs : IAccount[]}> = [];
+  public sharedChains : Array<IChainGroup> = [];
+  public myChains : Array<IChainGroup> = [];
   //_---------------------------
   public routePattern: RegExp = new RegExp("/Linx/Profile/[^/]+", "g");
 
@@ -107,30 +107,69 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy{
       .pipe(distinctUntilChanged())
       .subscribe((url) => {
         if (url) {
-          this.showAlert('all', false);
+          this.showChainRequested(false);
           this.isUser.set(false);
           this.isChained.set(this.isLinx());
           this.isMatch.set(!this.isLinx());
           this.loadChatComponent();
           if (this.isLinx()) {
-            this.getExtendedChain()
+            this.getChainExtents(this.userdata?.userid! , this.linxdata?.userid!)
             this.isMyChain.set(false);
           } else {
             this.isMyChain.set(true);
           }
         } else {
           this.isUser.set(true);
+          this.getChainExtents(this.userdata?.userid! , null)
         }
         this.articles = []
         this.loadProfileArticles()
       });
   }
   //#region ----------------- SET UP ----------------------------------------
+  
+  //_________ NEW BUILT :
 
-  async getExtendedChain (){
-    const res = await this.utilsvc.getExtendedChainFromLinx(this.linxdata!.userid , this.userdata?.userid!)
-    this.extendedChain = res;
+  groupMyLinxsOnChains (){
+    this.myChains = this.utilsvc.groupMyLinxsOnChains(this.userdata!);
   }
+
+  retrieveSharedChains (){
+    this.sharedChains = this.utilsvc.groupLinxsInSharedChains(this.userdata! , this.linxdata!)
+  }
+
+  async getChainExtents (userid : string , linxid : string | null){
+    
+    try {
+      const res = await this.restSvc.getMyChainExtents(userid , linxid);
+
+      if(res.code === 0){
+
+        this.chainExtents = linxid === null ? res.userdata : res.others;
+        console.log('CHAIN EXTENTS RETRIEVED AT HOME : ', this.chainExtents)
+        this.addExtentsToChain();
+      }else{
+        console.log('Error getting chain extents at home.....', res.error)
+      }
+
+    } catch (error) {
+      console.log('Error getting chain extents at home.....', error)
+    }
+  }
+
+  addExtentsToChain (){
+    this.myChains.forEach(chain => {
+      this.chainExtents.forEach(ext => {
+        if(ext.chainid === chain.chainid){
+          const index = this.myChains.findIndex(cha => cha.chainid === ext.chainid)
+          this.myChains[index].linxExtents.push(ext)
+        }
+      })
+    })
+  }
+
+
+  //____________________________________
 
   async getPlaceDetail() {
     try {
@@ -207,23 +246,8 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy{
     this.isPickChainOpen.update(v => !v);
   }
 
-  showAlert(alert: string, isOpen: boolean) {
-    switch (alert) {
-      case "breakchain":
-        this.showBreakChainAlert.set(isOpen);
-        break;
-      case "requestedchain":
-        this.showChainBeingRequested.set(isOpen);
-        break;
-      case "all":
-        this.showChainBeingRequested.set(false);
-        this.showBreakChainAlert.set(false);
-        this.isChainBeingRequested.set(false);
-        this.isChainRequested.set(false);
-        break;
-      default:
-        break;
-    }
+  showChainRequested( isOpen: boolean) {
+    this.isChainRequested.set(isOpen);
   }
 
   async answerJoinReq() {
@@ -272,12 +296,8 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy{
     this.isChained.set(value);
   }
 
-  onIsChainRequestedChange (value : boolean){
-    this.isChainRequested.set(value)
-  }
-
-  onShowAlertsChange (value : {alert : string , isOpen : boolean}){
-   this.showAlert(value.alert , value.isOpen)
+  onJoinChainRequestedAlertChange (isOpen : boolean){
+   this.isChainRequested.set(isOpen)
   }
 
   formatDate(postedon: string): string {
@@ -375,69 +395,6 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy{
     this.router.navigateByUrl('/Linx/Login');
   }
 
-  //_________ BUILT 
-
-  groupMyLinxsOnChains (){
-    const myLinxs: IAccount[] = this.signalStoreSvc.RetrieveMyLinxs()()!;
-    const linxMap: Map<string, IAccount> = new Map();
   
-    // Inicializo las cadenas 
-    this.userdata?.account.myChains?.forEach(chain => {
-      this.myChains.push({ chainid: chain.chainid, chainname: chain.chainname, createdAt: chain.createdAt, linxs: [] });
-    });
-  
-    myLinxs.forEach(linx => {
-      linxMap.set(linx.userid, linx);
-    });
-  
-    // Agrupo lxs linxs en las cadenas correspondientes
-    this.userdata?.account.myLinxs?.forEach(linx => {
-      const chain = this.myChains.find(chain => chain.chainid === linx.chainid);
-      const linxData = linxMap.get(linx.userid);
-  
-      if (chain && linxData) {
-        chain.linxs.push(linxData);
-      }
-    });
-  }
-
-  retrieveSharedChains (){
-
-    let myLinxs : IAccount[] = this.signalStoreSvc.RetrieveMyLinxs()()!;
-    let chainIDs : Set<string> = new Set<string>();
-    let linxMap :  Map<string, string> = new Map<string,string>();
-
-    // Recojo los chainids que compartimos este Linx y yo
-    this.userdata?.account.myLinxs?.forEach(li => {
-      if(li.userid === this.linxdata?.userid){
-        chainIDs.add(li.chainid)
-      }
-    })
-
-    // Almaceno las cadenas compartidas 
-    this.sharedChains = this.userdata?.account.myChains
-    ?.filter(chain => chainIDs.has(chain.chainid))
-    .map(chain => ({ chainid: chain.chainid, chainname: chain.chainname, linxs: [] })) || [];
-
-    // Mapeao cada linx con su chainid 
-    this.userdata?.account.myLinxs?.forEach(linx => {
-      if (chainIDs.has(linx.chainid)) {
-        linxMap.set(linx.userid, linx.chainid);
-      }
-    });
-
-    //Añado las cuentas completas de les linxs a las cadenas compartidas
-    myLinxs.forEach(linx => {
-      const chainid = linxMap.get(linx.userid);
-      if (chainid) {
-        const index = this.sharedChains.findIndex(cha => cha.chainid === chainid);
-        if (index !== -1) {
-          this.sharedChains[index].linxs.push(linx);
-        }
-      }
-    });
-
-    
-  }
 
 }

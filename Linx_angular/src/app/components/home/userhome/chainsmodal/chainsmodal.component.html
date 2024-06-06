@@ -24,18 +24,22 @@
                         <input type="text" name="newchain" id="name"placeholder="Nombra vuestra cadena..." (change)="onChainNameChange($event)"
                         class="bg-purple-100 border border-gray-300 text-lime-700 text-sm rounded-lg focus:ring-lime-400 focus:border-lime-400 block w-full p-2.5">
                     </div>
-                    <div class="col-span-2 overflow-y-auto">
-                        <label for="name" class="block mb-2 text-xl ">Tus cadenas</label>
-                        @for( entry of userchains; track $index ){
-                            <div class="flex flex-row justify-start w-full break-words">
-                                <input id="helper-checkbox" type="checkbox" [value]="entry" class="w-4 h-4 text-fuchsia-400 bg-gray-100 border-gray-300 rounded">
-                                <p class="chainname">{{ entry }}</p>
-                            </div>
+                    @if(this.userchains.entries.length > 0){
+                        <div class="col-span-2 overflow-y-auto">
+                            <label for="name" class="block mb-2 text-xl ">Tus cadenas</label>
                         
-                        }
-                    </div>
+                            <div class="flex flex-row justify-start w-full break-words" *ngFor="let entry of userchains | keyvalue">
+                                <input id="helper-checkbox" type="checkbox" [value]="entry.key" class="w-4 h-4 text-fuchsia-400 bg-gray-100 border-gray-300 rounded" (change)="onIncludedChainChange(entry.key, entry.value ,$event)">
+                                <p class="chainname">{{ entry.value }}</p>
+                            </div>
+                        </div>
+                    }@else {
+                        <div class="col-span-2">
+                            <p style="font-style: italic;">aún no tienes cadenas...</p>
+                        </div>
+                    }
                     <div class="col-span-2 flex justify-end">
-                        <button type="button" (click)="requestJoinChain()"
+                        <button type="button" (click)="inviteToJoinChain()"
                             class="text-lime-700 inline-flex items-center bg-lime-300 hover:text-fuchsia-400 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                             Enviar invitación
                         </button>

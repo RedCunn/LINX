@@ -3,6 +3,9 @@ import { SignalStorageService } from '../../../services/signal-storage.service';
 import { IAccount } from '../../../models/useraccount/IAccount';
 import { Router } from '@angular/router';
 import {MyChainComponent} from '../../mychain/mychain.component'
+import { IChainGroup } from '../../../models/userprofile/IChainGroup';
+import { UtilsService } from '../../../services/utils.service';
+import { IUser } from '../../../models/userprofile/IUser';
 
 @Component({
   selector: 'app-loggedheader',
@@ -14,17 +17,19 @@ import {MyChainComponent} from '../../mychain/mychain.component'
 export class LoggedheaderComponent implements OnInit{
   
   private signalStoreSvc : SignalStorageService = inject(SignalStorageService);
+  private utilsvc : UtilsService = inject(UtilsService);
 
   public isMyChainOpen = signal(false);
   public isMyChain = signal(true);
-  public myChain! : IAccount[] | null;
+  private user! : IUser;
+  public myChains! : IChainGroup[];
 
   constructor(private router : Router){
-    let _userdata = this.signalStoreSvc.RetrieveUserData();
+    this.user = this.signalStoreSvc.RetrieveUserData()()!;
   }
 
   ngOnInit(): void {
-    this.myChain = this.signalStoreSvc.RetrieveMyChain()() !== null ? this.signalStoreSvc.RetrieveMyChain()() : [];
+    this.myChains = this.utilsvc.groupMyLinxsOnChains(this.user)
     this.isMyChain.set(true);
   }
 

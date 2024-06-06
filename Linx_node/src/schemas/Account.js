@@ -37,6 +37,7 @@ let accountSchema = new mongoose.Schema({
     exchanger: [{ exitemid: { type: mongoose.Schema.Types.ObjectId, ref: 'Exitem' } }],
     agenda: [{ eventid: { type: mongoose.Schema.Types.ObjectId, ref: 'Event' } }],
     myChains : [{chainid : {type : String , unique : true}, chainname : {type : String}, createdAt : {type : Date, default: Date.now}}],
+    extendedChains : [{chainadminid : {type : String}, chainid : {type : String , unique : true}, chainname : {type : String}, onChainSince : {type : Date, default: Date.now}}],
     myLinxs: [{ chainid : {type : String}, userid : {type: String} , roomkey : {type: String}, chainedAt : {type : Date, default: Date.now} }],
     articles: {
         type: [{

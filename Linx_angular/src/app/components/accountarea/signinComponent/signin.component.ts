@@ -104,7 +104,6 @@ export class SigninComponent {
           this.socketSvc.requestInitChat(key , user.userid, value)
         }
         this.signalstoresvc.StoreRoomKeys(extmap);
-
       }else{
         console.log('ERROR AL RECUPERAR LINXEXTENTS EN SIGNIN : ', res.error)
       }
@@ -124,13 +123,17 @@ export class SigninComponent {
       user.account.articles = _response.others;
       this.signalstoresvc.StoreUserData(user);
       this.signalstoresvc.StoreJWT(_response.token!);
+
       this.socketSvc.connect();
       this.socketSvc.initUserRoom(user.userid);
+
       await this.getFullChain(user)
       await this.getMyMatches(user.userid)
       this.setExtendedChainKeys(user)
+
       this.socketSvc.userLogin(user.account._id!, user.account.linxname);
       this.utilsvc.joinRooms(this.userRooms);
+
       this.router.navigateByUrl('/Linx/Inicio');
     } else {
       this.loginerrors.update(v => true);

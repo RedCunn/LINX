@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output, inject, signal } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject, signal} from '@angular/core';
+import {CommonModule , NgFor} from '@angular/common';
 import { IUser } from '../../../../models/userprofile/IUser';
 import { IAccount } from '../../../../models/useraccount/IAccount';
 import { WebsocketService } from '../../../../services/websocket.service';
@@ -10,7 +11,7 @@ import { UtilsService } from '../../../../services/utils.service';
 @Component({
   selector: 'app-chainsmodal',
   standalone: true,
-  imports: [],
+  imports: [CommonModule , NgFor],
   templateUrl: './chainsmodal.component.html',
   styleUrl: './chainsmodal.component.css'
 })
@@ -21,16 +22,14 @@ export class ChainsmodalComponent implements OnInit{
   @Input() linxdata! : IAccount ;
   @Output() isChainRequestedchange= new EventEmitter<boolean>();
   @Output() isChainedchange = new EventEmitter<boolean>();
-  @Output() showAlertschange = new EventEmitter<{alert:string, isOpen : boolean}>();
+  @Output() chainRequestedAlert = new EventEmitter<boolean>();
 
   private socketsvc: WebsocketService = inject(WebsocketService);
-  private signalStoreSvc: SignalStorageService = inject(SignalStorageService);
   private restSvc: RestnodeService = inject(RestnodeService);
-  private utilsvc: UtilsService = inject(UtilsService);
 
-  public userchains : string[] = [];
+  public userchains : Map<string,string> = new Map<string,string>();
   public newchainname : string | null = null;
-  public chainsToAdd : string [] = [];
+  public chainsToAdd : Map<string,string> = new Map<string,string>();
 
   closeModal() {
     this.isOpen.set(false);
@@ -45,45 +44,49 @@ export class ChainsmodalComponent implements OnInit{
       this.newchainname = null;
     }
   }
-  onChainSelected (event : any){
+  onIncludedChainChange(key : string , name : string, event : any){
     let inputvalue = event.target.value ; 
     console.log('input : ', inputvalue)
-    this.chainsToAdd.push(inputvalue);
+    if(inputvalue){
+     this.chainsToAdd.set(key, name);
+    }else{
+      this.chainsToAdd.delete(key)
+    }
   }
 
-  async requestJoinChain() {
+  async inviteToJoinChain() {
     try {
       if(this.newchainname !== null){
-        this.chainsToAdd.push(this.newchainname);
+        this.chainsToAdd.set('new',this.newchainname);
       }
       const res = await this.restSvc.requestJoinChain(this.userdata!.userid!, this.linxdata!.userid!, this.chainsToAdd)
       if (res.code === 0) {
         if (res.message === 'REQUESTING') {
           this.isChainRequestedchange.emit(true);
           this.isChainedchange.emit(false);
+          this.socketsvc.linxreqchain(this.linxdata.userid , this.userdata?.userid! , this.userdata?.account! , this.linxdata, this.chainsToAdd)
+          this.isOpen.set(false)
         } else {
           this.isChainRequestedchange.emit(false);
-          this.showAlertschange.emit({alert : 'all', isOpen : false})
-          this.isChainedchange.emit(true);
-          this.socketsvc.linxchain(this.linxdata?.userid!, this.userdata?.userid!, this.userdata?.account!, this.linxdata!)
-          this.signalStoreSvc.StoreMyChain([this.linxdata])
+          this.chainRequestedAlert.emit(false)
+          this.isOpen.set(false)
         }
       } else {
-        console.log(`${this.userdata?.account.linxname} and ${this.linxdata?.linxname} couldnt chain...`)
+        console.log(` ${this.linxdata?.linxname} couldnt get ${this.userdata?.account.linxname} 's invitation to join their chains on chainsmodal ...`)
       }
     } catch (error) {
-      console.log('error in requesting join chain...', error)
+      console.log('error in INVITING TO join chain on chainsmodal ...', error)
     }
   }
 
 
   ngOnInit(): void {
-    let setNames = new Set<string>();
-    this.userdata?.account.myChain?.forEach(chain => {
-      setNames.add(chain.chainname)
+    let chainsMap = new Map<string, string>();
+    this.userdata?.account.myChains?.forEach(chain => {
+      chainsMap.set(chain.chainid , chain.chainname)
     })
 
-    this.userchains = [...setNames]
+    this.userchains = chainsMap
   }
 
 }

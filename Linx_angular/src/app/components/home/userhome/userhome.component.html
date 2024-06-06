@@ -62,6 +62,7 @@
           </div>
         </button>
       </div>
+      <!-- ESTO VA EN CHAINS MODAL 
       <div class="chainbutt">
         <button (click)="showAlert('breakchain', true)" data-tooltip-target="tooltip-animation"
           data-tooltip-placement="right" data-tooltip-style="light"
@@ -72,7 +73,7 @@
           class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-extralight text-black transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip ">
           Romper cadena
         </div>
-      </div>
+      </div> -->
       }
       
       <div class="joinchainbutt">
@@ -292,9 +293,9 @@
 <app-articlemodalform [isOpen]="isArtFormOpen" [article]="article" [articles]="articles" [userdata]="userdata"
   (articleChange)="onArticleChange"></app-articlemodalform>
 
-<app-mychain [sharedChains]="this.sharedChains" [isOpen]="this.isChainOpen"
+<app-mychain [sharedChains]="this.sharedChains" [isOpen]="this.isChainOpen" [isMyChain]="this.isMyChain"
   [myChains]="this.myChains"></app-mychain>
 
 <app-chainsmodal [isOpen]="isPickChainOpen" [userdata]="userdata" [linxdata]="linxdata!" (isChainedchange)="this.onIsChainedChange"
-(isChainRequestedchange)="this.onIsChainRequestedChange" (showAlertschange)="this.onShowAlertsChange"></app-chainsmodal>
+(isChainRequestedchange)="this. onJoinChainRequestedAlertChange" (chainRequestedAlert)="this.onJoinChainRequestedAlertChange"></app-chainsmodal>
 <ng-container #chatcompoContainer></ng-container>

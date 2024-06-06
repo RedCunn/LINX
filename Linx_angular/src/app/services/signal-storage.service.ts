@@ -45,7 +45,7 @@ export class SignalStorageService implements IStorageService{
     }
   }
   RetrieveMyLinxs(): WritableSignal<IAccount[] | null> {
-    throw new Error('Method not implemented.');
+   return this._mylinxssignal;
   }
 
   StoreCandidateIndex(index: number): void {

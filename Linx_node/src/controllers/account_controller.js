@@ -460,7 +460,7 @@ module.exports = {
     markMessagesAsRead: async (req, res, next) => {
         try {
 
-            let {messages} = req.body
+            let messages = req.body
             let userid = req.params.userid
 
 
