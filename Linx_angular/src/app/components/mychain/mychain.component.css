@@ -1,5 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap');
+
 #circleicon{
     font-size: 50px;
+}
+
+.allchainstitle{
+    font-family: "Chakra Petch", sans-serif;
+    font-weight: 300;
+    font-style: normal;
+    color : rgba(136, 0, 255, 0.271);
+    font-size: 1.5rem;
+    text-align: center;
 }
 
 .modal-container {

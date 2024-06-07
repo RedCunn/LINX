@@ -43,12 +43,12 @@ let accountSchema = new mongoose.Schema({
         type: [{
             type: String
         }],
-        validate: [arrayLimit, '{PATH} exceeds the limit of 6'] 
+        validate: [arrayLimit, '{PATH} exceeds the limit of 10'] 
     }
 })
 
 function arrayLimit(val) {
-    return val.length <= 6;
+    return val.length <= 10;
 }
 
 module.exports = mongoose.model('Account', accountSchema, 'Accounts');

@@ -48,8 +48,8 @@ const ioFn = (httpServer) => {
 
         socket.on('full_match', (data)=> {
             console.log('SOCKET ON FULL MATCH................. ', data)
-            io.to(data.from_userid).emit('get_interaction',{type : 'match', interaction: data.to_user})
-            io.to(data.to_userid).emit('get_interaction',{type : 'match', interaction: data.from_user})
+            io.to(data.from_userid).emit('get_interaction',{type : 'match', from: data.to_user})
+            io.to(data.to_userid).emit('get_interaction',{type : 'match', from: data.from_user})
         })
         socket.on('on_req_chain', (data)=> {
             console.log('on REQ CHAIN :',data)

@@ -54,7 +54,7 @@ export class InteractionsComponent implements OnInit, OnDestroy {
       switch (data.type) {
         case 'match':
           console.log('FULL MATCH :::::::::::::::::', data)
-          let accountInteracting = data.from 
+          let accountInteracting = data.from
           this.interactions.matchingAccounts!.unshift(accountInteracting);
           this.interactions.matchingAccounts?.forEach(acc => {
             if(!this.setUnMatchAlertOpen[acc.userid]){

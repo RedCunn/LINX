@@ -80,8 +80,8 @@
                     <label class="ps-3 pt-1">Usar como artículo principal</label>
                 </div>
                 <div class="col-span-2">
-                    @if(this.userdata?.account?.articles?.length === 6 && this.articleCopy.articleid === ''){
-                    <p class="text-orange-500 font-extralight">( Solo pueden colgarse un máximo de 6 artículos en el
+                    @if(this.userdata?.account?.articles?.length! >= 6 && this.articleCopy.articleid === undefined){
+                    <p class="text-orange-500 font-extralight">( Solo pueden colgarse un máximo de 10 artículos en el
                         perfil. Si ya has
                         alcanzado el límite, al añadir uno nuevo se eliminará el más antiguo. Si quieres, puedes
                         archivarlos.)</p>

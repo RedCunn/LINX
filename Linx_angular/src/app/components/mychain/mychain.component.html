@@ -26,9 +26,14 @@
                             <span class="sr-only">Close modal</span>
                         </button>
                     </div>
+                    @if(isAdminGroups()){
+                    <div class="allchainstitle col-span-3">
+                        <p>Todas las cadenas que llevan a tí</p>
+                    </div>
+                    }
                 </div>
                 <!-- Modal body -->
-                <div class="p-4 md:p-5" style="height: auto; max-height: 30dvh; overflow-y: auto;">
+                <div class="p-4 md:p-5" style="height: auto; max-height: 40dvh; overflow-y: auto;">
                     <ul class="my-4 space-y-3">
                         @if(isMyChain()){
                         @for(chain of this.myChains; track chain.chainid){
@@ -47,37 +52,57 @@
                         }
                         }
                         @if(isSharedChain()){
-                            @for(chain of this.sharedChains; track chain.chainid){
-                            <li>
-                                <button (click)="this.showLinxsOnChain(chain)"
-                                    class="flex items-center w-full p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 dark:bg-gray-600 dark:text-white">
-                                    <p style="color: purple;" class="px-2 pt-2">
-                                    </p>
-                                    <p style="color: purple;">{{chain.chainname}}</p>
-                                </button>
-                            </li>
-                            }@empty{
-                            <li>
-                                <p style="color: purple; font-style: italic;">No hay cadenas en común por el momento...</p>
-                            </li>
-                            }
+                        @for(chain of this.sharedChains; track chain.chainid){
+                        <li>
+                            <button (click)="this.showLinxsOnChain(chain)"
+                                class="flex items-center w-full p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 dark:bg-gray-600 dark:text-white">
+                                <p style="color: purple;" class="px-2 pt-2">
+                                </p>
+                                <p style="color: purple;">{{chain.chainname}}</p>
+                            </button>
+                        </li>
+                        }@empty{
+                        <li>
+                            <p style="color: purple; font-style: italic;">No hay cadenas en común por el momento...</p>
+                        </li>
+                        }
                         }
 
                         @if(isAdminGroups()){
-                            @for(group of this.adminGroups; track $index){
-                            <li>
-                                <button (click)="this.showLinsOnGroup(group)"
-                                    class="flex items-center w-full p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 dark:bg-gray-600 dark:text-white">
-                                    <p style="color: purple;" class="px-2 pt-2">
-                                    </p>
-                                    <p style="color: purple;">{{group.chainName}}</p>
-                                </button>
-                            </li>
-                            }@empty{
-                            <li>
-                                <p style="color: purple; font-style: italic;">No hay cadenas en común por el momento...</p>
-                            </li>
+                        @for(group of this.adminGroups; track $index){
+                        @if(group.chainadminID === this.user.userid){
+                        <li class="text-lg">
+                            <p style="color: rgba(25, 4, 118, 0.793); font-weight: 600;">
+                                {{this.searchAdminNameOnMyLinxs(group.chainadminID)}} </p>
+                        </li>
+                        }@else {
+                        <li>
+                            <p style="color: rgb(52, 4, 118); font-weight: 600;"> Cadenas de
+                                {{this.searchAdminNameOnMyLinxs(group.chainadminID)}}</p>
+                        </li>
+                        }
+                        <li>
+                            @if(group.chainadminID === this.user.userid){
+                            <button (click)="this.showLinsOnGroup(group)"
+                                class="flex items-center w-full p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 dark:bg-gray-600 dark:text-white">
+                                <p style="color: rgb(255, 9, 177);" class="px-2 pt-2">
+                                </p>
+                                <p style="color: rgb(255, 9, 177);">{{group.chainName}}</p>
+                            </button>
+                            }@else {
+                            <button (click)="this.showLinsOnGroup(group)"
+                                class="flex items-center w-full p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 dark:bg-gray-600 dark:text-white">
+                                <p style="color: purple;" class="px-2 pt-2">
+                                </p>
+                                <p style="color: purple;">{{group.chainName}}</p>
+                            </button>
                             }
+                        </li>
+                        }@empty{
+                        <li>
+                            <p style="color: purple; font-style: italic;">No hay cadenas en común por el momento...</p>
+                        </li>
+                        }
                         }
 
                     </ul>
@@ -88,5 +113,6 @@
 </div>
 }
 
-<app-linxsonchain [isMyChain]="this.isMyChain" [isAllChains]="isAdminGroups" [isSharedChain]="isSharedChain" [chain]="this.chain" [group]="this.group"
-    [isOpen]="this.isLinxsOnChainOpen"></app-linxsonchain>
+<app-linxsonchain [isMyChain]="this.isMyChain" [isAllChains]="isAdminGroups" [isSharedChain]="isSharedChain"
+    [chain]="this.chain" [group]="this.group" [isOpen]="this.isLinxsOnChainOpen"
+    [chainName]="this.chainName"></app-linxsonchain>

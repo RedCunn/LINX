@@ -99,7 +99,7 @@ export class ChainsmodalComponent implements OnInit{
     this.userdata?.account.myChains?.forEach(chain => {
       chainsMap.set(chain.chainid , chain.chainname)
     })
-
+    
     this.userchains = chainsMap
   }
 

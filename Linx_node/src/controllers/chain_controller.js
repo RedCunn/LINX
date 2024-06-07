@@ -331,19 +331,19 @@ module.exports = {
             
             let userAccount = await Account.findOne({ userid: userid })
             
-            let accountsGroupedByChainAdmin = {};
+            let accountsGroupedByChainAdmin = [];
             let chainsIds = new Set();
 
             //1º  COJO TODAS LAS CHAINIDS que tenga el user (propias y extendidas)
 
-            userAccount.myChains(chain => {
+            userAccount.myChains.forEach(chain => {
                 chainsIds.add(chain.chainid)
             })
             userAccount.extendedChains.forEach(chain => {
                 chainsIds.add(chain.chainid)
             });
 
-            let chainIdsArray = Array.from(chainIds);
+            let chainIdsArray = Array.from(chainsIds);
 
             // 2º BUSCO LOS INDEX DE LAS CADENAS PARA RECUPERAR TODOS LOS USERIDS ASOCIADOS 
 

@@ -313,6 +313,34 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy{
 
   }
 
+  //------ NEW ON SINGIN BEFORE : 
+  private chainsExtents : IChainExtents[] = [];
+
+  groupLinxsAndExtentsOnChains(user : IUser){
+    const linxaccounts = this.signalStoreSvc.RetrieveMyLinxs()()!;
+    let groupedLinxs : IChainGroup[] = this.utilsvc.groupMyLinxsOnChains(user, linxaccounts)
+    groupedLinxs.forEach(group => {
+      this.chainsExtents.forEach(extent => {
+        if(group.chainid === extent.linxExtent.chainID){
+          group.linxExtents.push(extent)
+        }
+      })
+    })
+    this.signalStoreSvc.StoreGroupedLinxsOnMyChains(groupedLinxs);
+  }
+
+  setExtendedChainKeys (userid : string){
+    const extmap = new Map<string,string>();
+    this.chainsExtents.forEach(ext => {
+      const roomkey = this.utilsvc.generateRoomkey();
+      extmap.set(ext.linxExtent.userid , roomkey);
+    })
+    for (const [key , value] of extmap) {
+      this.socketsvc.requestInitChat(key , userid, value)
+    }
+    this.signalStoreSvc.StoreRoomKeys(extmap);
+  }
+
   //#region ---------------------- COMPONET'S LIFECYCLE --------------------------------
   ngAfterViewInit(): void {
     initTooltips();
@@ -327,6 +355,8 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy{
       initFlowbite();
     }
     this.retrieveAccountRequests();
+    this.groupLinxsAndExtentsOnChains(this.userdata!)
+    this.setExtendedChainKeys(this.userdata!.userid)
   }
 
   ngOnDestroy(): void {

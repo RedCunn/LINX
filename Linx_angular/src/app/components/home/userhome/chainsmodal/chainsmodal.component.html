@@ -24,14 +24,15 @@
                         <input type="text" name="newchain" id="name"placeholder="Nombra vuestra cadena..." (change)="onChainNameChange($event)"
                         class="bg-purple-100 border border-gray-300 text-lime-700 text-sm rounded-lg focus:ring-lime-400 focus:border-lime-400 block w-full p-2.5">
                     </div>
-                    @if(this.userchains.entries.length > 0){
+                    @if(this.userdata?.account?.myChains?.length! > 0){
                         <div class="col-span-2 overflow-y-auto">
                             <label for="name" class="block mb-2 text-xl ">Tus cadenas</label>
-                        
-                            <div class="flex flex-row justify-start w-full break-words" *ngFor="let entry of userchains | keyvalue">
-                                <input id="helper-checkbox" type="checkbox" [value]="entry.key" class="w-4 h-4 text-fuchsia-400 bg-gray-100 border-gray-300 rounded" (change)="onIncludedChainChange(entry.key, entry.value ,$event)">
-                                <p class="chainname">{{ entry.value }}</p>
-                            </div>
+                        @for(chain of this.userdata?.account?.myChains ; track chain.chainid){
+                          <div class="flex flex-row justify-start w-full break-words">
+                            <input id="helper-checkbox" type="checkbox" [value]="chain.chainid" class="w-4 h-4 text-fuchsia-400 bg-gray-100 border-gray-300 rounded" (change)="onIncludedChainChange(chain.chainid , chain.chainname ,$event)">
+                            <p class="chainname">{{ chain.chainname }}</p>
+                          </div>
+                        }
                         </div>
                     }@else {
                         <div class="col-span-2">

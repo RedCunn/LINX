@@ -23,12 +23,13 @@ export class LinxsonchainComponent {
   @Input() chain! : IChainGroup;
   @Input() group! : IAccount[];
   @Input() isOpen = signal(false);
+  @Input() chainName! : string;
 
   private signalStorageSvc = inject(SignalStorageService);
   private restsvc = inject(RestnodeService);
   private utilsvc = inject(UtilsService);
   private router = inject(Router);
-  private _user! : IUser | null; 
+  public _user! : IUser | null; 
   private linxArticles : IArticle[] = []; 
 
   goToLinxProfile(linx : IAccount){
