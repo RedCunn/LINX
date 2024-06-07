@@ -4,6 +4,7 @@ import { IAccount } from "./useraccount/IAccount";
 import { IMessage } from "./chat/IMessage";
 import { IMatch } from "./userprofile/IMatch";
 import { IChainGroup } from "./userprofile/IChainGroup";
+import { IAdminGroups } from "./userprofile/IAdminGroups";
 
 export interface IStorageService {
     //#region ---------------------------- [ SYNC ] --------------------
@@ -37,8 +38,11 @@ export interface IStorageService {
 
     //NEW : 
 
-    StoreGroupedLinxs ( chaingroups : IChainGroup[] | null) : void;
-    RetrieveGroupedLinxs () : WritableSignal<IChainGroup[] | null>; 
+    StoreAllUserChainsGroupedByAdmin (admingroups : IAdminGroups[] | null) : void;
+    RetrieveAllUserChainsGroupedByAdmin () : WritableSignal<IAdminGroups[] | null>; 
+
+    StoreGroupedLinxsOnMyChains ( chaingroups : IChainGroup[] | null) : void;
+    RetrieveGroupedLinxsOnMyChains () : WritableSignal<IChainGroup[] | null>; 
 
     StoreMyLinxs ( mylinxs : IAccount[] | null) : void;
     RetrieveMyLinxs () : WritableSignal<IAccount[] | null>;

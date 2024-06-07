@@ -5,6 +5,7 @@ import { IAccount } from '../models/useraccount/IAccount';
 import { IMessage } from '../models/chat/IMessage';
 import { IMatch } from '../models/userprofile/IMatch';
 import { IChainGroup } from '../models/userprofile/IChainGroup';
+import { IAdminGroups } from '../models/userprofile/IAdminGroups';
 
 @Injectable({
   providedIn: 'root'
@@ -23,18 +24,31 @@ export class SignalStorageService implements IStorageService{
   //NEW : 
   private _mylinxssignal : WritableSignal<IAccount[] | null> = signal<IAccount[] | null>([]);
   private _groupedLinxs : WritableSignal<IChainGroup[] | null> = signal<IChainGroup[] | null>([]);
+  private _groupedLinxsByAdmin : WritableSignal<IAdminGroups[] | null> = signal<IAdminGroups[] | null>([]);
+  
   constructor() { }
   
   //NEW : 
 
-  StoreGroupedLinxs(chaingroups: IChainGroup[] | null): void {
+  StoreAllUserChainsGroupedByAdmin(admingroups: IAdminGroups[] | null): void {
+    if(admingroups !== null){
+      this._groupedLinxsByAdmin.update((currentstate) => ([...admingroups]))
+    }else{
+      this._groupedLinxsByAdmin.set(null);
+    }
+  }
+  RetrieveAllUserChainsGroupedByAdmin(): WritableSignal<IAdminGroups[] | null> {
+    return this._groupedLinxsByAdmin;
+  }
+  
+  StoreGroupedLinxsOnMyChains(chaingroups: IChainGroup[] | null): void {
     if(chaingroups !== null){
       this._groupedLinxs.update((currentstate) => ([...chaingroups]))
     }else{
-      this._groupedLinxs.set([]);
+      this._groupedLinxs.set(null);
     }
   }
-  RetrieveGroupedLinxs(): WritableSignal<IChainGroup[] | null> {
+  RetrieveGroupedLinxsOnMyChains(): WritableSignal<IChainGroup[] | null> {
     return this._groupedLinxs;
   }
 
@@ -42,7 +56,7 @@ export class SignalStorageService implements IStorageService{
     if(mylinxs !== null){
       this._mylinxssignal.update((currentstate) => ([...mylinxs]))
     }else{
-      this._mylinxssignal.set([]);
+      this._mylinxssignal.set(null);
     }
   }
   RetrieveMyLinxs(): WritableSignal<IAccount[] | null> {

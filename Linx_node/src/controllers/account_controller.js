@@ -470,11 +470,11 @@ module.exports = {
                     update: { $set: { 'messages.$.isRead': true } }
                 }
             }));
-            
+
             let bulkresult = await Chat.bulkWrite(updateOperations);
 
             console.log('BULKRESULT MARKING MESS : ', bulkresult)
-            
+
 
             res.status(200).send({
                 code: 0,
@@ -611,6 +611,31 @@ module.exports = {
                 code: 1,
                 error: error.message,
                 message: 'Error deleting Article IMG',
+                token: null,
+                userdata: null,
+                others: null
+            })
+        }
+    },
+    getAccountArticles: async (req, res, next) => {
+        try {
+            const userid = req.params.userid;
+
+            let articles = await Article.find({userid : userid})
+
+            res.status(200).send({
+                code: 0,
+                error: null,
+                message: 'ARTICULOS RECUPERADO',
+                token: null,
+                userdata: articles,
+                others: null
+            })
+        } catch (error) {
+            res.status(400).send({
+                code: 1,
+                error: error.message,
+                message: 'ERROR RECUPERANDO ARTICULOS DE CUENTA',
                 token: null,
                 userdata: null,
                 others: null

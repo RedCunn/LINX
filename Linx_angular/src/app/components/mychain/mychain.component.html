@@ -45,7 +45,8 @@
                             <p style="color: green;">Todavía no has hecho cadena...</p>
                         </li>
                         }
-                        }@else{
+                        }
+                        @if(isSharedChain()){
                             @for(chain of this.sharedChains; track chain.chainid){
                             <li>
                                 <button (click)="this.showLinxsOnChain(chain)"
@@ -53,6 +54,23 @@
                                     <p style="color: purple;" class="px-2 pt-2">
                                     </p>
                                     <p style="color: purple;">{{chain.chainname}}</p>
+                                </button>
+                            </li>
+                            }@empty{
+                            <li>
+                                <p style="color: purple; font-style: italic;">No hay cadenas en común por el momento...</p>
+                            </li>
+                            }
+                        }
+
+                        @if(isAdminGroups()){
+                            @for(group of this.adminGroups; track $index){
+                            <li>
+                                <button (click)="this.showLinsOnGroup(group)"
+                                    class="flex items-center w-full p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 dark:bg-gray-600 dark:text-white">
+                                    <p style="color: purple;" class="px-2 pt-2">
+                                    </p>
+                                    <p style="color: purple;">{{group.chainName}}</p>
                                 </button>
                             </li>
                             }@empty{
@@ -70,5 +88,5 @@
 </div>
 }
 
-<app-linxsonchain [isMyChain]="this.isMyChain" [chain]="this.chain"
+<app-linxsonchain [isMyChain]="this.isMyChain" [isAllChains]="isAdminGroups" [isSharedChain]="isSharedChain" [chain]="this.chain" [group]="this.group"
     [isOpen]="this.isLinxsOnChainOpen"></app-linxsonchain>

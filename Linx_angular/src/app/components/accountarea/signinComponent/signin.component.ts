@@ -13,6 +13,7 @@ import { UtilsService } from '../../../services/utils.service';
 import { IChainGroup } from '../../../models/userprofile/IChainGroup';
 import { IChainExtents } from '../../../models/userprofile/IChainExtents';
 import { ILinxExtent } from '../../../models/userprofile/ILinxExtent';
+import { IAdminGroups } from '../../../models/userprofile/IAdminGroups';
 
 @Component({
   selector: 'app-signin',
@@ -37,11 +38,13 @@ export class SigninComponent {
   constructor(private router: Router, private restSvc: RestnodeService) { }
 
   private chainsExtents : IChainExtents[] = [];
+  private chainGroupsByAdmin : IAdminGroups[] = [];
 
   goToSignup() {
     this.router.navigateByUrl('/Linx/Registro');
   }
 
+  //#region ---- GETTING ALL MY LINXS WHOLEACCOUNTS, MATCHES-WHOLEACCOUNTS, EXTENTS-WHOLEACCOUNT
   async getAllMyLinxs(user: IUser) {
     try {
       const res = await this.restSvc.getMyLinxs(user.userid, null);
@@ -115,7 +118,9 @@ export class SigninComponent {
       console.log('ERROR AL RECUPERAR LINXEXTENTS EN SIGNIN : ', error)
     }
   }
+//#endregion
 
+//#region ---------- GROUPING LINXS & EXTENTS ON CHAINS 
   groupLinxsAndExtentsOnChains(user : IUser){
     const linxaccounts = this.signalstoresvc.RetrieveMyLinxs()()!;
     let groupedLinxs : IChainGroup[] = this.utilsvc.groupMyLinxsOnChains(user, linxaccounts)
@@ -126,9 +131,12 @@ export class SigninComponent {
         }
       })
     })
-    this.signalstoresvc.StoreGroupedLinxs(groupedLinxs);
+    this.signalstoresvc.StoreGroupedLinxsOnMyChains(groupedLinxs);
   }
 
+//#endregion
+
+//#region --------------- SETTING ROOMKEYS FOR EXTENTS 
   setExtendedChainKeys (userid : string){
     const extmap = new Map<string,string>();
     this.chainsExtents.forEach(ext => {
@@ -140,6 +148,30 @@ export class SigninComponent {
     }
     this.signalstoresvc.StoreRoomKeys(extmap);
   }
+
+//#endregion
+
+
+//#region ------ CARGAR TODAS LAS CADENAS DE LAS QUE FORMO PARTE AGRUPADAS POR ADMIN PARA EL ACCESO DESDE LOGGEDHEADER
+//!NO CARGO ARTÍCULOS, hay que peedirlos cada vez que el user acceda a uno de sus perfiles 
+//!NO INICIALIZO CHATS, tendré que unirme a sala cada vez que visite perfil 
+async getAllChainsGroupedByAdmin (userid : string){
+  try {
+    const res = await this.restSvc.getAllUserChainsGroupedByAdmin(userid)
+
+    if(res.code === 0){
+      console.log('GOT ALL USER CHAINs GROUPED BY ADMIN ->> ', res.userdata)
+      //RES _> adminGroup = {chainadminID : index.chainadminID , chainName : index.chainName , accounts : []}[]
+      this.chainGroupsByAdmin = res.userdata as IAdminGroups[]
+      this.signalstoresvc.StoreAllUserChainsGroupedByAdmin(this.chainGroupsByAdmin)
+    }else{
+      console.log('COULDNT GET ALL USER CHAINs GROUPED BY ADMIN...', res.error)
+    }
+  } catch (error) {
+    console.log('COULDNT GET ALL USER CHAINs GROUPED BY ADMIN...', error)
+  }
+}
+//#endregion
 
   async Signin(loginForm: NgForm) {
 
@@ -156,10 +188,12 @@ export class SigninComponent {
 
       await this.getAllMyLinxs(user)
       await this.getMyMatches(user.userid)
-      await this.getChainExtents(user.userid)
-      this.groupLinxsAndExtentsOnChains(user)
-      this.setExtendedChainKeys(user.userid)
-
+      //!CARGAR EXTENTS E INICIAR ROOMS CUANDO EL USER ACCEDA A LA CADENA COMPARTIDA
+      //await this.getChainExtents(user.userid)
+      //!CARGAR EN USERHOME 
+      //this.groupLinxsAndExtentsOnChains(user)
+      //this.setExtendedChainKeys(user.userid)
+      await this.getAllChainsGroupedByAdmin(user.userid)
       this.socketSvc.userLogin(user.account._id!, user.account.linxname);
       this.utilsvc.joinRooms(this.userRooms);
 

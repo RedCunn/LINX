@@ -144,7 +144,7 @@ export class RestnodeService {
 
   //#region ----------------------------- MY CHAIN --------------------------------
 
-  //NEW : 
+  
   public getMyLinxs(userid: string , chainid : string | null): Promise<IRestMessage> {
     const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Chain/${userid}/chain/${chainid}`);
     return lastValueFrom(res);
@@ -166,21 +166,27 @@ export class RestnodeService {
     return lastValueFrom(res);
   }
 
-  public getJoinChainRequests(userid: string) {
+  public getJoinChainRequests(userid: string) : Promise<IRestMessage> {
     const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Chain/${userid}/chainreqs`);
     return lastValueFrom(res);
   }
 
-  public breakChain(userid: string, linxuserid: string , chainid : string) {
+  public breakChain(userid: string, linxuserid: string , chainid : string) : Promise<IRestMessage> {
     const res = this._httpClient.delete<IRestMessage>(`http://localhost:3000/api/Chain/${userid}/chain/${chainid}/linx/${linxuserid}`);
     return lastValueFrom(res);
   }
 
-  public rejectJoinChainRequest(userid: string, linxuserid: string, acceptedChainReqs : Array<{chainid : string , accepted : boolean}>) {
+  public rejectJoinChainRequest(userid: string, linxuserid: string, acceptedChainReqs : Array<{chainid : string , accepted : boolean}>): Promise<IRestMessage>  {
     const res = this._httpClient.delete<IRestMessage>(`http://localhost:3000/api/Chain/${userid}/chainreq/${linxuserid}`);
   
     return lastValueFrom(res);
   }
+
+  public getAllUserChainsGroupedByAdmin (userid : string) : Promise<IRestMessage> {
+    const res = this._httpClient.get<IRestMessage>(`http://localhost:3000/api/Chain/${userid}`);
+    return lastValueFrom(res);
+  }
+
 
   //#endregion
 

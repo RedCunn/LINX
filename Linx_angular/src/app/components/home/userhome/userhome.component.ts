@@ -131,8 +131,8 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy{
   //_________ NEW BUILT :
 
   getGroupedLinxsOnChain (){
-    if(this.signalStoreSvc.RetrieveGroupedLinxs()() !== null){
-      this.myChains = this.signalStoreSvc.RetrieveGroupedLinxs()()!;
+    if(this.signalStoreSvc.RetrieveGroupedLinxsOnMyChains()() !== null){
+      this.myChains = this.signalStoreSvc.RetrieveGroupedLinxsOnMyChains()()!;
     }else{
       this.myChains = []
     }
@@ -340,7 +340,7 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy{
     this.signalStoreSvc.StoreRoomKeys(null);
     this.signalStoreSvc.StoreMatchesAccounts(null);
     this.signalStoreSvc.StoreMyLinxs(null);
-    this.signalStoreSvc.StoreGroupedLinxs(null);
+    this.signalStoreSvc.StoreGroupedLinxsOnMyChains(null);
     this.signalStoreSvc.StoreMatches(null);
     this.socketsvc.disconnect();
     this.router.navigateByUrl('/Linx/Login');
