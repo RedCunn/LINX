@@ -20,12 +20,15 @@ module.exports = {
                     return account;
                 })
             } else {
-                _myLinxPromises = _userAccount.myLinxs.map(async (linx, i) => {
-                    if (linx.chainid === _chainid) {
-                        const account = await Account.findOne({ userid: linx.userid });
-                        return account;
-                    }
-                })
+                _myLinxPromises = _userAccount.myLinxs.map(async (linx) => {
+                    const chainIdPromises = linx.chainIds
+                                            .filter(chainid => chainid === _chainid)
+                                            .map(async () => {
+                                                const account = await Account.findOne({ userid: linx.userid });
+                                                return account;
+                                            });
+                    return Promise.all(chainIdPromises);
+                });
             }
 
             const accounts = await Promise.all(_myLinxPromises);
@@ -74,7 +77,7 @@ module.exports = {
 
             for (const [key, value] of requestStates) {
                 if (value.state === 'ACCEPTED') {
-                    await chaining.joinChains(userid, linxuserid, key, value.name);
+                    await chaining.joinChains(userid, linxuserid, key);
                     joinReqState = 'ACCEPTING'
                 }
                 if (value.state === 'REQUESTED') {
@@ -280,30 +283,30 @@ module.exports = {
 
                 const chainsIdsArray = Array.from(extendedChainsIds);
 
-                let chainIndexes = await ChainIndex.find({chainID : {$in : chainsIdsArray}})
+                let chainIndexes = await ChainIndex.find({ chainID: { $in: chainsIdsArray } })
 
                 for (let index of chainIndexes) {
-                    let adminGroup = {chainID : index.chainID , chainName : index.chainName , accounts : []}
+                    let adminGroup = { chainID: index.chainID, chainName: index.chainName, accounts: [] }
 
-                    for(let userid of index.userIDs){
-                        let account = await Account.findOne({userid : userid})
+                    for (let userid of index.userIDs) {
+                        let account = await Account.findOne({ userid: userid })
                         chainGroup.accounts.push(account);
-                    }                
+                    }
 
-                    accountsGroupedByChain.push(adminGroup);   
+                    accountsGroupedByChain.push(adminGroup);
                 }
-            
+
 
             } else {
-                let chainIndex = await ChainIndex.findOne({chainID : chainid})
-                let chainGroup = {chainID : chainIndex.chainID , chainName : chainIndex.chainName , accounts : []}
-                
-                for(let userid of chainIndex.userIDs){
-                    let account = await Account.findOne({userid : userid})
-                    chainGroup.accounts.push(account);
-                }                
+                let chainIndex = await ChainIndex.findOne({ chainID: chainid })
+                let chainGroup = { chainID: chainIndex.chainID, chainName: chainIndex.chainName, accounts: [] }
 
-                accountsGroupedByChain.push(adminGroup);   
+                for (let userid of chainIndex.userIDs) {
+                    let account = await Account.findOne({ userid: userid })
+                    chainGroup.accounts.push(account);
+                }
+
+                accountsGroupedByChain.push(adminGroup);
             }
             res.status(200).send({
                 code: 0,
@@ -328,9 +331,9 @@ module.exports = {
         try {
 
             const userid = req.params.userid;
-            
+
             let userAccount = await Account.findOne({ userid: userid })
-            
+
             let accountsGroupedByChainAdmin = [];
             let chainsIds = new Set();
 
@@ -347,19 +350,27 @@ module.exports = {
 
             // 2º BUSCO LOS INDEX DE LAS CADENAS PARA RECUPERAR TODOS LOS USERIDS ASOCIADOS 
 
-            let chainIndexes = await ChainIndex.find({chainID : {$in : chainIdsArray}})
+            let accountArticles = [];
+            let useridsSet = new Set();
+
+            let chainIndexes = await ChainIndex.find({ chainID: { $in: chainIdsArray } })
 
             for (let index of chainIndexes) {
-                let adminGroup = {chainadminID : index.chainadminID , chainName : index.chainName , accounts : []}
-
-                for(let userid of index.userIDs){
-                    let account = await Account.findOne({userid : userid})
+                let adminGroup = { chainadminID: index.chainadminID, chainName: index.chainName, accounts: [] }
+                for (let userid of index.userIDs) {
+                    let account = await Account.findOne({ userid: userid })
                     adminGroup.accounts.push(account);
-                }                
+                    useridsSet.add(userid)
+                }
+                accountsGroupedByChainAdmin.push(adminGroup);
+            }
 
-                accountsGroupedByChainAdmin.push(adminGroup);   
+            for (const id of useridsSet) {
+                let articles = await Article.find({userid : id})
+                accountArticles.push(articles);   
             }
             
+
             console.log('CUENTAS AGRUPADAS POR ADMIN DE CADENA : ', accountsGroupedByChainAdmin)
 
             res.status(200).send({
@@ -368,6 +379,35 @@ module.exports = {
                 message: '',
                 token: null,
                 userdata: accountsGroupedByChainAdmin,
+                others: accountArticles
+            })
+        } catch (error) {
+            res.status(400).send({
+                code: 1,
+                error: error.message,
+                message: '',
+                token: null,
+                userdata: null,
+                others: null
+            })
+        }
+    },
+    removeLinxLeavingExtents: async (req, res, next) => {
+
+        const adminid = req.params.adminid;
+        const chainid = req.params.chainid;
+        const linxid = req.params.linxid;
+
+        let result = chaining.removeLinxLeavingExtents(adminid , chainid, linxid)
+
+
+        try {
+            res.status(200).send({
+                code: 0,
+                error: null,
+                message: `LINX AUTOREMOVED FROM CHAIN ${result}`,
+                token: null,
+                userdata: null,
                 others: null
             })
         } catch (error) {

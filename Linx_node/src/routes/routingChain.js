@@ -10,5 +10,6 @@ router.delete('/:userid/chainreq/:linxuserid', ChainController.rejectJoinChainRe
 router.get('/:userid/extents/:linxuserid', ChainController.getChainLinxExtents)
 router.get('/:userid/extendedchain/:chainid', ChainController.getExtendedChains)
 router.get('/:userid', ChainController.getAllUserChains)
+router.delete('/chainid/admin/:adminid/linx/:linxid', ChainController.removeLinxLeavingExtents)
 
 module.exports = router;
