@@ -42,6 +42,10 @@ export class MyChainComponent implements OnInit{
   public chainId! : string;
   public groupChats : IGroupChat[] = [];
 
+  constructor(){
+    console.log('MY CHAINS ON MYCHAINCOMPO : ', this.myChains)
+  }
+
   closeModal() {
     this.isOpen.set(false);
   }

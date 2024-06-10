@@ -91,6 +91,9 @@
         <p>Género :</p> {{this.cadidateAttributes.get('gender')}}
       </li>
       <li>
+        <p>Idiomas :</p> {{this.cadidateAttributes.get('langs')}}
+      </li>
+      <li>
         <p>Trabaja en :</p> {{this.cadidateAttributes.get('work')}}
       </li>
       <li>
@@ -264,7 +267,7 @@
 <app-articlemodalform [isOpen]="isArtFormOpen" [article]="article" [articles]="articles" [userdata]="userdata"
   (articleChange)="onArticleChange"></app-articlemodalform>
 
-<app-mychain [sharedChains]="this.sharedChains" [isOpen]="this.isChainOpen" [isMyChain]="this.isMyChain"
+<app-mychain [isOpen]="this.isChainOpen" [isMyChain]="this.isMyChain" [isSharedChain]="this.isSharedChains" [isAdminGroups]="this.isAdminChains"
   [myChains]="this.myChains"></app-mychain>
 
 <app-chainsmodal [isOpen]="isPickChainOpen" [userdata]="userdata" [linxdata]="linxdata!"

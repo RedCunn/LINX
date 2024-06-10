@@ -234,6 +234,17 @@ export class UtilsService {
 
     attributesMap.set('work', work)
 
+    let langs= '';
+    if(profile.languages.length > 1){
+      profile.languages.forEach(lang => {
+        langs = langs + ', ' + lang
+      })
+    }else{
+      langs = profile.languages[0]
+    }
+    
+    attributesMap.set('langs', langs)
+
     return attributesMap;
   }
 

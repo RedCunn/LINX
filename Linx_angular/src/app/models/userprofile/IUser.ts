@@ -10,11 +10,11 @@ export interface IUser {
             fromAge : number;
             toAge : number;
         };
-        genders : String [];
+        genders : string [];
         proxyRange : string;
         sharePolitics: string;
         shareDiet : boolean;
-        languages : String [];
+        languages : string [];
         shareIndustry : string;
     };
     account : IAccount;
@@ -29,7 +29,7 @@ export interface IUser {
     };
     politics: string;
     diet : string;
-    languages : String [];
+    languages : string [];
     work : {
         industry: string;
         other?: String;

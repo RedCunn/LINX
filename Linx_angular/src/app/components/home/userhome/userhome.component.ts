@@ -73,7 +73,8 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy{
   public isChainRequested = signal(false);
   //NEW : 
   public isMyChain = signal(false);
-  public areMyChains = signal(false);
+  public isAdminChains = signal(false);
+  public isSharedChains = signal(false);
   public chainExtents : Array<IChainExtents> = [];
   public acceptedChainsReq : Array<{chainid : string, accepted : boolean} > = [];
   public sharedChains : Array<IChainGroup> = [];
@@ -220,7 +221,14 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy{
   }
 
   toggleChainModal() {
-    this.isMyChain.set(false);
+    if(this.isUser()){
+      this.isMyChain.set(true);
+      this.isAdminChains.set(false);
+      this.isSharedChains.set(false);
+    }else{
+      this.isMyChain.set(false);
+      this.isAdminChains.set(true);
+    }
     this.isChainOpen.update(v => !v);
   }
 
@@ -370,15 +378,18 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy{
   }
 
   groupLinxsAndExtentsOnChains(user : IUser){
-    const linxaccounts = this.signalStoreSvc.RetrieveMyLinxs()()!;
-    let groupedLinxs : IChainGroup[] = this.utilsvc.groupMyLinxsOnChains(user, linxaccounts)
-    groupedLinxs.forEach(group => {
-      this.chainsExtents.forEach(extent => {
-        if(group.chainid === extent.linxExtent.chainID){
-          group.linxExtents.push(extent)
+    const admingroups = this.signalStoreSvc.RetrieveAllUserChainsGroupedByAdmin()()!;
+    let groupedLinxs : IChainGroup[] = [];
+
+
+    admingroups.forEach(group => {
+        if(group.chainadminID === this.userdata?.userid){
+          const chain = this.userdata.account.myChains?.find(chain => chain.chainid === group.chainID)
+          const chaingroup : IChainGroup = {chainid : group.chainID , chainname : group.chainName , createdAt : chain?.createdAt , linxsOnChain : group.accounts, linxExtents : []}
+          groupedLinxs.push(chaingroup);
         }
-      })
     })
+
     this.myChains = groupedLinxs;
     console.log('GROUPED LINX AND EXTENTS FROM MYCHAINS AT HOME : ', groupedLinxs)
     this.signalStoreSvc.StoreGroupedLinxsOnMyChains(groupedLinxs);

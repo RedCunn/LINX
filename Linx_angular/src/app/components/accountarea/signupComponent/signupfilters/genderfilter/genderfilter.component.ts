@@ -18,12 +18,12 @@ export class GenderfilterComponent {
   @Output() isValidGenders = new EventEmitter<boolean>;
 
   public isValid : boolean = false;
-  public userGenderPrefsList = signal<String[]>([]);
+  public userGenderPrefsList = signal<string[]>([]);
   
 
   setGenderPref (gen : any){
    
-    const selectedGen : String = gen.target.value;
+    const selectedGen : string = gen.target.value;
     const checked : boolean = gen.target.checked;
 
 

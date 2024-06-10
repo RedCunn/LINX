@@ -14,8 +14,8 @@ export class LangfilterComponent implements OnInit{
   @Output() userProfileChange = new EventEmitter<IUser>();
   @ViewChild('selectUserLangs') selectUserLangs !: ElementRef;
   @ViewChild('selectUserLangPrefs') selectUserLangPrefs !: ElementRef;
-  public userLangList = signal<String[]>([]);
-  public userLangPrefsList = signal<String[]>([]);
+  public userLangList = signal<string[]>([]);
+  public userLangPrefsList = signal<string[]>([]);
 
   ngOnInit(): void {
    if(this.userProfile.languages.length > 0){
