@@ -23,7 +23,7 @@ module.exports = {
     },
     retrieveAccountsFromUsers : async (userids) => {
         try {
-            const accounts = await Account.find({ "userid": {$in : userids} });
+            const accounts = await Account.find({ userid: {$in : userids} });
             return accounts;
         } catch (error) {
             console.error('Error al buscar cuentas:', error);

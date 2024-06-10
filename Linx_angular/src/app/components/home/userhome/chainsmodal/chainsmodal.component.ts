@@ -27,6 +27,7 @@ export class ChainsmodalComponent implements OnInit{
   private socketsvc: WebsocketService = inject(WebsocketService);
   private restSvc: RestnodeService = inject(RestnodeService);
 
+  public allChains : Map<string,string> = new Map<string,string>();
   public userchains : Map<string,string> = new Map<string,string>();
   public newchainname : string | null = null;
   public chainsToAdd : Map<string,string> = new Map<string,string>();
@@ -46,14 +47,15 @@ export class ChainsmodalComponent implements OnInit{
   }
   onIncludedChainChange(key : string , name : string, event : any){
     let inputvalue = event.target.value ; 
-    console.log('input : ', inputvalue)
-    if(inputvalue){
+    let checked = event.target.checked;
+    if(checked){
      this.chainsToAdd.set(key, name);
     }else{
       this.chainsToAdd.delete(key)
     }
   }
 
+  
   
   async breakChain(chainid : string) {
     try {
@@ -73,6 +75,7 @@ export class ChainsmodalComponent implements OnInit{
       if(this.newchainname !== null){
         this.chainsToAdd.set('new',this.newchainname);
       }
+      console.log('CHAINS TO ADD ON CHAINS MODAL : ', this.chainsToAdd)
       const res = await this.restSvc.requestJoinChain(this.userdata!.userid!, this.linxdata!.userid!, this.chainsToAdd)
       if (res.code === 0) {
         if (res.message === 'REQUESTING') {

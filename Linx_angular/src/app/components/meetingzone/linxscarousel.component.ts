@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
 import { initCarousels} from 'flowbite';
 import { RestnodeService } from '../../services/restnode.service';
 import { SignalStorageService } from '../../services/signal-storage.service';
@@ -9,6 +9,7 @@ import { IAccount } from '../../models/useraccount/IAccount';
 import { WebsocketService } from '../../services/websocket.service';
 import { IArticle } from '../../models/useraccount/IArticle';
 import { UtilsService } from '../../services/utils.service';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-linxscarousel',
@@ -44,19 +45,26 @@ export class LinxscarouselComponent implements OnInit {
   async setCandidateProfiles() {
     try {
       const response: IRestMessage = await this.restsvc.shuffleCandidateProfiles(this.userdata?.userid!);
+      console.log('RESPONSE SETTING CANDIDATE PROFILES : ', response)
       if (response.code === 0) {
         
         const _accountsArticles : IArticle[] = response.userdata as IArticle[];
         const _accounts = response.others.accounts as IAccount[];
-        const wholeAccounts : IAccount[] = this.utilsvc.putArticleObjectsIntoAccounts(_accounts , _accountsArticles)
+        if(_accounts.length > 0){
+          const wholeAccounts : IAccount[] = this.utilsvc.putArticleObjectsIntoAccounts(_accounts , _accountsArticles)
 
-        const _users = response.others.users as IUser[];
-        const wholeUsers : IUser[] = this.utilsvc.integrateAccountsIntoUsers(wholeAccounts , _users);
-
-        this.candidateProfiles = wholeUsers;
-        if(this.candidateProfiles[this.currentIndex()].account.articles !== undefined && this.candidateProfiles[this.currentIndex()].account.articles!.length > 0){
-          this.setProfilePicArticle(this.candidateProfiles[this.currentIndex()])
+          const _users = response.others.users as IUser[];
+          const wholeUsers : IUser[] = this.utilsvc.integrateAccountsIntoUsers(wholeAccounts , _users);
+  
+          this.candidateProfiles = wholeUsers;
+  
+          if(this.candidateProfiles[this.currentIndex()].account.articles !== undefined && this.candidateProfiles[this.currentIndex()].account.articles!.length > 0){
+            this.setProfilePicArticle(this.candidateProfiles[this.currentIndex()])
+          }
+        }else{
+          this.candidateProfiles = []; 
         }
+        
         this.loading.set(false);
       } else {
         this.loading.set(false);
@@ -107,6 +115,7 @@ export class LinxscarouselComponent implements OnInit {
       if (res.code === 0) {
         let index = this.candidateProfiles!.findIndex(profile => profile.userid === linx.userid);
         if (index !== -1) {
+          this.nextProfile()
           this.candidateProfiles!.splice(index, 1);
         }
         console.log('RESPONSE MATCH REQ : ', res)

@@ -10,9 +10,11 @@ const { default: mongoose } = require('mongoose');
 const Account = require('../schemas/Account');
 const User = require('../schemas/User');
 const Chat = require('../schemas/Chat');
+const GroupChat = require('../schemas/GroupChat');
 const Article = require('../schemas/Article');
 const chating = require('./utils/chating');
 const Job = require('../schemas/Job');
+const ChainIndex = require('../schemas/ChainIndex');
 
 function generateToken(userdata) {
 
@@ -366,6 +368,7 @@ module.exports = {
             const { userid: _userid, linxuserid: _linxuserid } = req.params;
 
             let chats = [];
+            let groupchats = [];
 
             if (_linxuserid === 'null') {
                 chats = await Chat.find({
@@ -374,6 +377,18 @@ module.exports = {
                         { 'participants.userid_b': _userid }
                     ]
                 });
+                
+                groupchats = await GroupChat.find({'groupParticipants.userid': _userid})
+
+                if(groupchats.length > 0){
+                    for (let group of groupchats) {
+                        const chain = await ChainIndex.findOne({chainID : group.roomkey})   
+                        if(chain){
+                            group.conversationname = chain.chainName
+                        }
+                    }
+                }
+                
             } else {
                 chats = await Chat.find({
                     $or: [
@@ -413,12 +428,14 @@ module.exports = {
                 }
             });
 
+
+
             res.status(200).send({
                 code: 0,
                 error: null,
                 message: 'CHATS RECUPERADOS',
                 token: null,
-                userdata: null,
+                userdata: groupchats,
                 others: chats
             })
         } catch (error) {
@@ -451,6 +468,41 @@ module.exports = {
                 code: 1,
                 error: error.message,
                 message: 'MESSAGE COULDNT BE STORE',
+                token: null,
+                userdata: null,
+                others: null
+            })
+        }
+    },
+    storeGroupChatMessage: async (req, res, next) => {
+        try {
+            const roomkey = req.params.roomkey;
+            const { message, groupParticipants } = req.body;
+
+            let findResult = await GroupChat.findOne({roomkey : roomkey});
+
+            if(findResult){
+                findResult.messages.push(message);
+                await findResult.save();
+            }else{
+                let insertResult = await GroupChat.create({groupParticipants : groupParticipants , roomkey : roomkey , messages : [message]})
+                console.log('INSERT RESULT ON STORE GROUP CHAT MESSAGE : ', insertResult)
+            }
+
+
+            res.status(200).send({
+                code: 0,
+                error: null,
+                message: 'MENSAJE GUARDADO EN CHAT DE GRUPO',
+                token: null,
+                userdata: null,
+                others: null
+            })
+        } catch (error) {
+            res.status(400).send({
+                code: 1,
+                error: error.message,
+                message: 'NO HEMOS PODIDO GUARDAR EL MENSAJE EN CHAT DE GRUPO',
                 token: null,
                 userdata: null,
                 others: null
@@ -621,7 +673,7 @@ module.exports = {
         try {
             const userid = req.params.userid;
 
-            let articles = await Article.find({userid : userid})
+            let articles = await Article.find({ userid: userid })
 
             res.status(200).send({
                 code: 0,

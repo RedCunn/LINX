@@ -17,7 +17,7 @@
                         </div>
                     }
                     @if(isAdminGroups()){
-                        <div class="allchainstitle col-span-2 ps-2 pt-4 mb-3">
+                        <div class="allchainstitle col-span-2 pt-4 mb-3">
                             <p>⛓️ Todas las cadenas que llevan a tí ⛓️</p>
                         </div>
                     }
@@ -75,7 +75,7 @@
                         @for(group of this.adminGroups; track $index){
                         @if(group.chainadminID === this.user.userid){
                         <li class="text-lg">
-                            <p style="color: rgba(25, 4, 118, 0.793); font-weight: 600;">
+                            <p class="mychains">
                                 {{this.searchAdminNameOnMyLinxs(group.chainadminID)}} </p>
                         </li>
                         }@else {
@@ -118,4 +118,4 @@
 
 <app-linxsonchain [isMyChain]="this.isMyChain" [isAllChains]="isAdminGroups" [isSharedChain]="isSharedChain"
     [chain]="this.chain" [group]="this.group" [isOpen]="this.isLinxsOnChainOpen"
-    [chainName]="this.chainName"></app-linxsonchain>
+    [chainName]="this.chainName" [chainId]="this.chainId" [groupChat]="this.groupChats"></app-linxsonchain>

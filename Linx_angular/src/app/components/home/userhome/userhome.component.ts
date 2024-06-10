@@ -13,13 +13,14 @@ import { IAccount } from '../../../models/useraccount/IAccount';
 import { ChatComponent } from '../../chat/chat.component';
 import { IChat } from '../../../models/chat/IChat';
 import { ArticlemodalformComponent } from './artmodal/articlemodalform.component';
-import { BehaviorSubject, distinctUntilChanged } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, lastValueFrom } from 'rxjs';
 import { WebsocketService } from '../../../services/websocket.service';
 import { MyChainComponent } from '../../mychain/mychain.component';
 import { UtilsService } from '../../../services/utils.service';
 import { ChainsmodalComponent } from './chainsmodal/chainsmodal.component';
 import { IChainGroup } from '../../../models/userprofile/IChainGroup';
 import { IChainExtents } from '../../../models/userprofile/IChainExtents';
+import { ILinxExtent } from '../../../models/userprofile/ILinxExtent';
 
 
 @Component({
@@ -118,7 +119,8 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy{
           }
         } else {
           this.isUser.set(true);
-          this.getGroupedLinxsOnChain();
+          this.getChainExtents(this.userdata?.userid!);
+          this.groupLinxsAndExtentsOnChains(this.userdata!);
           this.isMyChain.set(true);
         }
 
@@ -290,7 +292,7 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy{
 
   }
 
-  loadProfileArticles() {
+  async loadProfileArticles() {
 
     let sortedArticles: IArticle[] = [];
     this.articles = [];
@@ -305,16 +307,67 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy{
       this.articles = sortedArticles;
       return;
     }
-    if(this.isChained() || this.isMatch()){
-      sortedArticles = this.utilsvc.sortArticlesDateDESC(this.linxdata?.articles !== undefined ? this.linxdata.articles! : [])
+
+    if(this.isMatch()){
+      sortedArticles = this.utilsvc.sortArticlesDateDESC(this.linxdata?.articles !== undefined ? this.linxdata?.articles! : [])
       this.articles = sortedArticles;
       return;
-    } 
+    }
+    
+    
+      this.articles = await this.getArticles();
+    
+    
 
+  }
+
+
+  
+
+  async getArticles() : Promise<IArticle[]>{
+    try {
+      const res = await this.restSvc.getAccountArticles(this.linxdata?.userid!);
+      console.log('ARTICLES PEDIDOS EN HOME : ', res.userdata)
+      if(res.code === 0){
+        return res.userdata as IArticle[];
+      }else{
+        return [];
+      }
+    } catch (error) {
+      console.log('ERROR PIDIENDO ARTICULOS DE PERFIL ; ', error)
+      return [];
+    }
   }
 
   //------ NEW ON SINGIN BEFORE : 
   private chainsExtents : IChainExtents[] = [];
+
+  
+  async getChainExtents (userid : string){
+    try {
+      const res = await this.restSvc.getMyChainExtents(userid , null)
+      if(res.code === 0){
+        const extentsAccounts : IAccount[] = res.others.accounts as IAccount[]
+        const extentsArticles : IArticle[] = res.others.articles as IArticle[]
+        const wholeExtentsAccounts : IAccount[] = this.utilsvc.putArticleObjectsIntoAccounts(extentsAccounts , extentsArticles);
+        const extents : ILinxExtent[] = res.userdata as ILinxExtent[];
+        
+        extents.forEach(extent => {
+          wholeExtentsAccounts.forEach(account => {
+            if(extent.userid === account.userid){
+              this.chainsExtents.push({linxExtent : extent , extentAccount : account})
+            }
+          })
+        })
+        
+      }else{
+        console.log('ERROR AL RECUPERAR LINXEXTENTS EN SIGNIN : ', res.error)
+      }
+      
+    } catch (error) {
+      console.log('ERROR AL RECUPERAR LINXEXTENTS EN SIGNIN : ', error)
+    }
+  }
 
   groupLinxsAndExtentsOnChains(user : IUser){
     const linxaccounts = this.signalStoreSvc.RetrieveMyLinxs()()!;
@@ -326,6 +379,8 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy{
         }
       })
     })
+    this.myChains = groupedLinxs;
+    console.log('GROUPED LINX AND EXTENTS FROM MYCHAINS AT HOME : ', groupedLinxs)
     this.signalStoreSvc.StoreGroupedLinxsOnMyChains(groupedLinxs);
   }
 
@@ -372,6 +427,7 @@ export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy{
     this.signalStoreSvc.StoreMyLinxs(null);
     this.signalStoreSvc.StoreGroupedLinxsOnMyChains(null);
     this.signalStoreSvc.StoreMatches(null);
+    this.signalStoreSvc.StoreCandidateData(null);
     this.socketsvc.disconnect();
     this.router.navigateByUrl('/Linx/Login');
   }

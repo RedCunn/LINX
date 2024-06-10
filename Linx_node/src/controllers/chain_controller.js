@@ -70,7 +70,6 @@ module.exports = {
             const chains = req.body.chains;
 
             const chainsMap = new Map(Object.entries(chains));
-
             let joinReqState = '';
 
             let requestStates = await chaining.isJoinChainRequested(userid, linxuserid, chainsMap);
@@ -356,7 +355,7 @@ module.exports = {
             let chainIndexes = await ChainIndex.find({ chainID: { $in: chainIdsArray } })
 
             for (let index of chainIndexes) {
-                let adminGroup = { chainadminID: index.chainadminID, chainName: index.chainName, accounts: [] }
+                let adminGroup = { chainadminID: index.chainadminID, chainID : index.chainID, chainName: index.chainName, accounts: [] }
                 for (let userid of index.userIDs) {
                     let account = await Account.findOne({ userid: userid })
                     adminGroup.accounts.push(account);

@@ -225,6 +225,16 @@ export class RestnodeService {
     return lastValueFrom(res);
   }
 
+  public StoreMessageGroupChat(chat: { groupParticipants: Array<{userid : string, linxname : string}>, message: IMessage }, roomkey: string): Promise<IRestMessage> {
+    const res = this._httpClient.put<IRestMessage>(`http://localhost:3000/api/Account/groupchat/${roomkey}`,
+      chat,
+      {
+        headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+      })
+
+    return lastValueFrom(res);
+  }
+
   public markMessagesAsRead(messages : IMessage[], userid : string): Promise<IRestMessage> {
     const res = this._httpClient.put<IRestMessage>(`http://localhost:3000/api/Account/${userid}/chat`,
       messages,

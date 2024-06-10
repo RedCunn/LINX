@@ -39,6 +39,7 @@ export class SigninComponent {
 
   private chainsExtents : IChainExtents[] = [];
   private chainGroupsByAdmin : IAdminGroups[] = [];
+  private chainRooms :  Map<string,string> = new Map<string,string>();
 
   goToSignup() {
     this.router.navigateByUrl('/Linx/Registro');
@@ -163,7 +164,12 @@ async getAllChainsGroupedByAdmin (userid : string){
       console.log('GOT ALL USER CHAINs GROUPED BY ADMIN ->> ', res.userdata)
       //RES _> adminGroup = {chainadminID : index.chainadminID , chainName : index.chainName , accounts : []}[]
       this.chainGroupsByAdmin = res.userdata as IAdminGroups[]
+
+      this.chainGroupsByAdmin.forEach(chain => {
+        this.chainRooms.set(chain.chainName , chain.chainID);
+      })
       this.signalstoresvc.StoreAllUserChainsGroupedByAdmin(this.chainGroupsByAdmin)
+
     }else{
       console.log('COULDNT GET ALL USER CHAINs GROUPED BY ADMIN...', res.error)
     }
@@ -196,6 +202,7 @@ async getAllChainsGroupedByAdmin (userid : string){
       await this.getAllChainsGroupedByAdmin(user.userid)
       this.socketSvc.userLogin(user.account._id!, user.account.linxname);
       this.utilsvc.joinRooms(this.userRooms);
+      this.utilsvc.joinRooms(this.chainRooms);
 
       this.router.navigateByUrl('/Linx/Inicio');
     } else {

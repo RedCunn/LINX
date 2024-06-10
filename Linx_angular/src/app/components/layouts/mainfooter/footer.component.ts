@@ -10,6 +10,7 @@ import { SignalStorageService } from '../../../services/signal-storage.service';
 import { RestnodeService } from '../../../services/restnode.service';
 import { IChat } from '../../../models/chat/IChat';
 import { IMessage } from '../../../models/chat/IMessage';
+import { IGroupChat } from '../../../models/chat/IGroupChat';
 
 @Component({
   selector: 'app-footer',
@@ -27,6 +28,7 @@ export class FooterComponent implements AfterViewInit, OnInit{
   public isInteractionsOpen = signal(false);
   private _user! : IUser;
   public chats! : IChat[];
+  public groupchats! : IGroupChat[];
   public compressedChats : IChat[] = [];
   private chatsMap : Map<string, IChat[]> = new Map<string, IChat[]>();
 
@@ -88,8 +90,10 @@ export class FooterComponent implements AfterViewInit, OnInit{
       const res = await this.restSvc.getMyChats( this._user?.userid!, null);
       if(res.code === 0){
         this.chats = res.others as IChat[]; 
+        this.groupchats = res.userdata as IGroupChat[];
         this.chatCompression();
         console.log('CHATS comprimidos EN FOOTER ....', this.compressedChats)
+        console.log('CHATS DE GRUPO : ', this.groupchats)
       }else{
         console.log('ERROR ON RETRIEVING CHATS ON FOOTER ; ', res.error)
       }

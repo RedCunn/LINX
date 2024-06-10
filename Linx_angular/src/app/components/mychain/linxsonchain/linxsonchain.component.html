@@ -26,8 +26,13 @@
                             <span class="sr-only">Close modal</span>
                         </button>
                     </div>
-                    <div class="col-span-3 text-center">
+                    <div class="col-span-3 flex flex-row justify-center items-baseline text-center">
                         <p style="color: rgb(121, 35, 240); font-weight: 600; font-size: 1.5rem;">⛓️ {{this.chainName}}</p>
+                        <button (click)="toggleChatModal()" class="ms-3 text-purple-400 hover:text-purple-500 pt-3">
+                            <span class="material-symbols-outlined">
+                              chat_bubble
+                            </span>
+                        </button>
                     </div>
                 </div>
                 <!-- Modal body -->
@@ -93,3 +98,5 @@
     </div>
 </div>
 }
+
+<ng-container #chatContainer></ng-container>

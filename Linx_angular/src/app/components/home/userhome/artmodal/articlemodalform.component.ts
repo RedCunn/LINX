@@ -186,19 +186,6 @@ export class ArticlemodalformComponent implements OnChanges{
     }
   }
 
-
-  async archiveArticle() {
-    try {
-      const res = await this.restSvc.archiveArticle(this.userdata?.userid!, this.articleCopy.articleid!, this.articleCopy);
-      if (res.code === 0) {
-        console.log('Archived article on artmodal : ', res.message)
-      } else {
-        console.log('Couldnt archive article on artmodal....', res.error);
-      }
-    } catch (error) {
-      console.log('Couldnt archive article on artmodal....', error);
-    }
-  }
   closeModal() {
     this.isOpen.set(false);
   }

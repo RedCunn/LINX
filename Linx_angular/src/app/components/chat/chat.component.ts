@@ -9,6 +9,7 @@ import { RestnodeService } from '../../services/restnode.service';
 import { Subject, takeUntil } from 'rxjs';
 import { initDropdowns} from 'flowbite';
 import { UtilsService } from '../../services/utils.service';
+import { IGroupChat } from '../../models/chat/IGroupChat';
 
 @Component({
   selector: 'app-chat',
@@ -22,7 +23,7 @@ import { UtilsService } from '../../services/utils.service';
 export class ChatComponent implements OnInit, OnDestroy , AfterContentInit{
 
   @Input() isOpen = signal(false);
-  @Input() chatRef!: IChat;
+  @Input() chatRef!: IChat ;
   @ViewChild('messageContainer') messageContainer!: ElementRef;
   @ViewChild('messageTextarea') messageTextarea!: ElementRef;
 
@@ -31,7 +32,8 @@ export class ChatComponent implements OnInit, OnDestroy , AfterContentInit{
   private socketSvc = inject(WebsocketService);
   private utilsvc = inject(UtilsService);
 
-  public chat: IChat = {conversationname:'', participants: { userid_a: '', userid_b: '' }, messages: [], roomkey: '' };
+  public chat: IChat = {conversationname:'', participants: { userid_a: '', userid_b: '' }, messages: [], roomkey: ''};
+  public groupChat :  IGroupChat = {conversationname:'', groupParticipants: [], messages: [], roomkey: ''};
   public message: IMessage = { isRead : false, text: '', timestamp: '', sender: { userid: '', linxname: '' }};
   public user!: IUser;
   public receiveruserid: string = '';
@@ -119,7 +121,6 @@ export class ChatComponent implements OnInit, OnDestroy , AfterContentInit{
     } catch (error) {
       console.log(error)
     }
-
   }
 
   private scrollToBottom(): void {

@@ -11,6 +11,7 @@ module.exports = {
         try {
             let reqStates = new Map();
             let _chainid = ''; 
+            console.log('CHAINS IS JOIN CHAIN REQ ???? ', chains)
             for (const [key , value] of chains) {
 
                 if(key === 'new'){
@@ -26,6 +27,8 @@ module.exports = {
 
                     if(isRequested.length > 0){
                         reqStates.set(key , {name : value, state : 'ACCEPTED'})
+                    }else{
+                        reqStates.set(key , {name : value, state : 'REQUESTED'})
                     }
                 }
                 
@@ -74,24 +77,37 @@ module.exports = {
             const chainIndex = await ChainIndex.findOne({chainID : chainid});
 
             let insertChain;
+            let CHAIN_ID;
+            let CHAIN_NAME; 
 
             if(chainIndex !== null){
                 if(chainIndex.chainadminID === userid){
-                    insertIndex = await ChainIndex.updateOne({chainID : chainid, chainadminID : userid},   { $push: { userIDs: linxid } })
+                    insertIndex = await ChainIndex.findOneAndUpdate({chainID : chainid, chainadminID : userid},   { $push: { userIDs: linxid } }).session(session)
+                    CHAIN_ID = insertIndex.chainID
+                    CHAIN_NAME = insertIndex.chainName
                 }else{
-                    insertIndex = await ChainIndex.updateOne({chainID : chainid, chainadminID : linxid},   { $push: { userIDs: userid } })
+                    insertIndex = await ChainIndex.findOneAndUpdate({chainID : chainid, chainadminID : linxid},   { $push: { userIDs: userid } }).session(session)
+                    CHAIN_ID = insertIndex.chainID
+                    CHAIN_NAME = insertIndex.chainName
                 }
             }else{
                 // BORRAMOS LA PETICION y RECUPERAMOS DE ELLA EL CHAINID
-                joinRequest = await ChainRequest.findOneAndDelete({'chain.chainid' : chainid})
-                
+                joinRequest = await ChainRequest.findOneAndDelete({'chain.chainid' : chainid}).session(session)
+                CHAIN_ID = joinRequest.chain.chainid
+                CHAIN_NAME = joinRequest.chain.chainname
+
                 insertChain = await Account.findOneAndUpdate(
                     { userid: joinRequest.requestingUserid },
                     { $push: { myChains: { chainid: joinRequest.chain.chainid, chainname: joinRequest.chain.chainname } } },
                     { new: true, upsert: true }
                   ).session(session);
 
-                insertIndex = await ChainIndex.create({chainadminID : joinRequest.requestingUserid , chainID : joinRequest.chain.chainid , chainName : joinRequest.chain.chainname, userIDs : [userid , linxid]})
+                  const insertIndex = await ChainIndex.create([{
+                    chainadminID: joinRequest.requestingUserid,
+                    chainID: joinRequest.chain.chainid,
+                    chainName: joinRequest.chain.chainname,
+                    userIDs: [userid, linxid]
+                }], { session });
             }
 
             console.log('INSERT CHAIN RESULT chaining-joinChains : ', insertChain)
@@ -116,24 +132,24 @@ module.exports = {
 
             // INCLUIMOS LA CHAIN DEL USER EN LA EXTENDEDCHAIN DEL LINX
         
-            linxAccount.extendedChains.push({chainadminid : userid , chainid : insertChain.chain.chainid , chainname : insertChain.chain.chainname })
+            linxAccount.extendedChains.push({chainadminid : userid , chainid : CHAIN_ID , chainname : CHAIN_NAME })
             
             // INCLUIMOS AL LINX EN LXS LINXS DEL USER y AL USER EN LXS LINXS DEL LINX
 
             const userMyLinxsIndex = userAccount.myLinxs.findIndex(linx => linx.userid === linxid);
 
             if(userMyLinxsIndex !== -1 ){
-                userAccount.myLinxs[userMyLinxsIndex].chainIds.push(insertChain.chain.chainid);
+                userAccount.myLinxs[userMyLinxsIndex].chainIds.push(CHAIN_ID);
             }else{
-                userAccount.myLinxs.push({chainIds : [ insertChain.chain.chainid] , userid : linxAccount.userid , roomkey : roomkey})
+                userAccount.myLinxs.push({chainIds : [ CHAIN_ID] , userid : linxAccount.userid , roomkey : roomkey})
             }
 
             const linxMyLinxsIndex = userAccount.myLinxs.findIndex(linx => linx.userid === userid);
 
             if(linxMyLinxsIndex !== -1 ){
-                linxAccount.myLinxs[linxMyLinxsIndex].chainIds.push(insertChain.chain.chainid);
+                linxAccount.myLinxs[linxMyLinxsIndex].chainIds.push(CHAIN_ID);
             }else{
-                linxAccount.myLinxs.push({chainIds : [ insertChain.chain.chainid] , userid : userAccount.userid , roomkey : roomkey})
+                linxAccount.myLinxs.push({chainIds : [ CHAIN_ID] , userid : userAccount.userid , roomkey : roomkey})
             }
 
 

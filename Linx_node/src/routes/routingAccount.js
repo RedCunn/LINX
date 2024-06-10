@@ -143,6 +143,7 @@ router.put('/:userid', checkJWT, AccountController.modifyAccountData);
 router.post('/resetPwd', checkJWT, AccountController.resetPassword);
 router.get('/activate_account', AccountController.activateAccount);
 router.put('/chat/:roomkey', AccountController.storeChatMessage);
+router.put('/groupchat/:roomkey', AccountController.storeGroupChatMessage);
 router.post('/:userid/article',upload.single('file'), AccountController.newArticle);
 router.put('/:userid/article/:artid', upload.single('file'), AccountController.editArticle);
 router.delete('/:userid/article/:artid',deleteFile, AccountController.deleteArticle)

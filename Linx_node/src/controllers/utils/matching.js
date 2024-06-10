@@ -247,7 +247,7 @@ const getCompatibilityPercentage = async (user, searchgroup) => {
 }
 const retrieveHalfMatches = async (user) => {
     try {
-        let _halfMatches = await HalfMatch.find({ matchedUserid: user.userid });
+        let _halfMatches = await HalfMatch.find({ matchingUserid: user.userid });
         return _halfMatches;
     } catch (error) {
         console.log('error retrieving HalfMatches...', error)
@@ -330,10 +330,12 @@ module.exports = {
 
             //----------- active accounts 
             let _activeAccounts = await usersFilterRepo.retrieveUsersWithActiveAccounts(user);
+            console.log('ACTIVE ACCOUNTS : ', _activeAccounts)
             //----------- exclude already on chain
             let _userAccount = await Account.findOne({userid : user.userid});
             let excludedUserIds = new Set();
 
+            console.log('USSER ACCCCCOUNTS LINXS : ', _userAccount.myLinxs)
             if(_userAccount.myLinxs.length > 0){
                 _userAccount.myLinxs.forEach(linx => {
                     excludedUserIds.add(linx.userid)
@@ -364,21 +366,18 @@ module.exports = {
             const finalGroup = await getCompatibilityPercentage(user, _filteredByLang);
 
             const halfMatches = await retrieveHalfMatches(user);
-            
             let finalGroupUserIds = new Set(finalGroup.map(profile => profile.userid));
-            
             if (halfMatches.length > 0) {    
                 halfMatches.forEach(halfMatch => {
-                    
-                    finalGroupUserIds.add(halfMatch.matchingUserid);
-                    
+                    finalGroupUserIds.delete(halfMatch.matchedUserid);
                 });
-            }
+            }            
             let finalGroupUserIdsToArray = Array.from(finalGroupUserIds);
             
             const accounts = await usersFilterRepo.retrieveAccountsFromUsers(finalGroupUserIdsToArray);
 
-            return accounts;
+                return accounts;
+            
         } catch (error) {
             console.error('ERROR AL RECUPERAR PERFILES COMPATIBLES', error);
             throw error;

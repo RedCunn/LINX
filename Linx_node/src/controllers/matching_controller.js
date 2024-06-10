@@ -12,40 +12,52 @@ module.exports = {
     shuffleProfiles: async (req, res, next) => {
         try {
             const userid = req.params.userid;
-            let _user = await User.findOne({ 'userid': userid })
+            
+            let _user = await User.findOne({ userid: userid })
 
             let matchingProfiles = await match.retrieveProfilesBasedOnCompatibility(_user);
 
-            let userIDs = new Set();
-            let artIDs = new Set();
-
-            matchingProfiles.forEach(p => {
-                userIDs.add(p.userid);
-                if (p.articles !== undefined && p.articles.length > 0) {
-                    p.articles.forEach(artid => {
-                        artIDs.add(artid)
-                    })
-                }
-            })
-            let artIDsToArray = Array.from(artIDs);
-            let accountArticles = await Article.find({ articleid: { $in: artIDsToArray } });
-
-            let useridsToArray = Array.from(userIDs)
-            let userProfiles = await User.find({userid : {$in : useridsToArray}})
-
-            const accountsAndProfiles = {accounts : matchingProfiles, users : userProfiles}
-
-            console.log('COMPAT PROFILES : ', accountsAndProfiles)
-
-            res.status(200).send({
-                code: 0,
-                error: null,
-                message: 'PERFILES COMPATIBLES ...',
-                token: null,
-                userdata: accountArticles,
-                others: accountsAndProfiles
-            })
-
+            if(matchingProfiles.length > 0 ){
+                let userIDs = new Set();
+                let artIDs = new Set();
+    
+                matchingProfiles.forEach(p => {
+                    userIDs.add(p.userid);
+                    if (p.articles !== undefined && p.articles.length > 0) {
+                        p.articles.forEach(artid => {
+                            artIDs.add(artid)
+                        })
+                    }
+                })
+                let artIDsToArray = Array.from(artIDs);
+                let accountArticles = await Article.find({ articleid: { $in: artIDsToArray } });
+    
+                let useridsToArray = Array.from(userIDs)
+                let userProfiles = await User.find({userid : {$in : useridsToArray}})
+    
+                const accountsAndProfiles = {accounts : matchingProfiles, users : userProfiles}
+    
+                res.status(200).send({
+                    code: 0,
+                    error: null,
+                    message: 'PERFILES COMPATIBLES ...',
+                    token: null,
+                    userdata: accountArticles,
+                    others: accountsAndProfiles
+                })
+    
+            }else{
+                res.status(200).send({
+                    code: 0,
+                    error: null,
+                    message: 'PERFILES COMPATIBLES ...',
+                    token: null,
+                    userdata: [],
+                    others: {accounts : [], users : []}
+                })
+    
+            }
+            
         } catch (error) {
             console.log('ERROR SHUFFLING ...', error)
             res.status(400).send({

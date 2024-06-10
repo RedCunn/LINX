@@ -5,6 +5,10 @@ import { IChainGroup } from '../../models/userprofile/IChainGroup';
 import { IAdminGroups } from '../../models/userprofile/IAdminGroups';
 import { SignalStorageService } from '../../services/signal-storage.service';
 import { IUser } from '../../models/userprofile/IUser';
+import { UtilsService } from '../../services/utils.service';
+import { IChainExtents } from '../../models/userprofile/IChainExtents';
+import { RestnodeService } from '../../services/restnode.service';
+import { IGroupChat } from '../../models/chat/IGroupChat';
 
 @Component({
   selector: 'app-mychain',
@@ -25,6 +29,8 @@ export class MyChainComponent implements OnInit{
 
 
   private signalsvc = inject(SignalStorageService)
+  private restsvc = inject(RestnodeService)
+  private utilsvc = inject(UtilsService);
 
   public user! : IUser ; 
   public isLinxsOnChainOpen = signal(false);
@@ -32,6 +38,9 @@ export class MyChainComponent implements OnInit{
   public group : IAccount[] = [];
   public myLinxs : IAccount[] = [];
   public chainName : string = '';
+  public userChains! : IChainGroup;
+  public chainId! : string;
+  public groupChats : IGroupChat[] = [];
 
   closeModal() {
     this.isOpen.set(false);
@@ -41,6 +50,8 @@ export class MyChainComponent implements OnInit{
     this.chainName = adgroup.chainName;
     this.isAdminGroups.set(true);
     this.group = adgroup.accounts;
+    this.chainId = adgroup.chainID;
+    this.retrieveGroupChat();
     this.isLinxsOnChainOpen.set(true);
   }
   showLinxsOnChain(chain : IChainGroup){
@@ -66,16 +77,23 @@ export class MyChainComponent implements OnInit{
     return adminname;
   }
 
+  async retrieveGroupChat(){
+    try {
+      const res = await this.restsvc.getMyChats( this.user?.userid!, null);
+      if(res.code === 0){
+        this.groupChats = res.userdata as IGroupChat[];
+        console.log('GROUP CHATS ON LINXSONCHAIN : ', this.groupChats)
+      }else{
+        console.log('ERROR ON RETRIEVING CHATS ON FOOTER ; ', res.error)
+      }
+     } catch (error) {
+      console.log('ERROR ON RETRIEVING CHATS ON FOOTER ; ', error)
+     } 
+  
+  }
+
   ngOnInit(): void {
-    
-    if(this.signalsvc.RetrieveMyLinxs()() !== null){
-      this.myLinxs = this.signalsvc.RetrieveMyLinxs()()!;
-    }else{
-      this.myLinxs = []
-    }
     this.user = this.signalsvc.RetrieveUserData()()!;
-    console.log('SHARED CHAINS ON MY CHAIN COMPO : ', this.sharedChains)
-    console.log('MY CHAINS ON CHAIN COMPO : ', this.myChains)
   }
 
 }
