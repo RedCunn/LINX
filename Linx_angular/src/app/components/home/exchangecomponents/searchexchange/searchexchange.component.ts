@@ -6,7 +6,7 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './searchexchange.component.html',
-  styleUrl: './searchexchange.component.css'
+  styleUrl: './searchexchange.component.scss'
 })
 export class SearchexchangeComponent {
 

@@ -28,7 +28,7 @@ import { ILinxExtent } from '../../../models/userprofile/ILinxExtent';
   standalone: true,
   imports: [UserhomeasideComponent, MatIcon, FormsModule, RouterModule, ChatComponent, ArticlemodalformComponent, MyChainComponent, ChainsmodalComponent],
   templateUrl: './userhome.component.html',
-  styleUrl: './userhome.component.css'
+  styleUrl: './userhome.component.scss'
 })
 export class UserhomeComponent implements OnInit, AfterViewInit, OnDestroy{
 

@@ -10,7 +10,7 @@ import * as CryptoJS from 'crypto-js';
   standalone: true,
   imports: [FormsModule],
   templateUrl: './articlemodalform.component.html',
-  styleUrl: './articlemodalform.component.css'
+  styleUrl: './articlemodalform.component.scss'
 })
 export class ArticlemodalformComponent implements OnChanges{
 

@@ -8,7 +8,7 @@ import { IUser } from '../../../../../models/userprofile/IUser';
   standalone: true,
   imports: [],
   templateUrl: './proxyfilter.component.html',
-  styleUrl: './proxyfilter.component.css'
+  styleUrl: './proxyfilter.component.scss'
 })
 export class ProxyfilterComponent implements OnInit{
 

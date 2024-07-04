@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [],
   templateUrl: './exchangepanel.component.html',
-  styleUrl: './exchangepanel.component.css'
+  styleUrl: './exchangepanel.component.scss'
 })
 export class ExchangepanelComponent {
 

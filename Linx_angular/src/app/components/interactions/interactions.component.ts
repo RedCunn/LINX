@@ -17,7 +17,7 @@ import { IChainInvite } from '../../models/userprofile/IChainInvite';
   standalone: true,
   imports: [],
   templateUrl: './interactions.component.html',
-  styleUrl: './interactions.component.css'
+  styleUrl: './interactions.component.scss'
 })
 export class InteractionsComponent implements OnInit, OnDestroy {
 

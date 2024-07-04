@@ -16,7 +16,7 @@ import { IGroupChat } from '../../../models/chat/IGroupChat';
   standalone: true,
   imports: [MatIcon, ChatComponent, GroupchatComponent],
   templateUrl: './conversations.component.html',
-  styleUrl: './conversations.component.css'
+  styleUrl: './conversations.component.scss'
 })
 export class ConversationsComponent implements OnDestroy{
   

@@ -8,7 +8,7 @@ import { IUser } from '../../../../models/userprofile/IUser';
   standalone: true,
   imports: [],
   templateUrl: './editaccount.component.html',
-  styleUrl: './editaccount.component.css'
+  styleUrl: './editaccount.component.scss'
 })
 export class EditaccountComponent {
 

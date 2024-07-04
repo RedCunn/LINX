@@ -16,7 +16,7 @@ import { IGroupChat } from '../../models/chat/IGroupChat';
   standalone: true,
   imports: [],
   templateUrl: './chat.component.html',
-  styleUrl: './chat.component.css',
+  styleUrl: './chat.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 

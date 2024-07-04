@@ -13,7 +13,7 @@ import { UtilsService } from '../../../../services/utils.service';
   standalone: true,
   imports: [CommonModule , NgFor],
   templateUrl: './chainsmodal.component.html',
-  styleUrl: './chainsmodal.component.css'
+  styleUrl: './chainsmodal.component.scss'
 })
 export class ChainsmodalComponent implements OnInit{
 

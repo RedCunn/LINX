@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, Inject, OnInit, PLATFORM_ID, inject, signal} from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { SignalStorageService } from '../../services/signal-storage.service';
-import './mainpanel.component.css';
+import './mainpanel.component.scss';
 import {LinxscarouselComponent} from '../meetingzone/linxscarousel.component';
 import { isPlatformBrowser } from '@angular/common';
 import { initFlowbite, initTooltips } from 'flowbite';
@@ -11,7 +11,7 @@ import { initFlowbite, initTooltips } from 'flowbite';
   standalone: true,
   imports: [FormsModule, LinxscarouselComponent],
   templateUrl: './mainpanel.component.html',
-  styleUrl: './mainpanel.component.css'
+  styleUrls: ['./mainpanel.component.scss']
 })
 export class MainpanelComponent implements AfterViewInit, OnInit{
   public showMeetingZone = signal(false);

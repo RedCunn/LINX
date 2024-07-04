@@ -6,7 +6,7 @@ import { IUser } from '../../../../../models/userprofile/IUser';
   standalone: true,
   imports: [],
   templateUrl: './politicsfilter.component.html',
-  styleUrl: './politicsfilter.component.css'
+  styleUrl: './politicsfilter.component.scss'
 })
 export class PoliticsfilterComponent {
   

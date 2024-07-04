@@ -17,7 +17,7 @@ import { IGroupChat } from '../../../models/chat/IGroupChat';
   standalone: true,
   imports: [MatIcon, ConversationsComponent, InteractionsComponent],
   templateUrl: './footer.component.html',
-  styleUrl: './footer.component.css'
+  styleUrl: './footer.component.scss'
 })
 export class FooterComponent implements AfterViewInit, OnInit{
 

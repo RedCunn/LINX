@@ -13,7 +13,7 @@ import { IAdminGroups } from '../../../models/userprofile/IAdminGroups';
   standalone: true,
   imports: [MyChainComponent],
   templateUrl: './loggedheader.component.html',
-  styleUrl: './loggedheader.component.css'
+  styleUrl: './loggedheader.component.scss'
 })
 export class LoggedheaderComponent implements OnInit{
   

@@ -12,7 +12,7 @@ import { IPodcast } from '../../../../models/media/podcast';
   standalone: true,
   imports: [FormsModule],
   templateUrl: './mymusic.component.html',
-  styleUrl: './mymusic.component.css',
+  styleUrl: './mymusic.component.scss',
   providers: []
 })
 

@@ -7,7 +7,7 @@ import { MatIcon } from '@angular/material/icon';
   standalone: true,
   imports: [MatIcon],
   templateUrl: './mainheader.component.html',
-  styleUrl: './mainheader.component.css'
+  styleUrl: './mainheader.component.scss'
 })
 export class MainheaderComponent{
   
