@@ -10,7 +10,7 @@ import { WorkfilterComponent } from '../signupfilters/workfilter/workfilter.comp
 import { ProxyfilterComponent } from '../signupfilters/proxyfilter/proxyfilter.component';
 import { IUser } from '../../../../models/userprofile/IUser';
 import { IAccount } from '../../../../models/useraccount/IAccount';
-import { compareToValidator } from '../../../../../shared/validators/compareTo';
+import { compareToValidator } from '../../../../validators/compareTo';
 import { IRestMessage } from '../../../../models/IRestMessage';
 import { RestnodeService } from '../../../../services/restnode.service';
 import { Router } from '@angular/router';
