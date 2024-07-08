@@ -20,7 +20,7 @@ import { IAdminGroups } from '../../../models/userprofile/IAdminGroups';
   standalone: true,
   imports: [FormsModule],
   templateUrl: './signin.component.html',
-  styleUrl: './signin.component.css'
+  styleUrl: './signin.component.scss'
 })
 export class SigninComponent {
 

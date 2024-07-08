@@ -28,7 +28,7 @@ import { Router } from '@angular/router';
     ProxyfilterComponent
   ],
   templateUrl: './signup-userdata.component.html',
-  styleUrl: './signup-userdata.component.css'
+  styleUrl: './signup-userdata.component.scss'
 })
 export class SignupUserdataComponent {
 

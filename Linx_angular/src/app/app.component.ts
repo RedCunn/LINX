@@ -14,7 +14,7 @@ import { UtilsService } from './services/utils.service';
   standalone: true,
   imports: [RouterModule, MainheaderComponent, FooterComponent, LoggedheaderComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit, OnDestroy {
   title = 'Linx_angular';

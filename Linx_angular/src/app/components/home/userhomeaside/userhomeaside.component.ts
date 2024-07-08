@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [MatIcon],
   templateUrl: './userhomeaside.component.html',
-  styleUrl: './userhomeaside.component.css'
+  styleUrl: './userhomeaside.component.scss'
 })
 export class UserhomeasideComponent implements OnInit{
   

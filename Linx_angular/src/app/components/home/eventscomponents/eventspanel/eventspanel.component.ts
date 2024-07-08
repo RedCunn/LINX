@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [],
   templateUrl: './eventspanel.component.html',
-  styleUrl: './eventspanel.component.css'
+  styleUrl: './eventspanel.component.scss'
 })
 export class EventspanelComponent {
 

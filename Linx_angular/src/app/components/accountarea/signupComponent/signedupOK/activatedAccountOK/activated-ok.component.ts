@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [],
   templateUrl: './activated-ok.component.html',
-  styleUrl: './activated-ok.component.css'
+  styleUrl: './activated-ok.component.scss'
 })
 export class ActivatedOkComponent {
 

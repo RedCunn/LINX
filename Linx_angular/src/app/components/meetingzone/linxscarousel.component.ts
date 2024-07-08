@@ -16,7 +16,7 @@ import { BehaviorSubject } from 'rxjs';
   standalone: true,
   imports: [],
   templateUrl: './linxscarousel.component.html',
-  styleUrl: './linxscarousel.component.css'
+  styleUrl: './linxscarousel.component.scss'
 })
 export class LinxscarouselComponent implements OnInit {
 

@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [],
   templateUrl: './trackslib.component.html',
-  styleUrl: './trackslib.component.css'
+  styleUrl: './trackslib.component.scss'
 })
 export class TrackslibComponent {
 

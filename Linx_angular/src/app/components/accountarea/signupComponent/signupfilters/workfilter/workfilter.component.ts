@@ -6,7 +6,7 @@ import { IUser } from '../../../../../models/userprofile/IUser';
   standalone: true,
   imports: [],
   templateUrl: './workfilter.component.html',
-  styleUrl: './workfilter.component.css'
+  styleUrl: './workfilter.component.scss'
 })
 export class WorkfilterComponent {
 

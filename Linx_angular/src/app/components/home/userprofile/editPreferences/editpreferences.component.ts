@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './editpreferences.component.html',
-  styleUrl: './editpreferences.component.css'
+  styleUrl: './editpreferences.component.scss'
 })
 export class EditpreferencesComponent {
 

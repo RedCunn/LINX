@@ -7,7 +7,7 @@ import {EditaccountComponent} from './editAccount/editaccount.component'
   standalone: true,
   imports: [EditaccountComponent],
   templateUrl: './userprofile.component.html',
-  styleUrl: './userprofile.component.css'
+  styleUrl: './userprofile.component.scss'
 })
 export class UserprofileComponent {
 

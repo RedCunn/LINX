@@ -10,7 +10,7 @@ import { IUser } from '../../../../../models/userprofile/IUser';
   standalone: true,
   imports: [MatSliderModule, ReactiveFormsModule],
   templateUrl: './agefilter.component.html',
-  styleUrl: './agefilter.component.css',
+  styleUrl: './agefilter.component.scss',
   providers : [
     {provide: NG_VALUE_ACCESSOR, useExisting : forwardRef(()=> AgefilterComponent), multi: true},
     {provide : NG_VALIDATORS, useExisting : forwardRef(()=> AgefilterComponent), multi: true}

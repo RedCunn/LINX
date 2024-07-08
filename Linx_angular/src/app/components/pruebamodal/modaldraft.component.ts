@@ -5,7 +5,7 @@ import { Component, ElementRef, Input, ViewChild, signal } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './modaldraft.component.html',
-  styleUrl: './modaldraft.component.css'
+  styleUrl: './modaldraft.component.scss'
 })
 export class ModaldraftComponent {
   @Input() isOpen = signal(false);

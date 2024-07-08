@@ -11,7 +11,7 @@ import { Location } from '@angular/common';
   standalone: true,
   imports: [MatDatepickerModule, MatInputModule, MatFormFieldModule],
   templateUrl: './createevent.component.html',
-  styleUrl: './createevent.component.css',
+  styleUrl: './createevent.component.scss',
   providers : [provideNativeDateAdapter()]
 })
 export class CreateeventComponent {

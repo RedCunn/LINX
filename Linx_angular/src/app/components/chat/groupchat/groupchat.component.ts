@@ -13,7 +13,7 @@ import { Subject, takeUntil } from 'rxjs';
   standalone: true,
   imports: [],
   templateUrl: './groupchat.component.html',
-  styleUrl: './groupchat.component.css',
+  styleUrl: './groupchat.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GroupchatComponent implements OnInit, OnDestroy , AfterContentInit{

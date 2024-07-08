@@ -6,7 +6,7 @@ import { IUser } from '../../../../../models/userprofile/IUser';
   standalone: true,
   imports: [],
   templateUrl: './dietfilter.component.html',
-  styleUrl: './dietfilter.component.css'
+  styleUrl: './dietfilter.component.scss'
 })
 export class DietfilterComponent {
 

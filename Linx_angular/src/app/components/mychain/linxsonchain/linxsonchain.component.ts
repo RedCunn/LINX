@@ -15,7 +15,7 @@ import { IGroupChat } from '../../../models/chat/IGroupChat';
   standalone: true,
   imports: [GroupchatComponent],
   templateUrl: './linxsonchain.component.html',
-  styleUrl: './linxsonchain.component.css'
+  styleUrl: './linxsonchain.component.scss'
 })
 export class LinxsonchainComponent implements OnInit{
   

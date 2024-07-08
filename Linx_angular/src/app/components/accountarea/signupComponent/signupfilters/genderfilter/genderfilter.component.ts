@@ -7,7 +7,7 @@ import { IUser } from '../../../../../models/userprofile/IUser';
   standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './genderfilter.component.html',
-  styleUrl: './genderfilter.component.css',
+  styleUrl: './genderfilter.component.scss',
   providers : []
 })
 export class GenderfilterComponent {

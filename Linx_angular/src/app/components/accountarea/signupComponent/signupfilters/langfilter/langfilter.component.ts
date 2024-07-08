@@ -6,7 +6,7 @@ import { IUser } from '../../../../../models/userprofile/IUser';
   standalone: true,
   imports: [],
   templateUrl: './langfilter.component.html',
-  styleUrl: './langfilter.component.css'
+  styleUrl: './langfilter.component.scss'
 })
 export class LangfilterComponent implements OnInit{
   

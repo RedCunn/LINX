@@ -6,7 +6,7 @@ import { Component, ElementRef, ViewChild, signal } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './createexitem.component.html',
-  styleUrl: './createexitem.component.css'
+  styleUrl: './createexitem.component.scss'
 })
 export class CreateexitemComponent {
 
